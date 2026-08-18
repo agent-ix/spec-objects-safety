@@ -1,6 +1,6 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
-version: 0.1.0
+version: 0.2.0
 description: 'Filament Module: safety ObjectTypes (hazard, failure_mode) — IEC 61508 / ISO 26262 / FMEA lineage'
 # Order 55, following the family sequence (operational 53, security 54).
 nav:
