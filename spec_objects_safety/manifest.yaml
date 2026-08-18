@@ -55,16 +55,19 @@ object_types:
 # arise from components each behaving exactly as specified. Modelling hazards as
 # a variety of failure_mode would lose precisely those.
 - name: hazard
-  roles: [safety-relevant]
   allowed_links:
-    # A hazard is caused by failure modes and mitigated by requirements.
-    # `mitigates`/`controls` reuse the existing governance cluster rather than
-    # minting a safety-only synonym; `causes` and `contributes_to` are the
-    # safety-chain additions, which land in the iso vocabulary once
-    # spec-artifacts-iso#16 documents it (that FR gives an addition a rule to
-    # satisfy rather than a precedent to set).
-    causes: [safety-relevant]
-    contributes_to: [safety-relevant]
+    # NO NEW VERBS. spec-artifacts-iso FR-004's first criterion for adding one
+    # is "check the existing 76 — a near-synonym is a reason not to add", and
+    # there is one: `arises_from` ("Risk arises from a threat/vulnerability",
+    # governance) records exactly this fact, read from the hazard end, which is
+    # also the natural authoring direction. A hazard arising from several
+    # failure modes is several `arises_from` edges, so a separate
+    # `contributes_to` would be a second word for the same thing.
+    #
+    # The ticket (spec-objects-security#7) assumed `causes`/`contributes_to`
+    # would be added to the iso vocabulary. Applying the criteria that ticket
+    # asked for says not to.
+    arises_from: [failure_mode]
     references: [hazard, failure_mode]
   data_schema:
     type: object
@@ -124,10 +127,10 @@ object_types:
 # assessment (severity, likelihood), and collapsing them would force one table
 # to mean two things depending on which type declared it.
 - name: failure_mode
-  roles: [safety-relevant]
   allowed_links:
-    causes: [safety-relevant]
-    contributes_to: [safety-relevant]
+    # The causal edge is authored from the hazard end (`arises_from`), so a
+    # failure mode declares no outgoing safety verb of its own — one edge, one
+    # place to write it.
     references: [failure_mode, hazard]
   data_schema:
     type: object

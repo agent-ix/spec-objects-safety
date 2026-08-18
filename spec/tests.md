@@ -22,6 +22,7 @@ ships with the module, so no row here is `🚧` on the day it lands.
 | FR-001 | FR-001-AC-4 | TC-005 | ✅ Complete |
 | FR-001 | FR-001-AC-5 | TC-001 | ✅ Complete |
 | FR-001 | FR-001-AC-6 | TC-004 | ✅ Complete |
+| FR-001 | FR-001-AC-7 | TC-007 | ✅ Complete |
 
 ## Test Case Summary
 
@@ -33,7 +34,8 @@ ships with the module, so no row here is `🚧` on the day it lands.
 | TC-004 | Every lexicon entry is exactly `{definition: <text>}`, asserted structurally — an unquoted comma inside a YAML flow mapping is read as an entry separator and silently truncates the definition | Unit | P0 | FR-001-AC-6 | ✅ |
 | TC-005 | Each object type ships a skeleton, and each skeleton supplies every heading its contract requires | Unit | P0 | FR-001-AC-4 | ✅ |
 | TC-006 | The pack exposes `MANIFEST_PATH` / `PACK_ROOT` as importable resource data, which is how the activation pipeline reaches it | Unit | P1 | FR-001-AC-4 | ✅ |
+| TC-007 | Every `allowed_links` verb exists in the iso edge vocabulary, as a forward key or a declared inverse label. The ticket assumed `causes`/`contributes_to` would be added; applying iso FR-004's "a near-synonym is a reason not to add" says use the existing `arises_from` instead | Unit | P0 | FR-001-AC-7 | ✅ |
 
 ## Coverage Gaps
 
-None. Every acceptance criterion has an implemented test.
+None. Every acceptance criterion has an implemented test, and `quire validate --scope .` reports no diagnostic of any kind over the bundle.

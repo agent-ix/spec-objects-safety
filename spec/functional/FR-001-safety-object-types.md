@@ -30,6 +30,27 @@ type declared it.
 nobody can observe is a different engineering problem from the same failure
 with an alarm on it, and neither severity nor likelihood carries that.
 
+### No new verbs
+
+The ticket that asked for this module assumed safety-chain verbs — `causes`,
+`contributes_to` — would be added to the iso vocabulary. Applying that
+vocabulary's own first criterion for an addition, *"check the existing 76 — a
+near-synonym is a reason not to add"*, says otherwise.
+
+`arises_from` ("Risk arises from a threat/vulnerability", governance) records
+exactly the fact `causes` would, read from the hazard end — which is also the
+natural authoring direction, since an author writing a hazard document lists
+what it arises from. And a hazard arising from several failure modes is several
+`arises_from` edges, so `contributes_to` would be a second word for the same
+thing.
+
+The causal edge is therefore authored from the hazard only: one edge, one place
+to write it. `failure_mode` declares no outgoing safety verb of its own.
+
+No role is declared either. `allowed_links` target concrete object types, as
+`spec-objects-security`'s `threat` does, so the `safety-relevant` capability tag
+this module first reached for turned out to be unnecessary.
+
 ### Why a separate module and not an extension of spec-objects-security
 
 Hazard and failure mode are IEC 61508 / ISO 26262 / FMEA territory. The 23
@@ -62,13 +83,14 @@ gap visible — and the gap is the finding.
 | FR-001-AC-4 | Each object type ships an authoring skeleton whose sections supply every heading its contract requires. | Test (TC-005, TC-006) |
 | FR-001-AC-5 | The manifest validates against the FR-035 module-manifest schema, with no skip and no escape hatch — the gate ships with the module rather than being retrofitted. | Test (TC-001) |
 | FR-001-AC-6 | Every lexicon entry is exactly `{definition: <non-empty string>}`, asserted structurally so an unquoted comma inside a YAML flow mapping cannot silently truncate one. | Test (TC-004) |
+| FR-001-AC-7 | Every `allowed_links` verb is present in the iso edge vocabulary — as a forward key or as a declared inverse label — so a future edit reaching for a new verb fails here rather than minting one locally. | Test (TC-007) |
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|-----------|------|------------|
 | FR-001-CON-1 | Hazard identification and scoring are authored judgement. Nothing in this module computes, infers, or defaults either. | Design | Inspection |
-| FR-001-CON-2 | Safety-chain edge verbs (`causes`, `contributes_to`) and the `safety-relevant` role are added to the **iso** vocabulary, not minted locally, and only after `spec-artifacts-iso` FR-004 documents that vocabulary — so an addition has a rule to satisfy rather than a precedent to set. `mitigates`/`controls` reuse the existing governance cluster rather than gaining safety-only synonyms. Until that lands, `quire validate` reports `UnknownEdgeType`/`UnknownRole` here, which is the correct advisory state rather than a reason to mint local copies. | Design | Inspection |
+| FR-001-CON-2 | Every `allowed_links` verb SHALL already exist in the iso vocabulary. No safety-only verb is minted. | Design | Test (TC-007) |
 
 ## Dependencies
 

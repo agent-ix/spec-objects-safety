@@ -56,7 +56,49 @@ def test_object_types_are_well_formed() -> None:
     assert sorted(types) == sorted(OBJECT_TYPES)
     for name, entry in types.items():
         assert entry.get("data_schema"), f"{name}: declares a data_schema"
-        assert entry.get("roles"), f"{name}: declares at least one role"
+        assert entry.get("allowed_links"), f"{name}: declares allowed_links"
+
+
+def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
+    """Every `allowed_links` verb already exists in the iso edge vocabulary.
+
+    spec-artifacts-iso FR-004's first criterion for adding a verb is "check the
+    existing 76 — a near-synonym is a reason not to add, not a reason to add".
+    The ticket that asked for this module (agent-ix/spec-objects-security#7)
+    assumed `causes` and `contributes_to` would be added. Applying the criteria
+    it asked for says not to: `arises_from` records the same fact from the
+    hazard end, and a hazard arising from several failure modes is several
+    `arises_from` edges, so `contributes_to` would be a second word for one
+    thing.
+
+    This test fails if a future edit reaches for a new verb before the
+    vocabulary has one — which is the moment to argue the case in iso, not
+    here.
+    """
+    import spec_artifacts_iso
+
+    iso_manifest = (
+        pathlib.Path(spec_artifacts_iso.__file__).resolve().parent / "manifest.yaml"
+    )
+    iso = yaml.safe_load(iso_manifest.read_text())
+    declared = set(iso.get("edge_types") or {})
+    # Inverse labels are authorable without being forward keys (quire-rs
+    # FR-041-AC-2), so they count as declared too.
+    declared |= {
+        e["inverse"] for e in (iso.get("edge_types") or {}).values() if e.get("inverse")
+    }
+
+    used = {
+        verb
+        for t in _manifest()["object_types"]
+        for verb in (t.get("allowed_links") or {})
+    }
+    unknown = sorted(used - declared)
+    assert not unknown, (
+        f"verbs not in the iso vocabulary: {unknown}. Adding one is an "
+        "spec-artifacts-iso change with FR-004's criteria to satisfy, not a "
+        "local mint."
+    )
 
 
 def test_hazard_and_failure_mode_are_separate_types() -> None:
