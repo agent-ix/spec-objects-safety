@@ -186,3 +186,74 @@ def test_skeleton_headings_match_the_declared_contract() -> None:
             f"{name}: skeleton is missing required sections "
             f"{sorted(required - set(headings))}"
         )
+
+
+def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
+    """FR-001-AC-4 (TC-010): bidirectional hazard coverage is manifest data.
+
+    Assumptions: quire-rs FR-058 (v0.31.0) reads
+    ``traceability.required_relations``; the engine holds no archetype name,
+    no verb and no direction.
+
+    Criteria:
+      * a hazard and a failure mode each carry an obligation to be mitigated;
+      * each has its OWN ``trace:<check>`` key, so a repository can promote
+        unmitigated hazards to ``error`` while failure-mode coverage is still
+        being backfilled (quire-rs FR-057);
+      * ``direction`` is ``incoming`` — the mitigation is authored from the
+        requirement's end. A hazard listing its own mitigations would duplicate
+        the fact and let the two drift;
+      * ``arises_from`` is declared acyclic: a hazard that transitively arises
+        from itself states nothing, and no per-document check can see it
+        because the defect is a property of the graph.
+    """
+    model = _manifest()["traceability"]
+    by_name = {r["name"]: r for r in model["required_relations"]}
+
+    assert set(by_name) == {"hazard-has-mitigation", "failure-mode-has-mitigation"}
+    for name, kind in (
+        ("hazard-has-mitigation", "hazard"),
+        ("failure-mode-has-mitigation", "failure_mode"),
+    ):
+        relation = by_name[name]
+        assert relation["from"] == kind
+        assert relation["edges"] == ["mitigates"]
+        assert relation["direction"] == "incoming"
+
+    checks = {r["check"] for r in by_name.values()}
+    assert checks == {"unmitigated-hazard", "unmitigated-failure-mode"}
+    assert len(checks) == len(by_name), "each relation is independently tunable"
+
+    assert model["acyclic_edges"] == ["arises_from"]
+
+
+def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
+    """FR-001-AC-4 (TC-011): every verb and kind a relation names is real.
+
+    Assumptions: quire-rs CR-075 reports a relation naming a kind nothing
+    declares, because such a relation matches nothing and checks nothing.
+    Criteria: each relation's ``from`` is an object type this module declares,
+    and each verb is in the shared iso vocabulary — caught here, at author
+    time, rather than as a runtime advisory.
+    """
+    manifest = _manifest()
+    declared = {o["name"] for o in manifest["object_types"]}
+    import spec_artifacts_iso
+
+    iso_path = (
+        pathlib.Path(spec_artifacts_iso.__file__).resolve().parent / "manifest.yaml"
+    )
+    iso = yaml.safe_load(iso_path.read_text())
+    edge_types = iso.get("edge_types") or {}
+    # Inverse labels are authorable without being forward keys (quire-rs
+    # FR-041-AC-2), so they count as declared too — `mitigates` is one.
+    vocabulary = set(edge_types) | {
+        e["inverse"] for e in edge_types.values() if e.get("inverse")
+    }
+
+    for relation in manifest["traceability"]["required_relations"]:
+        assert relation["from"] in declared, relation["from"]
+        for verb in relation["edges"]:
+            assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
+    for verb in manifest["traceability"]["acyclic_edges"]:
+        assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"

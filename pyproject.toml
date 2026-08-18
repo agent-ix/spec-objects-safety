@@ -21,7 +21,7 @@ python = ">=3.13,<3.14"
 [tool.poetry.group.dev.dependencies]
 # FR-035 module-manifest gate, shipped WITH the module rather than retrofitted.
 # The schema is package data on spec-artifacts-iso — imported, not copied.
-spec-artifacts-iso = {version = "^0.12.0", source = "internal-pypi"}
+spec-artifacts-iso = {version = "^0.13.0", source = "internal-pypi"}
 jsonschema = "^4.25.0"
 black = "^26.1.0"
 poetry-dynamic-versioning = "^1.9.1"

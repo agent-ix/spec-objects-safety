@@ -160,6 +160,47 @@ object_types:
             - Detection
             min_rows: 1
 
+# FR-058 (quire-rs v0.31.0): upward-trace completeness. THE POINT OF THIS
+# MODULE, and the reason agent-ix/spec-objects-security#5 exists.
+#
+# Downward coverage answers "is what we wrote verified". It cannot answer "is
+# anything missing", because nothing operating over the existing spec text can:
+# a hazard nobody mitigated leaves no trace to follow. Reading the edge set in
+# the other direction does.
+#
+# Every field here is data. The engine holds no archetype name, no verb and no
+# direction — a different module states a different chain with the same code.
+traceability:
+  required_relations:
+  # A hazard nothing mitigates is a risk that was identified and then dropped.
+  # This is the finding that cannot be produced any other way: the hazard
+  # document is perfectly well-formed, passes every schema and grammar check,
+  # and is still evidence of an unaddressed risk.
+  #
+  # `direction: incoming` because the mitigation is authored from the
+  # requirement's end — an FR says what it mitigates. The hazard does not list
+  # its own mitigations, which would duplicate the fact and let the two drift.
+  - name: hazard-has-mitigation
+    from: hazard
+    edges: [mitigates]
+    to: []
+    direction: incoming
+    check: unmitigated-hazard
+  # A failure mode nothing mitigates is the same statement one level down.
+  # Kept separate rather than folded into the relation above so each is tunable
+  # on its own `trace:<check>` key (FR-057): a repository may want unmitigated
+  # hazards at `error` while failure-mode coverage is still being backfilled.
+  - name: failure-mode-has-mitigation
+    from: failure_mode
+    edges: [mitigates]
+    to: []
+    direction: incoming
+    check: unmitigated-failure-mode
+  # A hazard that transitively arises from itself states nothing, and no
+  # per-document check can see it — the defect is a property of the graph.
+  acyclic_edges:
+  - arises_from
+
 # FR-043: concrete-term lexicon — safety-domain terms. Definitions are quoted
 # because a YAML flow mapping treats an unquoted comma as an entry separator,
 # which silently truncated two definitions in spec-objects-security
