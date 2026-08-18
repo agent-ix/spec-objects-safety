@@ -1,0 +1,26 @@
+name: Release npm
+
+# Publish the Filament module to public npm as @agent-ix/<repo> on a vX.Y.Z tag.
+# Parallel to the PyPI publish in ci.yml — same tags drive both channels, both
+# dispatched manually.
+#
+# The publish itself lives in nodejs-actions so all module repos share one
+# tokenless OIDC implementation. This file must keep the name release-npm.yml:
+# that filename is what the package's Trusted Publisher on npmjs.com matches.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 0.6.0); defaults to the triggering vX.Y.Z tag"
+        required: false
+
+permissions:
+  contents: read
+  id-token: write # OIDC token for npm Trusted Publishing
+
+jobs:
+  publish:
+    uses: agent-ix/nodejs-actions/.github/workflows/release-npm-module.yml@main
+    with:
+      version: ${{ inputs.version }}

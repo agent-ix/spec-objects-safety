@@ -1,0 +1,172 @@
+manifest_version: 1.0.0
+name: spec-objects-safety
+version: 0.1.0
+description: 'Filament Module: safety ObjectTypes (hazard, failure_mode) — IEC 61508 / ISO 26262 / FMEA lineage'
+# Order 55, following the family sequence (operational 53, security 54).
+nav:
+  category:
+    slug: safety
+    label: Safety
+    icon: ShieldAlert
+    order: 55
+archetypes: []
+grammars: []
+artifact_types: []
+
+# Advisory lint rules (quire-rs FR-036). Evaluated by `quire lint`; never
+# blocks validation, extraction or sync.
+#
+# Severity and likelihood are the two axes every safety standard scores a
+# hazard on, and every standard uses a different scale. These are the ordinal
+# buckets the ecosystem authors in; a repository working to a specific standard
+# maps its own scale onto them rather than inventing a column.
+lint_rules:
+- type: table_column_values
+  id: hazard-severity
+  section: Assessment
+  column: Severity
+  allowed: [negligible, marginal, critical, catastrophic]
+- type: table_column_values
+  id: hazard-likelihood
+  section: Assessment
+  column: Likelihood
+  allowed: [incredible, improbable, remote, occasional, probable, frequent]
+- type: table_column_values
+  id: failure-mode-detection
+  section: Analysis
+  column: Detection
+  allowed: [none, indirect, direct, automatic]
+
+object_types:
+# ── hazard ───────────────────────────────────────────────────────────────
+#
+# A hazard is a *system state or condition* that can lead to harm. It is not a
+# failure and not a threat:
+#
+#   * a **threat** (spec-objects-security) is an adversary acting on an asset;
+#     the STRIDE lineage. Its question is "who would attack this".
+#   * a **failure_mode** is a component behaving wrongly; the FMEA lineage.
+#     Its question is "what breaks".
+#   * a **hazard** is the state that can harm someone, whether reached by
+#     attack, by failure, or by correct components interacting badly. Its
+#     question is "what state must never be reached".
+#
+# STPA exists because the third is not the union of the first two: a hazard can
+# arise from components each behaving exactly as specified. Modelling hazards as
+# a variety of failure_mode would lose precisely those.
+- name: hazard
+  roles: [safety-relevant]
+  allowed_links:
+    # A hazard is caused by failure modes and mitigated by requirements.
+    # `mitigates`/`controls` reuse the existing governance cluster rather than
+    # minting a safety-only synonym; `causes` and `contributes_to` are the
+    # safety-chain additions, which land in the iso vocabulary once
+    # spec-artifacts-iso#16 documents it (that FR gives an addition a rule to
+    # satisfy rather than a precedent to set).
+    causes: [safety-relevant]
+    contributes_to: [safety-relevant]
+    references: [hazard, failure_mode]
+  data_schema:
+    type: object
+  body_extraction:
+    yield_pattern:
+      match:
+        id: &id001
+          from: frontmatter_field
+          path:
+          - id
+          required: true
+        title: &id002
+          from: frontmatter_field
+          path:
+          - title
+          required: true
+        type: &id003
+          from: frontmatter_field
+          path:
+          - type
+          required: true
+        # The state, stated as a state. A hazard written as an event ("the
+        # brakes fail") is a failure mode wearing a hazard's name; written as a
+        # state ("the vehicle cannot decelerate") it stays true regardless of
+        # which failure produced it, which is what lets several failure modes
+        # link to one hazard.
+        condition:
+          from: section_body
+          after_heading: Condition
+          required: true
+        # Severity and likelihood in one required table, so a hazard cannot be
+        # recorded unscored. An unscored hazard cannot be prioritised, and a
+        # backlog of unscored hazards is indistinguishable from no analysis.
+        assessment:
+          from: table_row
+          under_section: Assessment
+          required: true
+          assert:
+            columns:
+            - Severity
+            - Likelihood
+            - Rationale
+            min_rows: 1
+        # What keeps the state from being reached, or limits harm once it is.
+        # Optional on purpose: an identified-but-unmitigated hazard is a real
+        # and reportable state, and requiring the section would push authors to
+        # write a placeholder rather than leave the gap visible.
+        mitigation:
+          from: section_body
+          after_heading: Mitigation
+          required: false
+
+# ── failure_mode ─────────────────────────────────────────────────────────
+#
+# Separate from `hazard`, not a variant of it — see the note above. The FMEA
+# triple (effect, cause, detection) is a different shape from the hazard
+# assessment (severity, likelihood), and collapsing them would force one table
+# to mean two things depending on which type declared it.
+- name: failure_mode
+  roles: [safety-relevant]
+  allowed_links:
+    causes: [safety-relevant]
+    contributes_to: [safety-relevant]
+    references: [failure_mode, hazard]
+  data_schema:
+    type: object
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        # What the component does instead of what it should.
+        description:
+          from: section_body
+          after_heading: Description
+          required: true
+        # The FMEA triple, in one required table. `Detection` is the column
+        # that earns the type: a failure nobody can detect is a different
+        # engineering problem from the same failure with an alarm on it, and
+        # nothing in the severity/likelihood pair carries that.
+        analysis:
+          from: table_row
+          under_section: Analysis
+          required: true
+          assert:
+            columns:
+            - Effect
+            - Cause
+            - Detection
+            min_rows: 1
+
+# FR-043: concrete-term lexicon — safety-domain terms. Definitions are quoted
+# because a YAML flow mapping treats an unquoted comma as an entry separator,
+# which silently truncated two definitions in spec-objects-security
+# (agent-ix/spec-objects-security#6).
+lexicon:
+  hazard: {definition: "a system state or condition that can lead to harm"}
+  harm: {definition: "physical injury, damage to health, or damage to property or environment"}
+  failure mode: {definition: "the manner in which a component fails to perform its intended function"}
+  severity: {definition: "how bad the harm is if the hazard is realised"}
+  likelihood: {definition: "how often the hazard state is expected to be reached"}
+  detection: {definition: "whether, and how directly, a failure can be observed before it causes harm"}
+  mitigation: {definition: "a measure that prevents a hazard state or limits the harm it causes"}
+  safety function: {definition: "a function whose failure directly contributes to a hazard"}
