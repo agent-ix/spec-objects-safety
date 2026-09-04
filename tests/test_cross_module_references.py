@@ -25,36 +25,37 @@ from tests.conftest import (
     shipped_schema_paths,
 )
 
-# Types the neighbouring modules own. None may be redeclared here.
-NEIGHBOUR_TYPES = {
-    "agent-ix/spec-objects-security": {
-        "threat",
-        "control",
-        "risk",
-        "vulnerability",
-        "asset",
-        "attack_surface",
-        "policy",
-        "audit_finding",
-        "trust_boundary",
-        "data_classification",
-    },
-    "agent-ix/spec-objects-architecture": {
-        "api_endpoint",
-        "data_schema",
-        "interface",
-        "external_contract",
-        "extension_point",
-    },
-    "agent-ix/spec-objects-operational": {
-        "incident",
-        "runbook",
-        "alert",
-        "sli",
-        "slo",
-        "deployment",
-    },
-}
+# The neighbouring packages whose types this module must not redeclare. The
+# TYPE NAMES ARE READ FROM THEIR INSTALLED MANIFESTS, never copied: a hand-kept
+# list of someone else's declarations is stale the day the neighbour adds a
+# type, and it goes stale silently — the boundary test keeps passing while the
+# boundary it describes has moved. `spec-objects-security` alone declares 23
+# types and is being migrated concurrently.
+NEIGHBOUR_PACKAGES = (
+    "spec-objects-security",
+    "spec-objects-architecture",
+    "spec-objects-operational",
+)
+
+MODULE_CATALOG = pathlib.Path.home() / ".ix" / "filament" / "modules"
+
+
+def neighbour_types() -> dict[str, set[str]]:
+    """Every object type the neighbouring modules declare, read from the catalog."""
+    owned: dict[str, set[str]] = {}
+    for package in NEIGHBOUR_PACKAGES:
+        manifest = MODULE_CATALOG / package / "manifest.yaml"
+        if not manifest.is_file():
+            pytest.fail(
+                f"{package} is not installed at {MODULE_CATALOG}, so the "
+                "anti-duplication boundary cannot be measured against what it "
+                "actually declares. Install the module catalog "
+                "(`quoin module install`) rather than hand-copying its type names."
+            )
+        declared = yaml.safe_load(manifest.read_text()).get("object_types") or []
+        owned[package] = {entry["name"] for entry in declared}
+    return owned
+
 
 # The open migration tickets that keep `semantic.imports` empty: a package with
 # no semantic contract cannot be pinned at a semantic version.
@@ -69,7 +70,9 @@ OPEN_MIGRATIONS = (
 def test_the_module_declares_two_types_and_none_a_neighbour_owns():
     declared = {ot["name"] for ot in object_types()}
     assert declared == set(OBJECT_TYPES)
-    for package, owned in NEIGHBOUR_TYPES.items():
+    owned_by = neighbour_types()
+    assert all(owned_by.values()), "a neighbouring module declares no object type"
+    for package, owned in owned_by.items():
         clash = declared & owned
         assert (
             not clash
@@ -128,7 +131,9 @@ def test_every_verb_this_module_uses_exists_in_the_iso_vocabulary():
     iso = yaml.safe_load(iso_path.read_text())
     edge_types = iso.get("edge_types") or {}
     # Inverse labels are authorable without being forward keys, so they count as
-    # declared too — `mitigates` is one.
+    # declared too. `mitigates` is not one of them — it is a forward key with no
+    # `inverse:` facet — but `part_of` and its siblings are, so the union is what
+    # "declared" means here.
     vocabulary = set(edge_types) | {
         entry["inverse"] for entry in edge_types.values() if entry.get("inverse")
     }

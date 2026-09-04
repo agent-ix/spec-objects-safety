@@ -107,7 +107,7 @@ object_types:
     references: [hazard, failure_mode]
   data_schema:
     schema: schemas/Hazard.json
-    digest: sha256:bde56fb1e4445bdcd7e1a61ef2eded7df5974a830ca03bc0e88b2dd72aad66f6
+    digest: sha256:958d1fe487841eb54982c346f289305c01b90409c60bae84cb48a4890c18cc81
   body_extraction:
     yield_pattern:
       match:
@@ -186,7 +186,7 @@ object_types:
     references: [failure_mode, hazard]
   data_schema:
     schema: schemas/FailureMode.json
-    digest: sha256:b5aec534643886d20ff93015e7f41473781c3b6d7ca20f90e35b9f124c985336
+    digest: sha256:fe67febf8c7ee4b11599ee7d74a9adc813b4a26233c252ff4413299929eee169
   body_extraction:
     yield_pattern:
       match:

@@ -17,6 +17,30 @@ description: "Chronological log of structural changes to this bundle."
 
   The `traceability` model is unchanged fact for fact, and is asserted so. `spec-objects-security`'s hazard-coverage work reads it across the repository boundary, so changing a verb, a direction or an object type from this side would silently repoint a neighbour's coverage check.
 
+  **[RAN]** The eight-review round found one thing worth more than the migration
+itself: **the incoming `mitigates` edge these checks require is authorable
+nowhere in the catalog.** `spec-objects-security`'s `control` declares
+`mitigates: [threat, risk, vulnerability]` and the `spec-artifacts-iso`
+`FR`/`NFR` archetypes declare no `mitigates` at all, so `unmitigated-hazard` —
+the check this module exists for — cannot yet tell a mitigated hazard from an
+unmitigated one. It is filed as agent-ix/spec-objects-safety#4 and NOT fixed
+from this side: a neighbour reads this model across the repository boundary, and
+NFR-001-AC-4 freezes it for that reason.
+
+  The same round hardened three things in the schemas. Every record and value
+model is now sealed twice — `unevaluatedProperties` is a 2020-12 keyword a
+consumer on an older dialect ignores wholesale, which would admit a `Hazard`
+carrying `analysis` while `required` and `enum` still failed closed, so
+`additionalProperties: false` says the same thing in every dialect.
+`status: accepted` now requires the `assessment` or `analysis` being accepted
+alongside the `provenance`: an acceptance of nothing scored is the module's
+central failure wearing a lifecycle state. And FR-004 now states the scale
+members in the requirement rather than only in `typespec/main.tsp` — the claim
+that `not_assessed` never reads as safe is a claim about exact member sets, so
+the member sets belong where the claim is made. `Severity` is recorded as the
+IEC 61508 / MIL-STD-882 four-band scale rather than ISO 26262 `S0..S3`, and no
+ASIL is derivable from it or claimed.
+
   Two upstream defects are carried as strict expected failures rather than worked around: a manifest refusal that names nothing (agent-ix/quire-rs#221, #394) and a legacy prose `## Properties` block that errors as well as warning under `legacy_forms: warning` (agent-ix/quire-rs#391). The FR-035 gate runs against the module-manifest schema at `spec-artifacts-iso` CR-012 because no release carries it (agent-ix/spec-artifacts-iso#36, filed here); a drift test proves the pinned copy is the released schema plus exactly the CR-012 pointers, and fails the moment a release makes the pin unnecessary. FR-001-AC-1's "at least one role" half contradicts FR-001's own body and is filed as agent-ix/spec-objects-safety#3 rather than edited here.
 
 

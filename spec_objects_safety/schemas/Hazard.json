@@ -51,6 +51,7 @@
     "not": {}
   },
   "description": "A hazard: a system state or condition that can lead to harm.\n\n`relations` carries the causal edges (`arises_from`) and is deliberately NOT\nsubject to a \"≥ 1 cause\" item rule. STPA exists because components each\nbehaving exactly as specified can reach a harmful state together, so a hazard\nwith no failure mode behind it is a valid and important record; requiring a\ncause would push authors to invent one.\n\nThere is no `controls` or `mitigations` key. The mitigation edge is authored\nfrom the requirement's end (`mitigates`, `direction: incoming` in the\nmanifest's `traceability` block), so a list here would be a second copy of\nthe same fact with nothing keeping the two in step. Controls themselves are\n`agent-ix/spec-objects-security`'s `control` type, referenced by\n`SemanticId`, never redeclared here.\n\n`operations` and `analysis` are forbidden by the seal: a hazard is a state,\nit invokes nothing, and the FMEA triple belongs to `FailureMode`.",
+  "additionalProperties": false,
   "allOf": [
     {
       "if": {
@@ -65,7 +66,8 @@
       },
       "then": {
         "required": [
-          "provenance"
+          "provenance",
+          "assessment"
         ]
       }
     }

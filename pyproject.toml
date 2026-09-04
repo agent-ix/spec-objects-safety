@@ -77,7 +77,7 @@ cmd = "node scripts/generate-schemas.mjs --check"
 help = "Fail when the committed schemas or manifest digests differ from the source"
 
 [tool.poe.tasks.dev-quire]
-shell = "pip install --index-url http://pypi.ix/root/dev/+simple/ --trusted-host pypi.ix 'quire>=0.46.0'"
+shell = "pip install --index-url http://pypi.ix/root/dev/+simple/ --trusted-host pypi.ix 'quire==0.46.0'"
 help = "Install the Quire wheel the semantic tests need (see agent-ix/quire-rs#392)"
 
 [tool.poe.tasks.ruff-check]
@@ -127,6 +127,12 @@ shell = "py-deps use-upstream ${package} || [ $? -eq 1 ] && poetry lock"
 help = "Switch dep to upstream registry"
 
 [tool.pytest.ini_options]
+# `make test` runs the unit suite only. `tests_integration/` drives the real
+# Quoin CLI and a writable module catalog — infrastructure this repository
+# cannot provision — so it is opt-in through `make test-integrations`. Without
+# this, a bare `pytest` collects both and a green `make test` would be reporting
+# over ambient tooling nobody pinned.
+testpaths = ["tests"]
 addopts = "--cov=spec_objects_safety --cov-report=term-missing --cov-fail-under=100 --json-report --json-report-file=report.json"
 
 # ALL WARNINGS MUST BE TREATED AS ERRORS, NO EXCEPTION!

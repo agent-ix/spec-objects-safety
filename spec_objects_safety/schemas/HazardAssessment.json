@@ -56,5 +56,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "The two axes every safety standard scores a hazard on, plus the two ISO 26262\nadds. `severity`, `likelihood` and `rationale` are required *when an\nassessment is present*: a hazard recorded with a half-filled assessment\ncannot be prioritised, and an unscored backlog is indistinguishable from no\nanalysis. `exposure` and `controllability` are optional because IEC 61508 and\nFMEA lineages do not score them; when a repository works to ISO 26262 it\nfills them, and `not_assessed` states that it has not."
+  "description": "The two axes every safety standard scores a hazard on, plus the two ISO 26262\nadds. `severity`, `likelihood` and `rationale` are required *when an\nassessment is present*: a hazard recorded with a half-filled assessment\ncannot be prioritised, and an unscored backlog is indistinguishable from no\nanalysis. `exposure` and `controllability` are optional because IEC 61508 and\nFMEA lineages do not score them; when a repository works to ISO 26262 it\nfills them, and `not_assessed` states that it has not.",
+  "additionalProperties": false
 }

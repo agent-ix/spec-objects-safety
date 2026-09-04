@@ -193,3 +193,15 @@ def test_the_refusal_names_the_offending_key_and_path(quire_engine, tmp_path):
     with pytest.raises(Exception) as error:
         quire_engine.Registry.load_from([str(unknown)])
     assert "foo" in str(error.value)
+
+    # The other half of the same criterion, and the other engine issue: an
+    # altered digest must name the path it refused, not drop the type in
+    # silence.
+    def break_digest(data):
+        entry = next(ot for ot in data["object_types"] if ot["name"] == "hazard")
+        entry["data_schema"]["digest"] = "sha256:" + "0" * 64
+
+    altered = module_copy(tmp_path / "named-path", break_digest)
+    with pytest.raises(Exception) as digest_error:
+        quire_engine.Registry.load_from([str(altered)])
+    assert "schemas/Hazard.json" in str(digest_error.value)

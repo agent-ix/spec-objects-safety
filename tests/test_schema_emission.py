@@ -92,6 +92,14 @@ def test_emitted_set_is_the_fifteen_files_the_toolchain_records():
     assert sorted(record["files"]) == expected
     assert len(expected) == 15
     assert sorted(shipped_schemas()) == expected
+    normalization = record["normalization"]
+    # The `$id`/`$ref` absolutization step is load-bearing — a relative `$ref`
+    # left in a shipped schema resolves against whatever base a consumer happens
+    # to have — so `toolchain.json` records whether it fired and over which
+    # files, and that record is asserted rather than assumed.
+    assert normalization["name"] == "absolute-id-and-ref"
+    assert normalization["applied"] is (len(normalization["rewrittenFiles"]) > 0)
+    assert set(normalization["rewrittenFiles"]) <= set(record["files"])
     assert record["compiler"] == {"name": "@typespec/compiler", "version": "1.15.0"}
     assert record["emitter"] == {"name": "@typespec/json-schema", "version": "1.15.0"}
     assert record["base"] == module_base()
@@ -354,7 +362,12 @@ def test_no_test_hard_codes_the_id_version_segment():
     """FR 002 CON-5: a criterion that hard-codes the version churns per release."""
     version = manifest_version()
     literal = f"spec-objects-safety/{version}/"
-    for path in sorted((REPO_ROOT / "tests").rglob("*.py")):
+    suites = [
+        *(REPO_ROOT / "tests").rglob("*.py"),
+        *(REPO_ROOT / "tests_integration").rglob("*.py"),
+    ]
+    assert len(suites) > len(list((REPO_ROOT / "tests").rglob("*.py")))
+    for path in sorted(suites):
         assert (
             literal not in path.read_text()
         ), f"{path} hard-codes the $id version segment"

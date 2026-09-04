@@ -45,23 +45,31 @@ shipped teaching example and the shipped contract cannot disagree.
 
 - Every skeleton SHALL validate through `quire.validate_document` with zero errors.
 - Every skeleton SHALL declare at least one field flagged `identity` in its `## Properties` table.
-- Each object type SHALL ship a `.sysml.md` alternate declaring exactly the same fields as its table form, and the two SHALL extract to identical normalized `fields` with `fieldsForm` `table` and `fence` respectively.
-- No artifact SHALL carry both Properties forms; the second form SHALL be refused.
-- Every skeleton SHALL declare its clauses as one `ocl` fence under one `### <clauseId>` heading each, and the extracted `clauses` SHALL carry a source span.
-- Every H2 heading in a skeleton SHALL be a heading some manifest locator names, and every required heading SHALL be present.
+- Each object type SHALL ship a `.sysml.md` alternate declaring exactly the same fields as its table form.
+- The two forms SHALL extract to identical normalized `fields`, with `fieldsForm` `table` and `fence` respectively.
+- No artifact SHALL carry both Properties forms.
+- When an artifact carries a second Properties form, the engine SHALL refuse the document at that form.
+- Every skeleton SHALL declare its clauses as one `ocl` fence under one `### <clauseId>` heading each.
+- Every extracted clause SHALL carry a source span.
+- Every H2 heading in a skeleton SHALL be a heading some manifest locator names.
+- Every heading a required locator names SHALL be present in the skeleton.
 - The `## Properties` table SHALL NOT restate a value the `## Assessment` or `## Analysis` table already carries, so the document has one home per fact.
-- Every skeleton SHALL be free of placeholder tokens and SHALL have substantive content in every asserted section.
-- Skeleton titles SHALL be distinct `Identifier`s outside the kernel-scalar set, and the frontmatter `object` SHALL equal `type`.
+- No skeleton SHALL carry a placeholder token.
+- Every asserted section of a skeleton SHALL hold at least 200 characters of body text, so the shipped example teaches the form rather than gesturing at it.
+- Skeleton titles SHALL be distinct `Identifier`s outside the kernel-scalar set.
+- Each skeleton's frontmatter `object` SHALL equal its `type`.
 - The negative fixtures SHALL cover: a hazard with no identity row, a failure mode with no identity row, both Properties forms in one artifact, a non-`Identifier` type token, a hazard with no `Assessment` table, a clause heading with no fence, and an `Analysis` table missing the `Detection` column.
-- Every negative fixture SHALL declare `expect` and `because` in its frontmatter, SHALL fail validation, and its error SHALL carry detail beyond the `expect` token.
-- No corpus repository, vendored corpus fixture, or sibling module SHALL be edited by this requirement.
+- Every negative fixture SHALL declare `expect` and `because` in its frontmatter.
+- Every negative fixture SHALL fail validation.
+- Every negative fixture's error message SHALL be longer than its `expect` token, so the fixture fails with a diagnosis rather than a bare code.
+- No change under this requirement SHALL touch a corpus repository, a vendored corpus fixture, or a sibling module.
 - The semantic tests SHALL fail, never skip, when the Quire wheel is absent.
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-005-CON-1 | No corpus repository or vendored fixture SHALL be edited. | Scope | Test |
+| FR-005-CON-1 | No change on this branch SHALL touch a corpus repository or a vendored fixture. | Scope | Test |
 | FR-005-CON-2 | One artifact carries one Properties form; the alternate is a separate file, never a second block. | Authoring | Test |
 | FR-005-CON-3 | A missing engine SHALL fail the suite, never skip it: a skipped row is not coverage. | Integrity | Test |
 
@@ -73,9 +81,9 @@ shipped teaching example and the shipped contract cannot disagree.
 | FR-005-AC-2 | For each object type the table and `sysml` skeletons extract to identical normalized `fields`, with `fieldsForm` `table` and `fence`. | Test |
 | FR-005-AC-3 | Under a bundle index built from the skeleton frontmatter every skeleton extracts with zero error diagnostics and zero unresolved type tokens. | Test |
 | FR-005-AC-4 | Availability per skeleton is `fields: available`, `clauses: available`, `operations: not_applicable`, matching the locators the type declares. | Test |
-| FR-005-AC-5 | Every negative fixture fails with its declared `expect`, the error carries detail beyond that token, and all seven named cases exist. | Test |
+| FR-005-AC-5 | Every negative fixture fails with its declared `expect`, its error message is longer than that token, and all seven named cases exist. | Test |
 | FR-005-AC-6 | Every skeleton H2 is a heading a manifest locator names, and every required heading is present. | Test |
-| FR-005-AC-7 | Every skeleton is placeholder-free with non-empty asserted sections. | Test |
+| FR-005-AC-7 | Every skeleton is placeholder-free and its body outside frontmatter and comments exceeds 200 characters. | Test |
 | FR-005-AC-8 | Skeleton titles are distinct `Identifier`s outside `KernelScalar`, and `object` equals `type` in every skeleton frontmatter. | Test |
 | FR-005-AC-9 | No `## Properties` row names a column of the `## Assessment` or `## Analysis` table of the same type. | Test |
 | FR-005-AC-10 | With the Quire wheel absent, the semantic tests fail naming `make dev-quire` and `agent-ix/quire-rs#392`; none is skipped. | Test |

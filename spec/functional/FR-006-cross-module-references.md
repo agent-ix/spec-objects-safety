@@ -35,19 +35,24 @@ type, field or vocabulary that duplicates one of them.
 
 - The module SHALL declare exactly two object types, `hazard` and `failure_mode`.
 - The module SHALL NOT declare a `control`, `risk`, `asset`, `threat`, `vulnerability`, `incident` or evidence-record object type.
-- A control SHALL be reached through the incoming `mitigates` edge the manifest `traceability` model already declares, and SHALL NOT be listed on the hazard or failure-mode record.
-- An evidence record SHALL be reached through `EvidenceRef.target`, a `SemanticId`, and SHALL NOT be copied into this module.
+- A consumer SHALL reach a control through the incoming `mitigates` edge the manifest `traceability` model already declares.
+- No record schema SHALL list a control on a hazard or a failure mode.
+- The catalog SHALL make that edge authorable. It does not today: `spec-objects-security`'s `control` declares `mitigates: [threat, risk, vulnerability]` and the `spec-artifacts-iso` `FR` and `NFR` archetypes declare no `mitigates` at all, so either end of the edge draws an advisory diagnostic and `unmitigated-hazard` cannot distinguish a mitigated hazard from an unmitigated one. `agent-ix/spec-objects-safety#4` owns the coordinated fix; this module does not change the relation, the verb or the direction unilaterally, because a neighbour reads them.
+- A consumer SHALL reach an evidence record through `EvidenceRef.target`, a `SemanticId`.
+- No schema in this module SHALL copy an evidence record's content.
 - `EvidenceRef.kind` SHALL stay an open string, because the closed evidence-kind vocabulary belongs to `agent-ix/engineering-assurance`.
 - `semantic.imports` SHALL name only packages that publish a semantic contract at an exact version.
-- Until `agent-ix/spec-objects-security#13`, `agent-ix/spec-objects-architecture#8` and `agent-ix/spec-objects-operational#6` land, `semantic.imports` SHALL be `{}` and the manifest SHALL record why, because pinning a version a neighbour does not declare is a false claim.
-- When a neighbouring module publishes its semantic contract, this module SHALL add it to `semantic.imports` at that exact version in the same change that first names one of its types in a shipped fixture.
+- While a neighbouring package publishes no semantic contract, this module SHALL leave it out of `semantic.imports`, because pinning a version a neighbour does not declare is a false claim.
+- When every neighbouring package this module references has published a semantic contract, `semantic.imports` SHALL name each at its exact version.
+- While `semantic.imports` is `{}`, the manifest SHALL name the open migration issues that keep it so.
+- When a neighbour publishes a semantic contract, the change that first names one of its types SHALL add that neighbour to `semantic.imports` at its exact version, whether the first naming is a shipped fixture or a schema reference.
 - The module SHALL NOT change the direction, the verb, or the object type of any edge the `traceability` model declares, because `agent-ix/spec-objects-security`'s hazard-coverage work reads that model across repositories.
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-006-CON-1 | No safety-only synonym SHALL be minted for a verb or a type another module already declares. | Architecture | Test |
+| FR-006-CON-1 | This module SHALL mint no safety-only synonym for a verb or a type another module already declares. | Architecture | Test |
 | FR-006-CON-2 | `semantic.imports` SHALL be empty rather than aspirational; an unpublished neighbour is recorded in prose, not in the pin map. | Integrity | Test |
 
 ## Acceptance Criteria

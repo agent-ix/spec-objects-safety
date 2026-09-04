@@ -48,6 +48,7 @@
     "not": {}
   },
   "description": "A failure mode: the manner in which a component fails to perform its intended\nfunction.\n\nSeparate from `Hazard`, not a variant of it. `assessment` and `context` are\nforbidden by the seal — the severity/likelihood pair scores a *state* and\nwould mean something else here — and `operations` is forbidden for the same\nreason it is on `Hazard`.",
+  "additionalProperties": false,
   "allOf": [
     {
       "if": {
@@ -62,7 +63,8 @@
       },
       "then": {
         "required": [
-          "provenance"
+          "provenance",
+          "analysis"
         ]
       }
     }

@@ -30,5 +30,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "Who asserted a safety judgement, when, and against what. Required whenever\n`status` is `accepted` (the `allOf`/`if` rule on both record models): risk\nacceptance with nobody's name on it is the one status that must never be\nreachable by a document simply validating."
+  "description": "Who asserted a safety judgement, when, and against what. Required whenever\n`status` is `accepted` (the `allOf`/`if` rule on both record models), together\nwith the assessment or analysis being accepted: risk acceptance with nobody's\nname on it, or with nothing scored to accept, is the one status that must\nnever be reachable by a document simply validating.",
+  "additionalProperties": false
 }

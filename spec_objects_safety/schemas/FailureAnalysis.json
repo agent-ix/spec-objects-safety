@@ -30,5 +30,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "The FMEA triple. `detection` is the field that earns `failure_mode` its own\ntype: a failure nobody can detect is a different engineering problem from the\nsame failure with an alarm on it, and neither severity nor likelihood carries\nthat."
+  "description": "The FMEA triple. `detection` is the field that earns `failure_mode` its own\ntype: a failure nobody can detect is a different engineering problem from the\nsame failure with an alarm on it, and neither severity nor likelihood carries\nthat.",
+  "additionalProperties": false
 }

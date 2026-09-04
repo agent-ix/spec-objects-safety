@@ -11,9 +11,9 @@ relationships:
 
 ## Statement
 
-The module SHALL keep every 0.2.0 extraction locator unchanged and SHALL add
-only `required: false` locators, so that every document valid at 0.2.0 stays
-valid at 0.3.0 with no author action.
+The module SHALL keep every 0.2.0 extraction locator unchanged, and add only
+`required: false` locators, so that every document valid at 0.2.0 stays valid at
+0.3.0 with no author action.
 
 ## Scope
 

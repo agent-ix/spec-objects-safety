@@ -59,7 +59,8 @@ and any drift between source and shipped bytes fails the build.
 - In `--check` mode the generator SHALL write no file, neither under `spec_objects_safety/schemas/` nor in `manifest.yaml`.
 - Every emitted schema SHALL declare `$schema: https://json-schema.org/draft/2020-12/schema` and `$id: https://schemas.agent-ix.org/agent-ix/spec-objects-safety/<manifest version>/<Model>.json`.
 - The `$id` base SHALL embed the manifest `version`, so one schema URL names exactly one immutable byte sequence and a downstream fixture reader that pinned a version can never silently read a later version's bytes under the same URL.
-- If the manifest `version` changes, then the bump procedure SHALL be: edit the `@jsonSchema` base in `typespec/main.tsp` and the manifest `version` in the same commit, run `make schemas`, and commit the re-emitted schemas, the rewritten `$id` and `$ref` values, the regenerated `data_schema.digest` values and `toolchain.json` together; a commit carrying one half of the pair is refused by `make schemas-check`.
+- If the manifest `version` changes, then the author SHALL edit the `@jsonSchema` base in `typespec/main.tsp` and the manifest `version` in one commit, re-run `make schemas`, and commit the re-emitted schemas, the rewritten `$id` and `$ref` values, the regenerated `data_schema.digest` values and `toolchain.json` together.
+- If a commit carries one half of that pair, then `make schemas-check` SHALL refuse it.
 - No acceptance criterion, test, or fixture SHALL hard-code the version segment of the `$id` base.
 - Each acceptance criterion, test, and fixture SHALL read the version segment of the `$id` base from the manifest `version`.
 - Every `$ref` in an emitted schema SHALL name either a sibling under the module base that ships in `schemas/`, or `https://schemas.agent-ix.org/semantic-core/0.1.0/<Model>.json`.
@@ -68,19 +69,21 @@ and any drift between source and shipped bytes fails the build.
 - `make lint` SHALL run `make schemas-check`, so a `typespec/` edit that was never regenerated fails before push rather than at review.
 - If any emitted file differs from the committed output, a committed file under `spec_objects_safety/schemas/` is stale, `toolchain.json` differs, or a manifest digest differs from the shipped bytes, then the check SHALL exit non-zero naming each such file.
 - If nothing differs, then the check SHALL exit zero.
-- The generator SHALL write files under `spec_objects_safety/schemas/` only, and SHALL edit `manifest.yaml` only at `data_schema.digest` values.
+- The generator SHALL write files under `spec_objects_safety/schemas/` only.
+- The generator SHALL edit `manifest.yaml` only at `data_schema.digest` values.
 - The Python package SHALL include `spec_objects_safety/schemas/*.json` in the wheel and sdist.
 - The repository SHALL mark `*.json`, `*.tsp`, `*.yaml` and `*.md` as `eol=lf` in `.gitattributes`, so a checkout with `autocrlf` cannot change the digested bytes.
-- `scripts/stage-npm.mjs` SHALL copy `schemas/` beside `manifest.yaml` at pack time, and `--clean` SHALL remove the staged copies afterwards so no `manifest.yaml` is left at the repository root for Filament tooling to discover as a second module.
+- `scripts/stage-npm.mjs` SHALL copy `schemas/` beside `manifest.yaml` at pack time, so the npm tarball ships the schemas the manifest references.
+- When `scripts/stage-npm.mjs` runs with `--clean`, it SHALL remove the staged copies, so no `manifest.yaml` is left at the repository root for Filament tooling to discover as a second module.
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-002-CON-1 | The build SHALL use the official `@typespec/json-schema` emitter only; no custom emitter and no hand-edited emitted file. | Architecture | Inspection |
-| FR-002-CON-2 | The repository SHALL carry no `.npmrc`, no `file:` or `link:` dependency, and no upper version bound on the TypeSpec toolchain beyond the exact pin. | Packaging | Inspection |
+| FR-002-CON-1 | The build SHALL use the official `@typespec/json-schema` emitter only; no custom emitter and no hand-edited emitted file. | Architecture | Test |
+| FR-002-CON-2 | The repository SHALL carry no `.npmrc`, no `file:` or `link:` dependency, and no upper version bound on the TypeSpec toolchain beyond the exact pin. | Packaging | Test |
 | FR-002-CON-3 | Emission SHALL be deterministic: two runs over one source produce byte-identical files. | Integrity | Test |
-| FR-002-CON-4 | `package-lock.json` SHALL resolve every public package from `registry.npmjs.org`; `@agent-ix/semantic-core` resolves from npm.ix through the user-level npm config until `agent-ix/filament-core-data#11` publishes it, so `make schemas`, `make schemas-check` and therefore `make lint` run on a machine whose user-level npm config routes `@agent-ix` to npm.ix. The GitHub workflow does not run them, and no criterion here claims it does. | Packaging | Inspection |
+| FR-002-CON-4 | `package-lock.json` SHALL resolve every public package from `registry.npmjs.org`; `@agent-ix/semantic-core` resolves from npm.ix through the user-level npm config until `agent-ix/filament-core-data#11` publishes it, so `make schemas`, `make schemas-check` and therefore `make lint` run on a machine whose user-level npm config routes `@agent-ix` to npm.ix. The GitHub workflow does not run them, and no criterion here claims it does. | Packaging | Test |
 | FR-002-CON-5 | The `$id` base SHALL embed the manifest `version`, bumped as one atomic regeneration (source base, manifest version, schemas, digests, `toolchain.json` in one commit). | Compatibility | Test |
 
 ## Acceptance Criteria

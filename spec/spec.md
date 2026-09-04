@@ -62,22 +62,48 @@ sees the contract that was authored instead of guessing at it.
   evidence-record type. Those belong to `agent-ix/spec-objects-security`,
   `agent-ix/spec-objects-architecture`, `agent-ix/spec-objects-operational` and
   `agent-ix/engineering-assurance`; this module references them and never
-  redeclares them (FR-006).
+  redeclares them (FR-006). `engineering-assurance` is the loosest of the four:
+  it declares document artifact types and an evidence policy, and no evidence
+  **object** type and no evidence-kind vocabulary, which is why `EvidenceRef.kind`
+  stays an open string rather than pointing at a closed set that does not exist.
 - Populating `semantic.imports`. The map pins imported semantic **packages** at
   exact versions, and none of the four neighbours above has published a
-  semantic contract yet: `agent-ix/spec-objects-security#13`,
-  `agent-ix/spec-objects-architecture#8` and
-  `agent-ix/spec-objects-operational#6` are the open migration tickets. Pinning
-  a version a neighbour does not declare would be a false claim, so the map
-  stays `{}` and FR-006 records the obligation to fill it.
+  semantic contract yet. Three have open migration tickets —
+  `agent-ix/spec-objects-security#13`, `agent-ix/spec-objects-architecture#8`
+  and `agent-ix/spec-objects-operational#6` — and `engineering-assurance` has
+  none, because it has no object types to migrate. Pinning a version a neighbour
+  does not declare would be a false claim, so the map stays `{}` and FR-006
+  records the obligation to fill it.
+- Making the incoming `mitigates` edge authorable. The `traceability` model this
+  module declares demands one on every hazard and failure mode, and no catalog
+  module can supply one without a diagnostic: `spec-objects-security`'s
+  `control` declares `mitigates: [threat, risk, vulnerability]` and the
+  `spec-artifacts-iso` `FR`/`NFR` archetypes declare no `mitigates` at all. The
+  consequence is that `unmitigated-hazard` cannot yet distinguish a mitigated
+  hazard from an unmitigated one — the module's own headline question.
+  `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
+  neighbours; changing the relation, the verb or the direction from this side
+  alone would repoint a neighbour's edges, which is why NFR-001-AC-4 freezes it
+  instead.
+- Deriving an ASIL, a SIL or any other integrity level. `Severity` is the IEC
+  61508 / MIL-STD-882 four-band harm scale rather than ISO 26262 `S0..S3`, and
+  no determination table is declared, so no integrity level follows from these
+  members and none is claimed.
+- Shipping the semantic-core grammar schemas a consumer would need to resolve
+  this module's `$ref`s offline. Quire resolves them from its own embedded copy
+  at the version `semantic.semantic_core` names, and this repository's tests
+  resolve them from the installed `@agent-ix/semantic-core` package; a consumer
+  with neither has an unresolvable `$ref`. Publishing a resolvable grammar
+  package is `agent-ix/filament-core-data#11`.
 - Extraction of the module-specific record keys (`assessment`, `context`,
   `analysis`, `status`, `provenance`, `evidence`) from Markdown. The published
-  mapping covers `Properties`, `Invariants` and `Operations` only
-  (`agent-ix/quoin#335`, quoin FR-071/FR-072); until a mapping for the
-  `Assessment` and `Analysis` tables is published and an extractor lands in
-  `agent-ix/quire-rs`, those keys are declared optional and are verified
-  against hand-built records rather than extracted ones. The tests that do so
-  say which they are.
+  mapping covers `Properties`, `Invariants` and `Operations` only (quoin
+  FR-071/FR-072); no mapping exists for a domain table or for the lifecycle
+  keys, which `agent-ix/quoin#342` owns. Until it lands and an extractor
+  follows in `agent-ix/quire-rs`, those keys are declared optional and are
+  verified against hand-built records rather than extracted ones — the tests
+  that do so say which they are — and FR-004-AC-8's "risk acceptance names a
+  person" is typed but unreachable from any document.
 - Widening the `Assessment` table with `Exposure` and `Controllability`
   columns. The 0.2.0 contract asserts the columns exactly, so adding one would
   not be additive (NFR-001); the two axes are typed in `HazardAssessment` and
@@ -116,8 +142,10 @@ sees the contract that was authored instead of guessing at it.
   stores the reference verbatim.
 - Bidirectional hazard↔requirement coverage checking, which is declared
   `traceability.required_relations` against quire-rs FR-058 rather than code in
-  this module (`agent-ix/spec-objects-security#5`). The 0.2.0 model is kept
-  unchanged here on purpose (NFR-001-AC-4).
+  this module. `agent-ix/spec-objects-security#5` asked for it and is closed;
+  the live neighbour is `agent-ix/spec-objects-security#13`, migrating that
+  module alongside this one. The 0.2.0 model is kept unchanged here on purpose
+  (NFR-001-AC-4).
 - Editing any corpus repository or vendored fixture; the corpus sweep is
   `agent-ix/quoin#291` and promotion is `agent-ix/quoin#290`.
 

@@ -17,5 +17,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "A reference to an evidence record that supports a safety judgement. A\nreference only: evidence records themselves are owned by\n`agent-ix/engineering-assurance`, and duplicating one here would create a\nsecond copy that drifts. `kind` is an open string for the same reason — the\nclosed evidence-kind vocabulary is the assurance module's to declare, not\nthis module's to mint."
+  "description": "A reference to an evidence record that supports a safety judgement. A\nreference only: evidence records themselves are owned by\n`agent-ix/engineering-assurance`, and duplicating one here would create a\nsecond copy that drifts. `kind` is an open string for the same reason — the\nclosed evidence-kind vocabulary is the assurance module's to declare, not\nthis module's to mint.",
+  "additionalProperties": false
 }

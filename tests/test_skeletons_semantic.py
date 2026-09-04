@@ -97,9 +97,13 @@ def test_table_and_sysml_skeletons_extract_to_identical_fields(
         assert table["fieldsForm"] == "table", name
         assert fence["fieldsForm"] == "fence", name
         assert table["fields"] == fence["fields"], name
-        assert table["clauses"] == fence["clauses"] or [
-            c["clauseId"] for c in table["clauses"]
-        ] == [c["clauseId"] for c in fence["clauses"]], name
+        # Clause source spans necessarily differ — the two files put the same
+        # fences on different lines — so the comparison is over clause identity
+        # and text, which is what "the same declarations, authored twice" means.
+        assert [c["clauseId"] for c in table["clauses"]] == [
+            c["clauseId"] for c in fence["clauses"]
+        ], name
+        assert table["clauseText"] == fence["clauseText"], name
 
 
 @pytest.mark.trace("TC-050", "FR-005-AC-3")
@@ -116,6 +120,17 @@ def test_under_the_bundle_index_every_skeleton_extracts_clean(
         assert not [
             d for d in diagnostics if d.get("code") == "semantic.unresolved-type"
         ], (path.name, diagnostics)
+        clauses = record.get("clauses") or []
+        assert clauses, path.name
+        for clause in clauses:
+            # A clause reference without a span is a clause nothing can trace
+            # back to the text a reviewer has to read.
+            span = clause.get("sourceSpan")
+            assert span, (path.name, clause["clauseId"])
+            assert span["path"] and span["startLine"] >= 1, (path.name, span)
+            assert span["sourceIdentity"].startswith(
+                "ix://agent-ix/spec-objects-safety/"
+            ), (path.name, span)
         for decl in record.get("fields") or []:
             target = decl["type"]["target"]
             if target in KERNEL_SCALARS:
@@ -284,7 +299,16 @@ def test_a_missing_engine_fails_the_suite_and_nothing_skips(monkeypatch):
     # assembled rather than written out, so this scan does not trip over the
     # literal in its own source.
     banned = ("pytest." + "skip(", "@pytest.mark." + "skip", "skip" + "if")
-    for path in sorted((REPO_ROOT / "tests").rglob("*.py")):
+    suites = sorted(
+        [
+            *(REPO_ROOT / "tests").rglob("*.py"),
+            *(REPO_ROOT / "tests_integration").rglob("*.py"),
+        ]
+    )
+    assert len(suites) > len(
+        list((REPO_ROOT / "tests").rglob("*.py"))
+    ), "the integration suite was not scanned; a skip could hide there"
+    for path in suites:
         source = path.read_text()
         for token in banned:
             assert token not in source, f"{path.name} carries `{token}`"

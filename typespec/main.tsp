@@ -31,6 +31,24 @@ namespace AgentIx.SpecObjects.Safety;
 // Support models
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// SEALED TWICE, ON PURPOSE.
+//
+// `...Record<never>` emits `unevaluatedProperties: {"not": {}}`, which is a
+// 2020-12 keyword: a consumer validating against draft-07 or earlier ignores it
+// and accepts a `Hazard` carrying `analysis`, or a `FailureMode` carrying
+// `assessment` — the exact conflation these models refuse. `required` and
+// `enum` still fail closed in every dialect, so the failure would be silent and
+// partial. `@extension("additionalProperties", false)` states the same rule in
+// a keyword every dialect back to draft-04 honours, and is redundant only where
+// the consumer is already on 2020-12.
+//
+// This is a line comment rather than a doc comment on purpose: a floating `/**
+// */` block above a model is emitted as that model's `description`, and the
+// model it would land on here is `IdentityField` — the one model deliberately
+// left OPEN, whose shipped schema would then describe itself as sealed.
+// ---------------------------------------------------------------------------
+
 /**
  * Open marker: a `FieldDecl` flagged as identity. Used only as the `@contains`
  * predicate for the "≥ 1 identity field" item rule; it is deliberately open so
@@ -145,6 +163,7 @@ enum LifecycleStatus {
  * FMEA lineages do not score them; when a repository works to ISO 26262 it
  * fills them, and `not_assessed` states that it has not.
  */
+@extension("additionalProperties", false)
 model HazardAssessment {
   severity: Severity | EpistemicState;
   likelihood: Likelihood | EpistemicState;
@@ -163,6 +182,7 @@ model HazardAssessment {
  * same failure with an alarm on it, and neither severity nor likelihood carries
  * that.
  */
+@extension("additionalProperties", false)
 model FailureAnalysis {
   @minLength(1)
   effect: string;
@@ -180,6 +200,7 @@ model FailureAnalysis {
  * without its context is a score that cannot be compared: "the vehicle cannot
  * decelerate" is a different exposure on a motorway than in a parking bay.
  */
+@extension("additionalProperties", false)
 model HazardContext {
   @minLength(1)
   situation: string;
@@ -191,10 +212,12 @@ model HazardContext {
 
 /**
  * Who asserted a safety judgement, when, and against what. Required whenever
- * `status` is `accepted` (the `allOf`/`if` rule on both record models): risk
- * acceptance with nobody's name on it is the one status that must never be
- * reachable by a document simply validating.
+ * `status` is `accepted` (the `allOf`/`if` rule on both record models), together
+ * with the assessment or analysis being accepted: risk acceptance with nobody's
+ * name on it, or with nothing scored to accept, is the one status that must
+ * never be reachable by a document simply validating.
  */
+@extension("additionalProperties", false)
 model Provenance {
   @minLength(1)
   assertedBy: string;
@@ -219,6 +242,7 @@ model Provenance {
  * closed evidence-kind vocabulary is the assurance module's to declare, not
  * this module's to mint.
  */
+@extension("additionalProperties", false)
 model EvidenceRef {
   target: SemanticId;
 
@@ -256,10 +280,11 @@ model EvidenceRef {
   #[
     #{
       `if`: #{ required: #["status"], properties: #{ status: #{ `const`: "accepted" } } },
-      then: #{ required: #["provenance"] },
+      then: #{ required: #["provenance", "assessment"] },
     }
   ]
 )
+@extension("additionalProperties", false)
 model Hazard {
   @minItems(1)
   @contains(IdentityField)
@@ -289,10 +314,11 @@ model Hazard {
   #[
     #{
       `if`: #{ required: #["status"], properties: #{ status: #{ `const`: "accepted" } } },
-      then: #{ required: #["provenance"] },
+      then: #{ required: #["provenance", "analysis"] },
     }
   ]
 )
+@extension("additionalProperties", false)
 model FailureMode {
   @minItems(1)
   @contains(IdentityField)

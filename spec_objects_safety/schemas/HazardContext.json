@@ -20,5 +20,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "The operational situation the hazard state is reached in. A hazard scored\nwithout its context is a score that cannot be compared: \"the vehicle cannot\ndecelerate\" is a different exposure on a motorway than in a parking bay."
+  "description": "The operational situation the hazard state is reached in. A hazard scored\nwithout its context is a score that cannot be compared: \"the vehicle cannot\ndecelerate\" is a different exposure on a motorway than in a parking bay.",
+  "additionalProperties": false
 }

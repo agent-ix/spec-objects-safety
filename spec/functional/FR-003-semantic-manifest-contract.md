@@ -25,9 +25,11 @@ them, while every existing extraction locator keeps its meaning.
 ## Inputs
 
 - The emitted schemas and digests of [FR-002](./FR-002-emitted-json-schemas.md).
-- The FR-035 module-manifest schema **as of `agent-ix/spec-artifacts-iso` CR-012**
+- The module-manifest schema, **as of `agent-ix/spec-artifacts-iso` CR-012**
   (commit `6686f11`), which adds the optional top-level `semantic` block and the
-  `data_schema` reference form. No released `spec-artifacts-iso` distribution
+  `data_schema` reference form. The requirement it implements is
+  `filament-core-service` FR-035; `spec-artifacts-iso` ships the schema file and
+  packages it as importable data, and is where a change to it lands. No released `spec-artifacts-iso` distribution
   carries it: `v0.18.0` is the newest tag and its schema predates CR-012, which
   is why FR-003-AC-7 pins the gate to a revision rather than to a release.
   `agent-ix/spec-artifacts-iso#36` tracks the release that retires the pin.
@@ -46,10 +48,11 @@ them, while every existing extraction locator keeps its meaning.
 - The manifest `version` SHALL be `0.3.0`, because the emitted `$id` embeds it and the previous version was `0.2.0`.
 - Every `body_extraction` locator present at version 0.2.0 SHALL remain present with the same `from`, heading, `language`, `required`, `multiple`, and `assert` facets.
 - Where an object type gains a locator after 0.2.0, that locator SHALL be `required: false`, so existing artifacts stay valid.
-- The `traceability` block SHALL keep its 0.2.0 shape: both `required_relations`, their `edges`, their `direction: incoming`, their distinct `check` keys, and `acyclic_edges: [arises_from]`, because `agent-ix/spec-objects-security`'s hazard-coverage work reads them across repositories.
+- The `traceability` block SHALL keep its 0.2.0 shape: both `required_relations`, their `edges`, their `direction: incoming`, their distinct `check` keys, and `acyclic_edges: [arises_from]`. `agent-ix/spec-objects-security`'s hazard-coverage work reads them across repositories, so a change here is a change to a neighbour.
 - The manifest SHALL load through Quire's registry loader with no load failure for either object type and with the recorded schema digest equal to the manifest digest.
-- Measured against quire 0.46.0: a refused schema drops that object type alone, while a manifest key the loader cannot parse drops every object type of the module, so a consumer sees the module as absent. Both refusals are silent — no diagnostic names the offending key, path, or digest — which `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` record as engine defects; the naming half of FR-003-AC-6 is blocked on them and is verified as an explicit expected failure rather than dropped.
-- The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic, and `quoin module` SHALL then list `spec-objects-safety`.
+- Measured against quire 0.46.0, and stated as a measurement rather than an obligation: a refused schema drops that object type alone, while a manifest key the loader cannot parse drops every object type of the module, so a consumer sees the module as absent. Both refusals are silent — no diagnostic names the offending key, path, or digest — which `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` record as engine defects; the naming half of FR-003-AC-6 is blocked on them and is verified as an explicit expected failure rather than dropped.
+- The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic.
+- When the install has completed, `quoin module` SHALL list `spec-objects-safety`.
 - If Quoin or Quire rejects the manifest, then this module SHALL correct its own manifest or schemas rather than relax the contract keys, the digests, or the `$id` rules to make a consumer accept them.
 
 ## Constraints
@@ -58,7 +61,7 @@ them, while every existing extraction locator keeps its meaning.
 |----|------------|------|------------|
 | FR-003-CON-1 | The `semantic` block SHALL contain no key outside the admitted list. Quire's loader refusal of an unknown key is verified here (FR-003-AC-6); Quoin's refusal is the neighbour's own obligation (quoin FR-070) and is evidenced by the clean install of IT-001. | Compatibility | Test |
 | FR-003-CON-2 | The manifest SHALL mark every locator added after 0.2.0 `required: false`. | Compatibility | Test |
-| FR-003-CON-3 | The FR-035 gate SHALL never skip. When the installed `spec-artifacts-iso` schema predates CR-012 the gate SHALL run against the pinned revision copy and SHALL fail if that copy differs from the installed schema anywhere outside the CR-012 paths. | Integrity | Test |
+| FR-003-CON-3 | The suite SHALL never skip the FR-035 gate. While the installed `spec-artifacts-iso` schema predates CR-012 the gate runs against the pinned revision copy, and fails when that copy differs from the installed schema anywhere outside the CR-012 paths. | Integrity | Test |
 
 ## Acceptance Criteria
 

@@ -69,7 +69,7 @@ assert what the requirement says.
 | FR-001 | FR-001-AC-1..7, FR-001-CON-1..2 | TC-001..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..9, FR-002-CON-1..5 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..7, FR-003-CON-1..3 | TC-026..TC-034 | ✅ AC-6's naming half is an expected failure |
-| FR-004 | FR-004-AC-1..12, FR-004-CON-1..3 | TC-035..TC-047, TC-071 | ✅ |
+| FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
 
@@ -83,7 +83,7 @@ assert what the requirement says.
 
 | Integration Test | Success Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| IT-001 | IT-001-SC-01..06 | TC-070 | 🚧 the row is backed by a tagged test; the CLI it drives is broken in this environment |
+| IT-001 | IT-001-SC-01..06 | TC-070 | ✅ |
 
 ## Test Case Summary
 
@@ -108,10 +108,10 @@ assert what the requirement says.
 | TC-019 | A coordinated version bump re-emits every `$id`/`$ref` with matching digests; bumping one half of the pair fails the check | Integration | P1 | FR-002-AC-8, FR-002-CON-5 | ✅ |
 | TC-020 | `make schemas-check` names a stale committed schema with no emitted counterpart and writes nothing | Integration | P1 | FR-002-AC-9 | ✅ |
 | TC-021 | Two generator runs over one source are byte-identical | Integration | P1 | FR-002-CON-3 | ✅ |
-| TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Static | P2 | FR-002-CON-1 | ✅ |
-| TC-023 | No `.npmrc`, no `file:`/`link:` dependency, exact toolchain pins in `package.json` | Static | P2 | FR-002-CON-2 | ✅ |
+| TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
+| TC-023 | No `.npmrc`, no `file:`/`link:` dependency, exact toolchain pins in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
 | TC-024 | `package-lock.json` resolves every package from npmjs except `@agent-ix/semantic-core` | Unit | P2 | FR-002-CON-4 | ✅ |
-| TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Static | P2 | FR-002-CON-5 | ✅ |
+| TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Unit | P2 | FR-002-CON-5 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
 | TC-027 | Every exported type's `data_schema` is the reference form whose file hashes to the recorded digest | Unit | P0 | FR-003-AC-2 | ✅ |
 | TC-028 | Every 0.2.0 locator is unchanged against the checked-in baseline | Unit | P0 | FR-003-AC-3 | ✅ |
@@ -128,12 +128,13 @@ assert what the requirement says.
 | TC-039 | Assessment: a missing `severity`, a missing `likelihood` or an empty `rationale` fails; `severity: not_assessed` validates and is not `negligible` | Integration | P0 | FR-004-AC-5 | ✅ |
 | TC-040 | Every scored axis accepts each member of its own scale and each `EpistemicState` member, rejects a foreign scale's member, and shares no member with `EpistemicState` | Property | P0 | FR-004-AC-6 | ✅ |
 | TC-041 | No shipped schema declares a `default`, a `controls` key or a `mitigations` key | Unit | P0 | FR-004-AC-7 | ✅ |
-| TC-042 | `status: accepted` without `provenance` fails; with `assertedBy` and `assertedAt` it validates; `status: identified` without provenance validates | Integration | P0 | FR-004-AC-8 | ✅ |
+| TC-042 | `status: accepted` fails without `provenance`, fails without the `assessment`/`analysis` being accepted, and validates only with both; `status: identified` validates with neither | Integration | P0 | FR-004-AC-8 | ✅ |
 | TC-043 | A hazard record with no `relations` validates, and one with an `arises_from` relation validates | Integration | P1 | FR-004-AC-9 | ✅ |
 | TC-044 | No module schema redeclares a semantic-core model; every grammar item is a `$ref` to semantic-core | Unit | P1 | FR-004-AC-10, FR-004-CON-1 | ✅ |
 | TC-045 | `detection: none` and `detection: not_assessed` are both accepted and are distinct values | Integration | P0 | FR-004-AC-11 | ✅ |
 | TC-046 | A record that validates carries no status, no score and no acceptance the document did not state | Integration | P0 | FR-004-CON-2, FR-001-CON-1 | ✅ |
-| TC-047 | No schema constraint was relaxed to make a fixture or skeleton pass | Static | P1 | FR-004-CON-3 | ✅ |
+| TC-047 | No schema constraint was relaxed to make a fixture or skeleton pass, and every record and value schema is sealed by both `unevaluatedProperties` and `additionalProperties` | Unit | P1 | FR-004-CON-3, FR-004-AC-13 | ✅ |
+| TC-072 | No shipped schema names an ASIL, a SIL or any other integrity level, and `Severity` is the four-band harm scale | Unit | P0 | FR-004-AC-14 | ✅ |
 | TC-048 | All four skeletons validate with no error | Integration | P0 | FR-005-AC-1 | ✅ |
 | TC-049 | Table and `sysml` skeletons extract to identical normalized fields with the recorded forms | Integration | P0 | FR-005-AC-2, FR-005-CON-2 | ✅ |
 | TC-050 | Under the skeleton bundle index every skeleton extracts with zero errors and zero unresolved tokens | Integration | P0 | FR-005-AC-3 | ✅ |
@@ -156,7 +157,7 @@ assert what the requirement says.
 | TC-067 | A legacy prose `## Properties` block warns rather than errors under `legacy_forms: warning` | Integration | P1 | NFR-001-AC-3 | ✅ the warning is emitted; the "not an error" half is an expected failure on quire-rs#391 |
 | TC-068 | The `traceability` model is unchanged from 0.2.0 | Unit | P0 | NFR-001-AC-4 | ✅ |
 | TC-069 | The widened lint allow-lists still admit every value they admitted at 0.2.0 | Unit | P1 | NFR-001-AC-5 | ✅ |
-| TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01..IT-001-SC-06 | 🚧 the installed quoin CLI cannot read its own packaged schemas |
+| TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 
 ## Test Environment
@@ -187,14 +188,19 @@ mapping that would populate them is `agent-ix/quoin#335`.
 Every acceptance criterion, constraint, and metric above has a row backed by a
 tagged test, with three recorded exceptions:
 
-1. **TC-070** is backed by a tagged, real test that drives the Quoin CLI, and
-   that test does not pass on the machine this branch was written on: the
-   globally installed `quoin` is a symlink into a live worktree whose `dist/`
-   is mid-build and missing `dist/schemas/module-manifest.schema.json`, so
-   `quoin module install` exits non-zero before reaching anything this module
-   owns. The row is `🚧` rather than `✅`, the test lives in
-   `tests_integration/` so `make test` does not report a green suite over a
-   broken CLI, and `make test-integrations` runs it once the CLI is whole.
+1. **The incoming `mitigates` edge these checks require is authorable nowhere.**
+   The manifest's two `required_relations` demand one on every hazard and
+   failure mode — the module's whole reason to exist — and no catalog module
+   can supply one without a diagnostic: `spec-objects-security`'s `control`
+   declares `mitigates: [threat, risk, vulnerability]`, and the
+   `spec-artifacts-iso` `FR`/`NFR` archetypes declare no `mitigates` at all. So
+   `unmitigated-hazard` cannot yet tell a mitigated hazard from an unmitigated
+   one, and no row here can honestly claim it does. TC-010, TC-031 and TC-068
+   assert the model as *data* and say nothing about whether the check fires;
+   they are not the missing evidence, and are not presented as it.
+   `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
+   neighbours. This module does not change the relation, the verb or the
+   direction unilaterally, because a neighbour reads them (NFR-001-AC-4).
 2. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
    FR-001's own body decided against declaring a role
    (*"the `safety-relevant` capability tag this module first reached for turned
@@ -211,7 +217,9 @@ tagged test, with three recorded exceptions:
 
 Two evidence-plan artifacts are absent and are carried by the plan rather than
 by this matrix: no `SuiteRegistry` document declares a producer for the `Unit`,
-`Integration`, `Static` and `Property` evidence kinds, and no `Inspections`
-document exists for the `Static` rows (TC-022, TC-023, TC-025, TC-047, TC-059),
-each of which is nonetheless discharged by an automated test here rather than by
-a human procedure.
+`Integration`, `Static` and `Property` evidence kinds. There is no missing
+`Inspections` document, because no obligation in this bundle is discharged by a
+human procedure: the four constraints that read `Inspection` at the start of the
+review round are each backed by an automated test, and their Verification cells
+now say `Test`. TC-059 is the one row that stays `Static` — it inspects the
+branch diff — and it too runs as a test.

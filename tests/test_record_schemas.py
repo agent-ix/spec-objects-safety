@@ -213,22 +213,37 @@ def test_no_schema_declares_a_default_a_controls_key_or_a_mitigations_key():
 
 
 @pytest.mark.trace("TC-042", "FR-004-AC-8")
-def test_accepted_status_requires_provenance(
+def test_accepted_status_requires_provenance_and_the_thing_accepted(
     schema_registry, hazard_record, failure_mode_record
 ):
-    for model, base in (
-        ("Hazard", hazard_record),
-        ("FailureMode", failure_mode_record),
+    """Risk acceptance names a person and names what was accepted.
+
+    Two obligations ride on one status. Without provenance an acceptance has
+    nobody's name on it; without the assessment or the analysis it is an
+    acceptance of nothing scored — a hazard could otherwise be `accepted` with
+    no severity ever assigned, which is this module's central failure wearing a
+    lifecycle state.
+    """
+    for model, base, scored in (
+        ("Hazard", hazard_record, {"assessment": ASSESSMENT}),
+        ("FailureMode", failure_mode_record, {"analysis": ANALYSIS}),
     ):
         validator = schema_registry(model)
         assert not valid(validator, dict(base, status="accepted")), model
-        assert valid(
+        assert not valid(
             validator, dict(base, status="accepted", provenance=PROVENANCE)
+        ), f"{model}: accepted with nothing scored to accept passed"
+        assert not valid(
+            validator, dict(base, status="accepted", **scored)
+        ), f"{model}: accepted with nobody's name on it passed"
+        assert valid(
+            validator, dict(base, status="accepted", provenance=PROVENANCE, **scored)
         ), model
         # Only acceptance carries the obligation; the other states do not.
         assert valid(validator, dict(base, status="identified")), model
         assert not valid(
-            validator, dict(base, status="accepted", provenance={"assertedBy": "x"})
+            validator,
+            dict(base, status="accepted", provenance={"assertedBy": "x"}, **scored),
         ), f"{model}: provenance without assertedAt passed"
 
 
@@ -304,7 +319,7 @@ def test_schema_validity_is_not_a_safety_claim(schema_registry, hazard_record):
         assert "default" not in schema_of("Hazard")["properties"][key]
 
 
-@pytest.mark.trace("TC-047", "FR-004-CON-3")
+@pytest.mark.trace("TC-047", "FR-004-CON-3", "FR-004-AC-13")
 def test_no_declared_constraint_was_relaxed_to_make_a_fixture_pass():
     """The required/forbidden facts of every model, asserted as a table.
 
@@ -324,7 +339,11 @@ def test_no_declared_constraint_was_relaxed_to_make_a_fixture_pass():
     for model, required in expected_required.items():
         assert schema_of(model)["required"] == required, model
 
-    # Every object model is sealed, and both records carry the acceptance rule.
+    # Every object model is sealed TWICE, and both records carry the acceptance
+    # rule. `unevaluatedProperties` is 2020-12 only, so a consumer on an older
+    # dialect ignores it and would accept a forbidden key while `required` and
+    # `enum` still fail closed — a silent, partial failure.
+    # `additionalProperties: false` says the same thing in every dialect.
     for model in RECORD_MODELS + (
         "HazardAssessment",
         "FailureAnalysis",
@@ -333,10 +352,11 @@ def test_no_declared_constraint_was_relaxed_to_make_a_fixture_pass():
         "EvidenceRef",
     ):
         assert schema_of(model)["unevaluatedProperties"] == SEAL, model
-    for model in RECORD_MODELS:
+        assert schema_of(model)["additionalProperties"] is False, model
+    for model, scored in ((("Hazard"), "assessment"), (("FailureMode"), "analysis")):
         rule = schema_of(model)["allOf"][0]
         assert rule["if"]["properties"]["status"]["const"] == "accepted", model
-        assert rule["then"]["required"] == ["provenance"], model
+        assert rule["then"]["required"] == ["provenance", scored], model
 
     # Non-empty text stays non-empty.
     assert schema_of("HazardAssessment")["properties"]["rationale"]["minLength"] == 1
@@ -380,3 +400,32 @@ def test_each_scale_is_closed_and_each_lint_list_matches_its_scale():
     assert set(rules) == set(scale_of_rule)
     for rule_id, model in scale_of_rule.items():
         assert rules[rule_id]["allowed"] == SCALES[model] + EPISTEMIC, rule_id
+
+
+@pytest.mark.trace("TC-072", "FR-004-AC-14")
+def test_no_schema_names_an_integrity_level():
+    """No ASIL, no SIL, and no scale that would imply one.
+
+    `Severity` is the IEC 61508 / MIL-STD-882 four-band harm scale, not ISO
+    26262 `S0..S3`, and no determination table is declared here — so no
+    integrity level follows from these members. Naming one anyway would be the
+    worst version of this module's central failure: a classification a reader
+    would act on, produced by a schema that never assessed anything.
+    """
+    banned = (
+        "asil",
+        "sil",
+        "s0",
+        "s1",
+        "s2",
+        "s3",
+        "integrity_level",
+        "integritylevel",
+    )
+    for path in shipped_schema_paths():
+        schema = json.loads(path.read_text())
+        keys = set(schema.get("properties") or {})
+        assert not {k.lower() for k in keys} & set(banned), path.name
+        for member in schema.get("enum") or []:
+            assert str(member).lower() not in banned, (path.name, member)
+    assert schema_of("Severity")["enum"] == SCALES["Severity"]
