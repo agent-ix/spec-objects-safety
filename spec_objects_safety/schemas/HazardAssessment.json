@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardAssessment.json",
+  "type": "object",
+  "properties": {
+    "severity": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Severity.json"
+        },
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EpistemicState.json"
+        }
+      ]
+    },
+    "likelihood": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Likelihood.json"
+        },
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EpistemicState.json"
+        }
+      ]
+    },
+    "exposure": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Exposure.json"
+        },
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EpistemicState.json"
+        }
+      ]
+    },
+    "controllability": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Controllability.json"
+        },
+        {
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EpistemicState.json"
+        }
+      ]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "severity",
+    "likelihood",
+    "rationale"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The two axes every safety standard scores a hazard on, plus the two ISO 26262\nadds. `severity`, `likelihood` and `rationale` are required *when an\nassessment is present*: a hazard recorded with a half-filled assessment\ncannot be prioritised, and an unscored backlog is indistinguishable from no\nanalysis. `exposure` and `controllability` are optional because IEC 61508 and\nFMEA lineages do not score them; when a repository works to ISO 26262 it\nfills them, and `not_assessed` states that it has not."
+}

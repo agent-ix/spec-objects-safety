@@ -1,0 +1,92 @@
+{
+  "locators": {
+    "failure_mode": {
+      "analysis": {
+        "assert": {
+          "columns": [
+            "Effect",
+            "Cause",
+            "Detection"
+          ],
+          "min_rows": 1
+        },
+        "from": "table_row",
+        "required": true,
+        "under_section": "Analysis"
+      },
+      "description": {
+        "after_heading": "Description",
+        "from": "section_body",
+        "required": true
+      },
+      "id": {
+        "from": "frontmatter_field",
+        "path": [
+          "id"
+        ],
+        "required": true
+      },
+      "title": {
+        "from": "frontmatter_field",
+        "path": [
+          "title"
+        ],
+        "required": true
+      },
+      "type": {
+        "from": "frontmatter_field",
+        "path": [
+          "type"
+        ],
+        "required": true
+      }
+    },
+    "hazard": {
+      "assessment": {
+        "assert": {
+          "columns": [
+            "Severity",
+            "Likelihood",
+            "Rationale"
+          ],
+          "min_rows": 1
+        },
+        "from": "table_row",
+        "required": true,
+        "under_section": "Assessment"
+      },
+      "condition": {
+        "after_heading": "Condition",
+        "from": "section_body",
+        "required": true
+      },
+      "id": {
+        "from": "frontmatter_field",
+        "path": [
+          "id"
+        ],
+        "required": true
+      },
+      "mitigation": {
+        "after_heading": "Mitigation",
+        "from": "section_body",
+        "required": false
+      },
+      "title": {
+        "from": "frontmatter_field",
+        "path": [
+          "title"
+        ],
+        "required": true
+      },
+      "type": {
+        "from": "frontmatter_field",
+        "path": [
+          "type"
+        ],
+        "required": true
+      }
+    }
+  },
+  "version": "0.2.0"
+}

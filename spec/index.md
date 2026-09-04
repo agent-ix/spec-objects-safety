@@ -9,5 +9,9 @@ okf_version: "0.1"
 ## Contents
 
 * [spec.md](./spec.md)
+* [tests.md](./tests.md)
 * [stakeholder](./stakeholder/index.md)
+* [usecase](./usecase/index.md)
 * [functional](./functional/index.md)
+* [non-functional](./non-functional/index.md)
+* [integration](./integration/index.md)

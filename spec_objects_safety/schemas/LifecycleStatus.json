@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/LifecycleStatus.json",
+  "type": "string",
+  "enum": [
+    "identified",
+    "analysed",
+    "mitigated",
+    "accepted",
+    "transferred",
+    "closed"
+  ],
+  "description": "Where a safety object sits in its own lifecycle. Authored, never inferred:\nschema validity is not a safety claim, and no value here is reached by a\ndocument merely validating."
+}

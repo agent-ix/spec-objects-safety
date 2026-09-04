@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Likelihood.json",
+  "type": "string",
+  "enum": [
+    "incredible",
+    "improbable",
+    "remote",
+    "occasional",
+    "probable",
+    "frequent"
+  ],
+  "description": "How often the hazard state is expected to be reached."
+}

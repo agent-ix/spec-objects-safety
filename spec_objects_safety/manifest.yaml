@@ -1,7 +1,35 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
-version: 0.2.0
+version: 0.3.0
 description: 'Filament Module: safety ObjectTypes (hazard, failure_mode) — IEC 61508 / ISO 26262 / FMEA lineage'
+semantic:
+  # quoin FR-070. Declared at the module level, so a consumer that cannot read
+  # this contract version refuses the module explicitly instead of loading it as
+  # an empty model.
+  contract_version: 1.0.0
+  semantic_core: 0.1.0
+  package: agent-ix/spec-objects-safety
+  exports:
+  - hazard
+  - failure_mode
+  # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
+  # references controls (`agent-ix/spec-objects-security` `control`), risks
+  # (`risk`), the interfaces and components a failure mode sits in
+  # (`agent-ix/spec-objects-architecture`), the incidents that realised it
+  # (`agent-ix/spec-objects-operational`) and the evidence that supports a
+  # judgement (`agent-ix/engineering-assurance`) — every one of them BY
+  # `SemanticId` REFERENCE, never redeclared here. `imports` pins imported
+  # semantic PACKAGES at exact versions, and none of those four has published a
+  # semantic contract yet: agent-ix/spec-objects-security#13,
+  # agent-ix/spec-objects-architecture#8 and agent-ix/spec-objects-operational#6
+  # are the open migration tickets. Pinning a version they do not yet declare
+  # would be a false claim, so the map stays empty and FR-006 records the
+  # obligation to fill it.
+  imports: {}
+  targets: [json-schema, markdown]
+  mappings: [typed-table, sysml-fence, ocl-clause]
+  compatibility_posture: additive
+  legacy_forms: warning
 # Order 55, following the family sequence (operational 53, security 54).
 nav:
   category:
@@ -20,22 +48,30 @@ artifact_types: []
 # hazard on, and every standard uses a different scale. These are the ordinal
 # buckets the ecosystem authors in; a repository working to a specific standard
 # maps its own scale onto them rather than inventing a column.
+#
+# WIDENED AT 0.3.0 with `unknown`, `not_assessed` and `not_applicable`, the
+# three `EpistemicState` members the emitted schemas admit on every scored axis
+# (FR-004). At 0.2.0 the only way past this advisory was to write a scale
+# value, so an author who had not scored an axis was nudged towards
+# `negligible` or `none` — the exact collapse this module exists to prevent.
+# Widening an advisory allow-list to admit "nobody has looked" is not a
+# relaxation of the gate; refusing the honest token was the defect.
 lint_rules:
 - type: table_column_values
   id: hazard-severity
   section: Assessment
   column: Severity
-  allowed: [negligible, marginal, critical, catastrophic]
+  allowed: [negligible, marginal, critical, catastrophic, unknown, not_assessed, not_applicable]
 - type: table_column_values
   id: hazard-likelihood
   section: Assessment
   column: Likelihood
-  allowed: [incredible, improbable, remote, occasional, probable, frequent]
+  allowed: [incredible, improbable, remote, occasional, probable, frequent, unknown, not_assessed, not_applicable]
 - type: table_column_values
   id: failure-mode-detection
   section: Analysis
   column: Detection
-  allowed: [none, indirect, direct, automatic]
+  allowed: [none, indirect, direct, automatic, unknown, not_assessed, not_applicable]
 
 object_types:
 # ── hazard ───────────────────────────────────────────────────────────────
@@ -70,7 +106,8 @@ object_types:
     arises_from: [failure_mode]
     references: [hazard, failure_mode]
   data_schema:
-    type: object
+    schema: schemas/Hazard.json
+    digest: sha256:bde56fb1e4445bdcd7e1a61ef2eded7df5974a830ca03bc0e88b2dd72aad66f6
   body_extraction:
     yield_pattern:
       match:
@@ -119,6 +156,21 @@ object_types:
           from: section_body
           after_heading: Mitigation
           required: false
+        # ADDED AT 0.3.0, `required: false` in both types so every 0.2.0
+        # artifact stays valid (NFR-001). The typed `## Properties` table is
+        # the semantic-module default form and a ```sysml``` fence is the
+        # alternate; `## Invariants` carries one ```ocl``` fence per clause.
+        # Quire's semantic extractor reads both from the document; these
+        # locators additionally yield them as strings beside the record, which
+        # is what a reader with no semantic support still sees.
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
 
 # ── failure_mode ─────────────────────────────────────────────────────────
 #
@@ -133,7 +185,8 @@ object_types:
     # place to write it.
     references: [failure_mode, hazard]
   data_schema:
-    type: object
+    schema: schemas/FailureMode.json
+    digest: sha256:b5aec534643886d20ff93015e7f41473781c3b6d7ca20f90e35b9f124c985336
   body_extraction:
     yield_pattern:
       match:
@@ -159,6 +212,21 @@ object_types:
             - Cause
             - Detection
             min_rows: 1
+        # ADDED AT 0.3.0, `required: false` in both types so every 0.2.0
+        # artifact stays valid (NFR-001). The typed `## Properties` table is
+        # the semantic-module default form and a ```sysml``` fence is the
+        # alternate; `## Invariants` carries one ```ocl``` fence per clause.
+        # Quire's semantic extractor reads both from the document; these
+        # locators additionally yield them as strings beside the record, which
+        # is what a reader with no semantic support still sees.
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
 
 # FR-058 (quire-rs v0.31.0): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.

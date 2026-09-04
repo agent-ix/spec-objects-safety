@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardContext.json",
+  "type": "object",
+  "properties": {
+    "situation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "situation"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The operational situation the hazard state is reached in. A hazard scored\nwithout its context is a score that cannot be compared: \"the vehicle cannot\ndecelerate\" is a different exposure on a motorway than in a parking bay."
+}

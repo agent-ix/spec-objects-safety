@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Controllability.json",
+  "type": "string",
+  "enum": [
+    "C0",
+    "C1",
+    "C2",
+    "C3"
+  ],
+  "description": "ISO 26262 controllability: whether the people involved can avoid the harm.\n`C0` means \"controllable in general\", a scored value."
+}

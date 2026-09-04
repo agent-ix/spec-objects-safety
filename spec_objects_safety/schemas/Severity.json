@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Severity.json",
+  "type": "string",
+  "enum": [
+    "negligible",
+    "marginal",
+    "critical",
+    "catastrophic"
+  ],
+  "description": "How bad the harm is if the hazard state is reached. The ordinal buckets the\necosystem authors in; a repository working to a specific standard maps its\nown scale onto them rather than inventing a column. `negligible` is the safe\nend of a *scored* axis — it is an assessment, not an absence of one."
+}

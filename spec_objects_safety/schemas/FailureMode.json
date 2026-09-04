@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/FailureMode.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/IdentityField.json"
+      }
+    },
+    "analysis": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/FailureAnalysis.json"
+    },
+    "status": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/LifecycleStatus.json"
+    },
+    "provenance": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Provenance.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EvidenceRef.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/RelationDecl.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A failure mode: the manner in which a component fails to perform its intended\nfunction.\n\nSeparate from `Hazard`, not a variant of it. `assessment` and `context` are\nforbidden by the seal — the severity/likelihood pair scores a *state* and\nwould mean something else here — and `operations` is forbidden for the same\nreason it is on `Hazard`.",
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "accepted"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "provenance"
+        ]
+      }
+    }
+  ]
+}
