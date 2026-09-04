@@ -63,13 +63,14 @@ shipped teaching example and the shipped contract cannot disagree.
 - Every negative fixture SHALL fail validation.
 - Every negative fixture's error message SHALL be longer than its `expect` token, so the fixture fails with a diagnosis rather than a bare code.
 - No change under this requirement SHALL touch a corpus repository, a vendored corpus fixture, or a sibling module.
+- The test that enforces the clause above SHALL assert over the tracked tree rather than over a diff against a moving ref, because a range anchored on `origin/main` changes meaning the moment the branch merges and turns the gate red for a branch that no longer exists.
 - The semantic tests SHALL fail, never skip, when the Quire wheel is absent.
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-005-CON-1 | No change on this branch SHALL touch a corpus repository or a vendored fixture. | Scope | Test |
+| FR-005-CON-1 | This repository SHALL track no `corpus/` path, no `fixtures/semantic-module` path and no `/vendor/` path. | Scope | Test |
 | FR-005-CON-2 | One artifact carries one Properties form; the alternate is a separate file, never a second block. | Authoring | Test |
 | FR-005-CON-3 | A missing engine SHALL fail the suite, never skip it: a skipped row is not coverage. | Integrity | Test |
 

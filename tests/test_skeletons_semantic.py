@@ -328,18 +328,37 @@ def test_a_properties_section_with_both_forms_is_refused(quire_engine):
 
 
 @pytest.mark.trace("TC-059", "FR-005-CON-1")
-def test_the_branch_edits_no_corpus_repository_or_vendored_fixture():
-    diff = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "diff", "--name-only", "origin/main...HEAD"],
+def test_no_corpus_repository_or_vendored_fixture_is_tracked_here():
+    """FR-005-CON-1, stated over the tracked tree rather than over a diff.
+
+    The first form of this guard ran `git diff --name-only origin/main...HEAD`
+    and asserted the result was non-empty. A merged change's path set is a fixed
+    historical fact, but computing it against a *moving* ref makes the assertion
+    change meaning the moment the branch merges: `origin/main...HEAD` empties,
+    `assert changed` fails, and main goes red for a branch that is no longer a
+    branch. That is not hypothetical — `spec-objects-business` main has been red
+    on the identical test since its own migration merged, and this module
+    inherited the pattern from it.
+
+    The tree form is merge-invariant and strictly stronger. No `corpus/` path,
+    no `fixtures/semantic-module` path and no `/vendor/` path exists in this
+    repository at all, so asserting their absence from the tracked tree says
+    everything the diff said and more: not "this branch left them alone" but
+    "they are not here". The liveness assertion is what stops it passing
+    vacuously — an empty listing means the gate did not run, not that the tree
+    is clean.
+    """
+    listing = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "ls-files"],
         capture_output=True,
         text=True,
         check=False,
     )
-    if diff.returncode != 0:  # pragma: no cover - a detached clone has no origin/main
-        pytest.fail(f"cannot read the branch diff: {diff.stderr.strip()}")
-    changed = [line for line in diff.stdout.splitlines() if line]
-    assert changed, "the branch changes nothing"
-    for path in changed:
+    if listing.returncode != 0:  # pragma: no cover - not a git checkout
+        pytest.fail(f"cannot list the tracked tree: {listing.stderr.strip()}")
+    tracked = [line for line in listing.stdout.splitlines() if line]
+    assert tracked, "the repository tracks no files, so this gate did not run"
+    for path in tracked:
         assert not path.startswith("corpus/"), path
         assert "fixtures/semantic-module" not in path, path
         assert "/vendor/" not in path, path

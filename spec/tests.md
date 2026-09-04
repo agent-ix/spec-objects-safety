@@ -146,7 +146,7 @@ assert what the requirement says.
 | TC-056 | No `## Properties` row names a column of the same type's `Assessment` or `Analysis` table | Unit | P1 | FR-005-AC-9 | ✅ |
 | TC-057 | With the engine absent the semantic helper fails naming `make dev-quire` and quire-rs#392, and no test skips | Unit | P0 | FR-005-AC-10, FR-005-CON-3 | ✅ |
 | TC-058 | A Properties section holding both forms is refused at the second form | Integration | P1 | FR-005-CON-2 | ✅ |
-| TC-059 | The branch edits no corpus repository or vendored fixture | Static | P2 | FR-005-CON-1 | ✅ |
+| TC-059 | The tracked tree holds no `corpus/` path, no `fixtures/semantic-module` path and no `/vendor/` path; an empty listing fails the gate rather than passing it | Static | P2 | FR-005-CON-1 | ✅ |
 | TC-060 | The manifest declares exactly two object types and none a neighbouring module owns | Unit | P0 | FR-006-AC-1 | ✅ |
 | TC-061 | No schema declares `controls` or `mitigations`, and every cross-module reference is a `SemanticId` | Unit | P0 | FR-006-AC-2 | ✅ |
 | TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |

@@ -41,6 +41,19 @@ the member sets belong where the claim is made. `Severity` is recorded as the
 IEC 61508 / MIL-STD-882 four-band scale rather than ISO 26262 `S0..S3`, and no
 ASIL is derivable from it or claimed.
 
+  **[RAN]** The scope guard was re-expressed over the tracked tree after review.
+Its first form diffed `origin/main...HEAD` and asserted the result was
+non-empty — a merge-degrading guard: a merged change's path set is a fixed
+historical fact, but computing it against a moving ref makes the assertion flip
+the moment the branch merges, the range empties, and `main` goes red for a
+branch that no longer exists. `spec-objects-business` main has been red on the
+identical test since its own migration merged, and this module inherited the
+pattern from it. No `corpus/`, `fixtures/semantic-module` or `/vendor/` path
+exists here at all, so the tree form is exactly equivalent in intent and
+strictly stronger — it says those paths are absent from the repository, not that
+one branch left them alone — and it is merge-invariant. A liveness assertion
+stops it passing vacuously on an empty listing.
+
   Two upstream defects are carried as strict expected failures rather than worked around: a manifest refusal that names nothing (agent-ix/quire-rs#221, #394) and a legacy prose `## Properties` block that errors as well as warning under `legacy_forms: warning` (agent-ix/quire-rs#391). The FR-035 gate runs against the module-manifest schema at `spec-artifacts-iso` CR-012 because no release carries it (agent-ix/spec-artifacts-iso#36, filed here); a drift test proves the pinned copy is the released schema plus exactly the CR-012 pointers, and fails the moment a release makes the pin unnecessary. FR-001-AC-1's "at least one role" half contradicts FR-001's own body and is filed as agent-ix/spec-objects-safety#3 rather than edited here.
 
 
