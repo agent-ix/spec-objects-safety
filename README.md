@@ -4,6 +4,46 @@
 
 ---
 
+## 🧭 What this module ships
+
+The package root **is** the Filament module. `spec_objects_safety/manifest.yaml`
+declares two object types — `hazard` (a system state that can lead to harm) and
+`failure_mode` (the manner in which a component fails) — with their body
+contracts, their authoring skeletons, the domain lexicon, and the
+`traceability` model that reports a hazard nothing mitigates.
+
+Since 0.3.0 it is a **semantic module** (quoin FR-070): the archetypes are
+authored in `typespec/main.tsp` against `@agent-ix/semantic-core`, emitted to
+JSON Schema 2020-12 under `spec_objects_safety/schemas/`, and referenced from
+the manifest by path and digest.
+
+The rule those schemas exist to enforce: every scored axis — severity,
+likelihood, ISO 26262 exposure and controllability, FMEA detection — admits
+either its own ordinal scale **or** one of `unknown`, `not_assessed`,
+`not_applicable`. Those three share no member with any scale, so an axis nobody
+looked at can never be read, sorted or scored as a safe one. Nothing here
+defaults a safety judgement, and `status: accepted` requires a `provenance`
+naming who accepted the risk and when.
+
+### Working on the schemas
+
+```bash
+make schemas        # re-emit spec_objects_safety/schemas/ from typespec/main.tsp
+make schemas-check  # fail on schema or digest drift (also run by `make lint`)
+make dev-quire      # install the Quire wheel the semantic tests need
+```
+
+`make schemas` needs `npm ci` first and a user-level npm config that routes
+`@agent-ix` to npm.ix; the repository carries no `.npmrc`. A wrong schema is
+fixed in `typespec/main.tsp` and regenerated — never hand-edited.
+
+`make dev-quire` exists because the Quire build exposing `extract_semantic` is
+on no index this repository may commit a dependency against
+(`agent-ix/quire-rs#392`). Without it the semantic tests **fail**; they never
+skip, because a skipped row is not coverage.
+
+---
+
 ## 📐 Project Structure and Development Philosophy
 
 - **Library Name:** `spec_objects_safety`
@@ -89,7 +129,10 @@ make build
 | `install` | Install dependencies in Poetry venv |
 | `build` | Build wheel and sdist artifacts |
 | `test` | Run tests |
-| `lint` | Run linting (Ruff + Black check) |
+| `lint` | Run linting (Ruff + Black check + schema drift gate) |
+| `schemas` | Re-emit `spec_objects_safety/schemas/` from `typespec/main.tsp` |
+| `schemas-check` | Fail on schema or manifest-digest drift |
+| `dev-quire` | Install the Quire wheel the semantic tests need |
 | `format` | Auto-format code (Black + Ruff --fix) |
 | `shell` | Open Poetry shell |
 | `clean` | Remove all build artifacts |

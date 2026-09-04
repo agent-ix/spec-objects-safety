@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Exposure.json",
+  "type": "string",
+  "enum": [
+    "E0",
+    "E1",
+    "E2",
+    "E3",
+    "E4"
+  ],
+  "description": "ISO 26262 exposure: how much of the operating time the situation obtains.\n`E0` means \"incredible\", a scored value; it does not mean \"not looked at\"."
+}

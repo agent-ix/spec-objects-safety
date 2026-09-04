@@ -1,0 +1,27 @@
+{
+  "acyclic_edges": [
+    "arises_from"
+  ],
+  "required_relations": [
+    {
+      "check": "unmitigated-hazard",
+      "direction": "incoming",
+      "edges": [
+        "mitigates"
+      ],
+      "from": "hazard",
+      "name": "hazard-has-mitigation",
+      "to": []
+    },
+    {
+      "check": "unmitigated-failure-mode",
+      "direction": "incoming",
+      "edges": [
+        "mitigates"
+      ],
+      "from": "failure_mode",
+      "name": "failure-mode-has-mitigation",
+      "to": []
+    }
+  ]
+}

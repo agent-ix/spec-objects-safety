@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Detection.json",
+  "type": "string",
+  "enum": [
+    "none",
+    "indirect",
+    "direct",
+    "automatic"
+  ],
+  "description": "Whether, and how directly, a failure can be observed before it causes harm.\n`none` is a scored value — nothing observes this failure — and is the worst\ncase on the axis, not a missing assessment."
+}

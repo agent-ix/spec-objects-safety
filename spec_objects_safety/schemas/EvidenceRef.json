@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EvidenceRef.json",
+  "type": "object",
+  "properties": {
+    "target": {
+      "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/SemanticId.json"
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "target"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A reference to an evidence record that supports a safety judgement. A\nreference only: evidence records themselves are owned by\n`agent-ix/engineering-assurance`, and duplicating one here would create a\nsecond copy that drifts. `kind` is an open string for the same reason — the\nclosed evidence-kind vocabulary is the assurance module's to declare, not\nthis module's to mint.",
+  "additionalProperties": false
+}

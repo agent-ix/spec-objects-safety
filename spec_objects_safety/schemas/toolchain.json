@@ -1,0 +1,41 @@
+{
+  "compiler": {
+    "name": "@typespec/compiler",
+    "version": "1.15.0"
+  },
+  "emitter": {
+    "name": "@typespec/json-schema",
+    "version": "1.15.0"
+  },
+  "semanticCore": {
+    "name": "@agent-ix/semantic-core",
+    "version": "0.1.0"
+  },
+  "base": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/",
+  "normalization": {
+    "name": "absolute-id-and-ref",
+    "version": "1.0.0",
+    "issue": "https://github.com/agent-ix/spec-objects-safety/issues/2",
+    "applied": false,
+    "rewrittenFiles": [],
+    "note": "no-op: the emitter left no relative $id or $ref"
+  },
+  "files": [
+    "Controllability.json",
+    "Detection.json",
+    "EpistemicState.json",
+    "EvidenceRef.json",
+    "Exposure.json",
+    "FailureAnalysis.json",
+    "FailureMode.json",
+    "Hazard.json",
+    "HazardAssessment.json",
+    "HazardContext.json",
+    "IdentityField.json",
+    "LifecycleStatus.json",
+    "Likelihood.json",
+    "Provenance.json",
+    "Severity.json"
+  ],
+  "digest": "sha256:2b380476fed27344d3b12b19f5b2f46f0869c2895d4104a3880d586faaf1a85b"
+}

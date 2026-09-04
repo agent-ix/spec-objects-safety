@@ -1,0 +1,40 @@
+[
+  {
+    "allowed": [
+      "negligible",
+      "marginal",
+      "critical",
+      "catastrophic"
+    ],
+    "column": "Severity",
+    "id": "hazard-severity",
+    "section": "Assessment",
+    "type": "table_column_values"
+  },
+  {
+    "allowed": [
+      "incredible",
+      "improbable",
+      "remote",
+      "occasional",
+      "probable",
+      "frequent"
+    ],
+    "column": "Likelihood",
+    "id": "hazard-likelihood",
+    "section": "Assessment",
+    "type": "table_column_values"
+  },
+  {
+    "allowed": [
+      "none",
+      "indirect",
+      "direct",
+      "automatic"
+    ],
+    "column": "Detection",
+    "id": "failure-mode-detection",
+    "section": "Analysis",
+    "type": "table_column_values"
+  }
+]

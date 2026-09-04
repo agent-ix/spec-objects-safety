@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Hazard.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/IdentityField.json"
+      }
+    },
+    "assessment": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardAssessment.json"
+    },
+    "context": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardContext.json"
+    },
+    "status": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/LifecycleStatus.json"
+    },
+    "provenance": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Provenance.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EvidenceRef.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/RelationDecl.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A hazard: a system state or condition that can lead to harm.\n\n`relations` carries the causal edges (`arises_from`) and is deliberately NOT\nsubject to a \"≥ 1 cause\" item rule. STPA exists because components each\nbehaving exactly as specified can reach a harmful state together, so a hazard\nwith no failure mode behind it is a valid and important record; requiring a\ncause would push authors to invent one.\n\nThere is no `controls` or `mitigations` key. The mitigation edge is authored\nfrom the requirement's end (`mitigates`, `direction: incoming` in the\nmanifest's `traceability` block), so a list here would be a second copy of\nthe same fact with nothing keeping the two in step. Controls themselves are\n`agent-ix/spec-objects-security`'s `control` type, referenced by\n`SemanticId`, never redeclared here.\n\n`operations` and `analysis` are forbidden by the seal: a hazard is a state,\nit invokes nothing, and the FMEA triple belongs to `FailureMode`.",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "accepted"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "provenance",
+          "assessment"
+        ]
+      }
+    }
+  ]
+}

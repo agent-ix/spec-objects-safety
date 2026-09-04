@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EpistemicState.json",
+  "type": "string",
+  "enum": [
+    "unknown",
+    "not_assessed",
+    "not_applicable"
+  ],
+  "description": "The epistemic states an assessed axis may carry INSTEAD of a scale value.\n\nThis enum exists because the three states below are routinely collapsed into\na scale's safe end, and each collapse hides a different thing:\n\n* `unknown` — the axis was looked at and cannot be determined yet. Someone\ntried; the answer is not available.\n* `not_assessed` — nobody has looked. This is the state a backlog of\nunanalysed hazards is in, and it is the one that must never read as\n`negligible`, `E0`, `C0` or `none`.\n* `not_applicable` — the axis does not apply to this object, with a reason\nthe author states in prose. Distinct from both of the above and from any\nscale value.\n\nNone of the three is a scale member, so no consumer can sort them into an\nordering with `negligible` or compute a risk number from them by accident."
+}
