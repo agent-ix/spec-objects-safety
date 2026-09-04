@@ -21,8 +21,23 @@ one.
 ## Inputs
 
 - The semantic-core declaration grammar 0.1.0.
-- The declared safety vocabulary: severity, likelihood, exposure,
-  controllability, detection, lifecycle status.
+- The declared safety vocabulary, fixed here rather than only in the emitted
+  schemas, because the epistemic property below is a claim about these exact
+  member sets:
+
+| Vocabulary | Members | Lineage |
+|---|---|---|
+| `Severity` | `negligible`, `marginal`, `critical`, `catastrophic` | IEC 61508 / ISO 26262 harm severity |
+| `Likelihood` | `incredible`, `improbable`, `remote`, `occasional`, `probable`, `frequent` | IEC 61508 frequency bands |
+| `Exposure` | `E0`, `E1`, `E2`, `E3`, `E4` | ISO 26262 exposure |
+| `Controllability` | `C0`, `C1`, `C2`, `C3` | ISO 26262 controllability |
+| `Detection` | `none`, `indirect`, `direct`, `automatic` | FMEA detectability |
+| `LifecycleStatus` | `identified`, `analysed`, `mitigated`, `accepted`, `transferred`, `closed` | Authored disposition |
+| `EpistemicState` | `unknown`, `not_assessed`, `not_applicable` | Not a scale; what an axis says instead of a scale value |
+
+- The three advisory lint allow-lists the manifest declares over the authored
+  tables — `hazard-severity` (`Assessment.Severity`), `hazard-likelihood`
+  (`Assessment.Likelihood`) and `failure-mode-detection` (`Analysis.Detection`).
 
 ## Outputs
 
@@ -38,6 +53,8 @@ one.
 - `FailureAnalysis` SHALL require a non-empty `effect`, a non-empty `cause` and a `detection`.
 - Each of `severity`, `likelihood`, `exposure`, `controllability` and `detection` SHALL admit either a value of its own ordinal scale or a value of `EpistemicState`.
 - `EpistemicState` SHALL be exactly `unknown`, `not_assessed`, `not_applicable`, and SHALL share no member with any ordinal scale.
+- Each ordinal scale SHALL hold exactly the members its row of the Inputs table names, so a consumer reading a scale reads a closed, stated set.
+- Each of the three advisory lint allow-lists SHALL admit its own scale's members and the three `EpistemicState` members, so the document form can express everything the schema admits and an unscored axis is never nudged towards a scale's safe end.
 - No schema SHALL declare a `default` for any scored axis or for `status`, so an absent value is never filled in as a safe one.
 - If `status` is `accepted`, then `provenance` SHALL be required, so risk acceptance always carries the name of whoever accepted it.
 - `Provenance` SHALL require a non-empty `assertedBy` and an `assertedAt` timestamp.
@@ -64,6 +81,7 @@ one.
 | FR-004-AC-4 | A hazard record carrying `analysis` fails, and one carrying `operations` fails. | Test |
 | FR-004-AC-5 | An assessment missing `severity`, missing `likelihood` or carrying an empty `rationale` fails; one scoring `severity: not_assessed` validates and is not equal to `severity: negligible`. | Test |
 | FR-004-AC-6 | Each of the five scored axes accepts every member of its own scale and every member of `EpistemicState`, and rejects a member of another scale; no scale shares a member with `EpistemicState`. | Test |
+| FR-004-AC-12 | Each ordinal scale's emitted `enum` equals the member list the Inputs table states, and each advisory lint allow-list is its scale's members plus the three `EpistemicState` members. | Test |
 | FR-004-AC-7 | No shipped schema declares a `default` anywhere, and none declares a `controls` or `mitigations` key. | Test |
 | FR-004-AC-8 | A record with `status: accepted` and no `provenance` fails; the same record with a `provenance` naming `assertedBy` and `assertedAt` validates; a record with `status: identified` and no `provenance` validates. | Test |
 | FR-004-AC-9 | A hazard record with no `relations` validates, and a hazard record with one `arises_from` relation validates. | Test |

@@ -118,7 +118,7 @@ def test_imports_is_empty_and_the_manifest_says_which_issues_keep_it_empty():
         assert issue in text, f"the manifest does not name {issue}"
 
 
-@pytest.mark.trace("TC-063", "FR-006-AC-4")
+@pytest.mark.trace("TC-063", "FR-006-AC-4", "StR-001-VC-2")
 def test_every_verb_this_module_uses_exists_in_the_iso_vocabulary():
     import spec_artifacts_iso
 

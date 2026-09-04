@@ -54,7 +54,7 @@ assert what the requirement says.
 
 | Stakeholder Req | Trace to US/FR | Test/Validation | Coverage Status |
 |---|---|---|---|
-| StR-001 | US-001, FR-001..FR-006 | TC-003, TC-048, TC-063 | ✅ |
+| StR-001 | US-001, FR-001..FR-006 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
 
 ### User Story Coverage
 
@@ -66,10 +66,10 @@ assert what the requirement says.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| FR-001 | FR-001-AC-1..7, FR-001-CON-1..2 | TC-001..TC-007, TC-010, TC-011 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
+| FR-001 | FR-001-AC-1..7, FR-001-CON-1..2 | TC-001..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..9, FR-002-CON-1..5 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..7, FR-003-CON-1..3 | TC-026..TC-034 | ✅ AC-6's naming half is an expected failure |
-| FR-004 | FR-004-AC-1..11, FR-004-CON-1..3 | TC-035..TC-047 | ✅ |
+| FR-004 | FR-004-AC-1..12, FR-004-CON-1..3 | TC-035..TC-047, TC-071 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
 
@@ -83,7 +83,7 @@ assert what the requirement says.
 
 | Integration Test | Success Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| IT-001 | IT-001-SC-01..06 | TC-070 | ✅ |
+| IT-001 | IT-001-SC-01..06 | TC-070 | 🚧 the row is backed by a tagged test; the CLI it drives is broken in this environment |
 
 ## Test Case Summary
 
@@ -96,8 +96,8 @@ assert what the requirement says.
 | TC-005 | Each object type ships a skeleton supplying every heading its contract requires | Unit | P0 | FR-001-AC-4 | ✅ |
 | TC-006 | The pack exposes `MANIFEST_PATH` / `PACK_ROOT` as importable resource data | Unit | P1 | FR-001-AC-4 | ✅ |
 | TC-007 | Every `allowed_links` verb exists in the iso edge vocabulary as a forward key or a declared inverse label | Unit | P0 | FR-001-AC-7, FR-001-CON-2 | ✅ |
-| TC-010 | Bidirectional hazard coverage is manifest data: two independently tunable relations, `direction: incoming`, `arises_from` acyclic | Unit | P0 | FR-001-AC-4 | ✅ |
-| TC-011 | Every relation names an object type this module declares and a verb the iso vocabulary carries | Unit | P0 | FR-001-AC-4 | ✅ |
+| TC-010 | Bidirectional hazard coverage is manifest data: two independently tunable relations, `direction: incoming`, `arises_from` acyclic | Unit | P0 | FR-003-AC-5 | ✅ |
+| TC-011 | Every relation names an object type this module declares and a verb the iso vocabulary carries | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-012 | The emitted set equals the fifteen models `toolchain.json` lists, with compiler and emitter 1.15.0 recorded | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name, with the version read from the manifest | Unit | P0 | FR-002-AC-2 | ✅ |
 | TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.1.0 | Unit | P0 | FR-002-AC-3 | ✅ |
@@ -132,7 +132,7 @@ assert what the requirement says.
 | TC-043 | A hazard record with no `relations` validates, and one with an `arises_from` relation validates | Integration | P1 | FR-004-AC-9 | ✅ |
 | TC-044 | No module schema redeclares a semantic-core model; every grammar item is a `$ref` to semantic-core | Unit | P1 | FR-004-AC-10, FR-004-CON-1 | ✅ |
 | TC-045 | `detection: none` and `detection: not_assessed` are both accepted and are distinct values | Integration | P0 | FR-004-AC-11 | ✅ |
-| TC-046 | A record that validates carries no status, no score and no acceptance the document did not state | Integration | P0 | FR-004-CON-2 | ✅ |
+| TC-046 | A record that validates carries no status, no score and no acceptance the document did not state | Integration | P0 | FR-004-CON-2, FR-001-CON-1 | ✅ |
 | TC-047 | No schema constraint was relaxed to make a fixture or skeleton pass | Static | P1 | FR-004-CON-3 | ✅ |
 | TC-048 | All four skeletons validate with no error | Integration | P0 | FR-005-AC-1 | ✅ |
 | TC-049 | Table and `sysml` skeletons extract to identical normalized fields with the recorded forms | Integration | P0 | FR-005-AC-2, FR-005-CON-2 | ✅ |
@@ -156,7 +156,8 @@ assert what the requirement says.
 | TC-067 | A legacy prose `## Properties` block warns rather than errors under `legacy_forms: warning` | Integration | P1 | NFR-001-AC-3 | ✅ the warning is emitted; the "not an error" half is an expected failure on quire-rs#391 |
 | TC-068 | The `traceability` model is unchanged from 0.2.0 | Unit | P0 | NFR-001-AC-4 | ✅ |
 | TC-069 | The widened lint allow-lists still admit every value they admitted at 0.2.0 | Unit | P1 | NFR-001-AC-5 | ✅ |
-| TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01..IT-001-SC-06, FR-003-AC-5 | ✅ |
+| TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01..IT-001-SC-06 | 🚧 the installed quoin CLI cannot read its own packaged schemas |
+| TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 
 ## Test Environment
 
@@ -186,17 +187,25 @@ mapping that would populate them is `agent-ix/quoin#335`.
 Every acceptance criterion, constraint, and metric above has a row backed by a
 tagged test, with three recorded exceptions:
 
-1. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
+1. **TC-070** is backed by a tagged, real test that drives the Quoin CLI, and
+   that test does not pass on the machine this branch was written on: the
+   globally installed `quoin` is a symlink into a live worktree whose `dist/`
+   is mid-build and missing `dist/schemas/module-manifest.schema.json`, so
+   `quoin module install` exits non-zero before reaching anything this module
+   owns. The row is `🚧` rather than `✅`, the test lives in
+   `tests_integration/` so `make test` does not report a green suite over a
+   broken CLI, and `make test-integrations` runs it once the CLI is whole.
+2. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
    FR-001's own body decided against declaring a role
    (*"the `safety-relevant` capability tag this module first reached for turned
    out to be unnecessary"*), and neither the 0.2.0 tests nor TC-002 check for
    one. The criterion and the requirement that owns it disagree; the row stays
    `🚧` and `agent-ix/spec-objects-safety#3` carries the correction, because
    FR-001 belongs to the ticket that authored it rather than to this one.
-2. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
+3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.
-3. **NFR-001-AC-3** (TC-067) — the legacy-form warning is emitted; the half that
+4. **NFR-001-AC-3** (TC-067) — the legacy-form warning is emitted; the half that
    requires it not to be accompanied by an error is an expected failure while
    `agent-ix/quire-rs#391` is open.
 

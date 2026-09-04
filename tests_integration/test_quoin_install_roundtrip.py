@@ -52,15 +52,8 @@ def quoin(*args: str, config_root) -> subprocess.CompletedProcess:
 
 
 @pytest.mark.integration
-@pytest.mark.trace(
-    "TC-070",
-    "IT-001-SC-01",
-    "IT-001-SC-02",
-    "IT-001-SC-03",
-    "IT-001-SC-04",
-    "IT-001-SC-05",
-    "IT-001-SC-06",
-)
+@pytest.mark.trace("TC-070", "IT-001-SC-01", "IT-001-SC-02", "IT-001-SC-03")
+@pytest.mark.trace("IT-001-SC-04", "IT-001-SC-05", "IT-001-SC-06")
 def test_quoin_installs_the_module_and_quire_loads_it_from_the_catalog(
     quire_engine, tmp_path
 ):

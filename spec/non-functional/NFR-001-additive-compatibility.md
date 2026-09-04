@@ -18,7 +18,9 @@ valid at 0.3.0 with no author action.
 ## Scope
 
 - Applies to: `spec_objects_safety/manifest.yaml` `body_extraction` locators,
-  the `traceability` model, and documents authored against version 0.2.0.
+  the `traceability` model, the three advisory lint rules `hazard-severity`,
+  `hazard-likelihood` and `failure-mode-detection`, and documents authored
+  against version 0.2.0.
 - Operational context: advisory-only adoption ahead of promotion; no corpus
   repository is edited.
 
@@ -35,10 +37,11 @@ a neighbour, not just this module.
 
 | Metric | Target | Threshold | Method |
 |--------|--------|-----------|--------|
-| 0.2.0 locators changed | 0 | 0 | Baseline diff against `tests/fixtures/baseline-0.2.0` |
-| Added locators that are `required: true` | 0 | 0 | Manifest inspection in test |
-| 0.2.0 skeletons failing validation under 0.3.0 | 0 | 0 | Validation of the checked-in 0.2.0 skeletons |
-| `traceability` facts changed | 0 | 0 | Structural comparison against the 0.2.0 model |
+| 0.2.0 locators changed | 0 | 0 | unit-testing |
+| Added locators that are `required: true` | 0 | 0 | unit-testing |
+| 0.2.0 skeletons failing validation under 0.3.0 | 0 | 0 | integration-testing |
+| `traceability` facts changed | 0 | 0 | unit-testing |
+| 0.2.0 lint values no longer admitted | 0 | 0 | unit-testing |
 
 ## Verification
 
@@ -56,7 +59,7 @@ one validates each 0.2.0 skeleton under the 0.3.0 module, and one compares the
 | NFR-001-AC-2 | Every checked-in 0.2.0 skeleton validates under 0.3.0 with zero errors. | Test |
 | NFR-001-AC-3 | A `## Properties` section holding the legacy prose form yields a warning under `legacy_forms: warning`, not an error. | Test |
 | NFR-001-AC-4 | The `traceability` model is unchanged: two relations, `edges: [mitigates]`, `direction: incoming`, distinct `check` keys, `acyclic_edges: [arises_from]`. | Test |
-| NFR-001-AC-5 | Widening the three advisory lint allow-lists refuses no value they admitted at 0.2.0. | Test |
+| NFR-001-AC-5 | The three advisory lint allow-lists `hazard-severity`, `hazard-likelihood` and `failure-mode-detection` still admit every value they admitted at 0.2.0, and each now also admits `unknown`, `not_assessed` and `not_applicable`. | Test |
 
 ## Dependencies
 

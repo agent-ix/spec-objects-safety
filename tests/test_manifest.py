@@ -120,7 +120,7 @@ def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
     )
 
 
-@pytest.mark.trace("TC-003", "FR-001-AC-2", "FR-001-AC-3")
+@pytest.mark.trace("TC-003", "FR-001-AC-2", "FR-001-AC-3", "StR-001-VC-1")
 def test_hazard_and_failure_mode_are_separate_types() -> None:
     """A hazard is not a variety of failure mode.
 

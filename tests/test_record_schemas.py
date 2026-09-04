@@ -286,7 +286,7 @@ def test_undetectable_and_unassessed_detection_are_different_records(schema_regi
     assert "none" not in schema_of("EpistemicState")["enum"]
 
 
-@pytest.mark.trace("TC-046", "FR-004-CON-2")
+@pytest.mark.trace("TC-046", "FR-004-CON-2", "FR-001-CON-1")
 def test_schema_validity_is_not_a_safety_claim(schema_registry, hazard_record):
     """A record that validates says nothing the document did not say.
 
@@ -345,3 +345,38 @@ def test_no_declared_constraint_was_relaxed_to_make_a_fixture_pass():
     assert schema_of("Hazard")["properties"]["fields"]["minItems"] == 1
     assert schema_of("FailureMode")["properties"]["fields"]["minItems"] == 1
     assert MODEL_OF == {"hazard": "Hazard", "failure_mode": "FailureMode"}
+
+
+@pytest.mark.trace("TC-071", "FR-004-AC-12")
+def test_each_scale_is_closed_and_each_lint_list_matches_its_scale():
+    """The document form can say everything the schema admits.
+
+    A scale whose emitted members drift from the stated set breaks the epistemic
+    claim silently, and an advisory allow-list narrower than its scale pushes an
+    author towards a value they did not mean. Both are asserted against the
+    member lists the requirement states, not against whatever the source
+    happens to emit.
+    """
+    from tests.conftest import load_manifest
+
+    for model, members in SCALES.items():
+        assert schema_of(model)["enum"] == members, model
+    assert schema_of("EpistemicState")["enum"] == EPISTEMIC
+    assert schema_of("LifecycleStatus")["enum"] == [
+        "identified",
+        "analysed",
+        "mitigated",
+        "accepted",
+        "transferred",
+        "closed",
+    ]
+
+    scale_of_rule = {
+        "hazard-severity": "Severity",
+        "hazard-likelihood": "Likelihood",
+        "failure-mode-detection": "Detection",
+    }
+    rules = {rule["id"]: rule for rule in load_manifest()["lint_rules"]}
+    assert set(rules) == set(scale_of_rule)
+    for rule_id, model in scale_of_rule.items():
+        assert rules[rule_id]["allowed"] == SCALES[model] + EPISTEMIC, rule_id
