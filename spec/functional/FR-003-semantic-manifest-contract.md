@@ -69,7 +69,7 @@ them, while every existing extraction locator keeps its meaning.
 | FR-003-AC-3 | Every 0.2.0 locator, compared against the checked-in 0.2.0 baseline, is present unchanged; every added locator is `required: false`. | Test |
 | FR-003-AC-4 | `quire.Registry.load_from` lists both archetypes and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
 | FR-003-AC-5 | The `traceability` block is byte-for-byte the 0.2.0 model: two relations, `edges: [mitigates]`, `direction: incoming`, distinct `check` keys, `acyclic_edges: [arises_from]`. | Test |
-| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo` is refused by Quire's loader naming `foo`; a copy whose digest is altered is refused naming the path. | Test |
+| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader, as is a copy whose `data_schema` digest is altered; an unmutated control loads in each case. The refusals are claimed; the half requiring the diagnostic to *name* `foo` or the path is an explicit expected failure while `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open. | Test |
 
 ## Dependencies
 

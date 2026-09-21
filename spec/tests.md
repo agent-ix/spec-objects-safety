@@ -117,7 +117,7 @@ assert what the requirement says.
 | TC-029 | Every locator added after 0.2.0 is `required: false` | Unit | P1 | FR-003-AC-3, FR-003-CON-2 | ✅ |
 | TC-030 | Quire's registry loader lists both archetypes and `validate_document` reports no `semantic.*` load failure on any skeleton | Integration | P0 | FR-003-AC-4 | ✅ |
 | TC-031 | The `traceability` model is fact-for-fact the 0.2.0 model | Unit | P0 | FR-003-AC-5 | ✅ |
-| TC-032 | An unknown `semantic` key and an altered digest are each refused by the loader; the refusal naming the key or path is an expected failure | Integration | P1 | FR-003-AC-6 | ✅ refusal verified; the naming half is an expected failure on quire-rs#221 and quire-rs#394 |
+| TC-032 | An unknown `semantic` key, a non-`<org>/<repo>` `package`, an unregistered `targets` value and an altered digest are each refused by the loader against a loading control; the refusal naming the key or path is a strict expected failure | Unit | P0 | FR-003-AC-6 | ✅ |
 | TC-035 | `Hazard.json` and `FailureMode.json` differ in a required key, a forbidden key or an item rule; neither is `type: object` only | Unit | P0 | FR-004-AC-1 | ✅ |
 | TC-036 | Hazard: an identity record validates; the identity flag removed fails; no `fields` fails | Integration | P0 | FR-004-AC-2 | ✅ |
 | TC-037 | Failure mode: an identity record validates; `assessment`, `context` or `operations` each fail | Integration | P0 | FR-004-AC-3 | ✅ |

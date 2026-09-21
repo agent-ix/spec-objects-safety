@@ -1,10 +1,14 @@
-"""Manifest shape + the FR 035 module-manifest gate.
+"""Manifest shape, and the structural assertions over it.
 
-The gate ships **with** this module rather than being retrofitted. Five sibling
-`spec-objects-*` repositories and `spec-artifacts-app` do not run it, so a new
-key in any of them ships unvalidated — and in `spec-objects-security` that let
-two lexicon definitions be silently truncated by unquoted commas inside YAML
-flow mappings for who knows how long (agent-ix/spec-objects-security#6, #8).
+Conformance to the FR-035 module-manifest schema is not asserted here: that
+schema is filament-core-service's, and this module holds no copy of it
+(PLAT-902). It is observed where it is applied — Quire's registry loader
+(FR-003-AC-4, FR-003-AC-6), `quoin module install` (IT-001), and activation.
+
+What is asserted here is the module against its own declarations, including
+TC-004's lexicon check. That one exists because unquoted commas inside YAML
+flow mappings silently truncated two definitions in `spec-objects-security`
+(agent-ix/spec-objects-security#6, #8), and no schema would have caught it.
 """
 
 from __future__ import annotations

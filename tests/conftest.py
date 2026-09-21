@@ -1,6 +1,6 @@
 """Shared fixtures for the module's test suite.
 
-Three policies are enforced here and nowhere else:
+Two policies are enforced here and nowhere else:
 
 * **The engine is a hard dependency of the semantic rows.** ``quire`` is not
   declared in ``pyproject.toml`` — no index a repository may commit against
@@ -12,11 +12,6 @@ Three policies are enforced here and nowhere else:
 * **The emitted schemas are read from the committed tree**, and every ``$ref``
   to semantic-core resolves against the package the toolchain installs, so a
   record test validates against the real bytes.
-* **The FR 035 gate never skips either.** The module-manifest schema that knows
-  the ``semantic`` block landed on ``spec-artifacts-iso`` ``main`` at CR-012 and
-  no release carries it (``agent-ix/spec-artifacts-iso#36``), so the gate runs
-  against the pinned revision copy under ``tests/fixtures/`` and TC 034 proves
-  that copy differs from the installed release only at the CR-012 pointers.
 """
 
 from __future__ import annotations

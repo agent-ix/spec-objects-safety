@@ -134,9 +134,11 @@ sees the contract that was authored instead of guessing at it.
 - Publishing a `spec-artifacts-iso` release whose FR-035 module-manifest schema
   carries the `semantic` block and the `data_schema` reference form: the schema
   landed on `main` at `6686f11` (CR-012) and no tag carries it, `v0.18.0`
-  included; `agent-ix/spec-artifacts-iso#36` is the blocking issue. FR-003-AC-7 therefore runs the gate against the pinned CR-012
-  revision and proves it differs from the installed release only at the CR-012
-  pointers; the gate still never skips.
+  included; `agent-ix/spec-artifacts-iso#36` is the blocking issue. This module
+  states no criterion over that schema as a document and holds no copy of it
+  (PLAT-902): conformance to it is observed at Quire's registry loader
+  (FR-003-AC-4, FR-003-AC-6), at `quoin module install` (IT-001), and at
+  activation.
 - Resolving a reference-form `data_schema` into a stored snapshot at
   activation: `agent-ix/filament-core-service#23`. Until it lands the service
   stores the reference verbatim.
@@ -198,8 +200,10 @@ every criterion's test case.
 - STPA — systems-theoretic process analysis, the reason a hazard is not
   derivable from a set of failure modes.
 - `spec-artifacts-iso` FR-004 — the edge-type and role vocabulary the
-  safety-chain verbs join; and its `module-manifest.schema.json` (FR-035,
-  CR-012), the schema this manifest conforms to.
+  safety-chain verbs join, read from its own manifest by TC-007, TC-011 and
+  TC-063. Its `module-manifest.schema.json` is a copy of a schema
+  `filament-core-service` owns under FR-035; this manifest does not conform to
+  that copy and is not judged against it.
 - `agent-ix/filament-core-data` FR-031..FR-034 (semantic-core grammar, scalars,
   JSON Schema projection, lowering) and ADR-0005 (TypeSpec source).
 - `agent-ix/quoin` FR-070..FR-075 (semantic-module contract, mappings,
