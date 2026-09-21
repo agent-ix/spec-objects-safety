@@ -136,9 +136,11 @@ sees the contract that was authored instead of guessing at it.
   landed on `main` at `6686f11` (CR-012) and no tag carries it, `v0.18.0`
   included; `agent-ix/spec-artifacts-iso#36` is the blocking issue. This module
   states no criterion over that schema as a document and holds no copy of it
-  (PLAT-902): conformance to it is observed at Quire's registry loader
-  (FR-003-AC-4, FR-003-AC-6), at `quoin module install` (IT-001), and at
-  activation.
+  (PLAT-902). What is executed here is what the consumers accept: Quire's
+  registry loader (FR-003-AC-4, FR-003-AC-6) and the `quoin module install`
+  roundtrip (IT-001, TC-070). Conformance to the schema itself is settled where
+  it is applied, at activation, which this repository does not exercise — no
+  test here stands in for it.
 - Resolving a reference-form `data_schema` into a stored snapshot at
   activation: `agent-ix/filament-core-service#23`. Until it lands the service
   stores the reference verbatim.
