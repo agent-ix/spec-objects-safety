@@ -174,6 +174,36 @@ def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
 
 
 @pytest.mark.trace("TC-032", "FR-003-AC-6")
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("bad-package", lambda block: block.update(package="ix://agent-ix/x")),
+        ("unregistered-target", lambda block: block.update(targets=["go"])),
+    ],
+)
+def test_a_semantic_value_the_contract_forbids_is_refused_at_load(
+    quire_engine, tmp_path, label, mutate
+):
+    """FR-003-AC-6 against the engine that reads the manifest.
+
+    The module-manifest schema is applied by quire at load, so a `semantic`
+    value the contract forbids costs the module its object types. The oracle is
+    the consumer, never a copy of the schema held here (PLAT-902).
+    """
+    control = module_copy(tmp_path / f"{label}-control")
+    assert quire_engine.Registry.load_from(
+        [str(control)]
+    ).archetype_names(), "the unmutated copy does not load; the control is broken"
+
+    def apply(data):
+        mutate(data["semantic"])
+
+    mutant = module_copy(tmp_path / label, apply)
+    loaded = quire_engine.Registry.load_from([str(mutant)]).archetype_names()
+    assert not loaded, f"{label} loaded anyway: {sorted(loaded)}"
+
+
+@pytest.mark.trace("TC-032", "FR-003-AC-6")
 @pytest.mark.xfail(
     strict=True,
     reason=(

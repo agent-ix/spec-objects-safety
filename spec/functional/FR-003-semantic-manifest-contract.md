@@ -25,14 +25,12 @@ them, while every existing extraction locator keeps its meaning.
 ## Inputs
 
 - The emitted schemas and digests of [FR-002](./FR-002-emitted-json-schemas.md).
-- The module-manifest schema, **as of `agent-ix/spec-artifacts-iso` CR-012**
-  (commit `6686f11`), which adds the optional top-level `semantic` block and the
-  `data_schema` reference form. The requirement it implements is
-  `filament-core-service` FR-035; `spec-artifacts-iso` ships the schema file and
-  packages it as importable data, and is where a change to it lands. No released `spec-artifacts-iso` distribution
-  carries it: `v0.18.0` is the newest tag and its schema predates CR-012, which
-  is why FR-003-AC-7 pins the gate to a revision rather than to a release.
-  `agent-ix/spec-artifacts-iso#36` tracks the release that retires the pin.
+- The module-manifest schema of `filament-core-service` FR-035, which defines
+  the optional top-level `semantic` block and the `data_schema` reference form.
+  It is applied by the consumers that read this manifest — Quire's registry
+  loader (FR-003-AC-4, AC-6) and `quoin module install` (IT-001) — and by the
+  service at activation. This module holds no copy of it and reads none from a
+  package that redistributes one.
 
 ## Outputs
 
@@ -61,7 +59,6 @@ them, while every existing extraction locator keeps its meaning.
 |----|------------|------|------------|
 | FR-003-CON-1 | The `semantic` block SHALL contain no key outside the admitted list. Quire's loader refusal of an unknown key is verified here (FR-003-AC-6); Quoin's refusal is the neighbour's own obligation (quoin FR-070) and is evidenced by the clean install of IT-001. | Compatibility | Test |
 | FR-003-CON-2 | The manifest SHALL mark every locator added after 0.2.0 `required: false`. | Compatibility | Test |
-| FR-003-CON-3 | The suite SHALL never skip the FR-035 gate. While the installed `spec-artifacts-iso` schema predates CR-012 the gate runs against the pinned revision copy, and fails when that copy differs from the installed schema anywhere outside the CR-012 paths. | Integrity | Test |
 
 ## Acceptance Criteria
 
@@ -72,8 +69,7 @@ them, while every existing extraction locator keeps its meaning.
 | FR-003-AC-3 | Every 0.2.0 locator, compared against the checked-in 0.2.0 baseline, is present unchanged; every added locator is `required: false`. | Test |
 | FR-003-AC-4 | `quire.Registry.load_from` lists both archetypes and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
 | FR-003-AC-5 | The `traceability` block is byte-for-byte the 0.2.0 model: two relations, `edges: [mitigates]`, `direction: incoming`, distinct `check` keys, `acyclic_edges: [arises_from]`. | Test |
-| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo` is refused by Quire's loader naming `foo`; a copy whose digest is altered is refused naming the path. | Test |
-| FR-003-AC-7 | The manifest validates against the FR-035 module-manifest schema at CR-012, and that schema differs from the installed `spec-artifacts-iso` release only at the JSON pointers CR-012 introduces. | Test |
+| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader, as is a copy whose `data_schema` digest is altered; an unmutated control loads in each case. The refusals are claimed; the half requiring the diagnostic to *name* `foo` or the path is an explicit expected failure while `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open. | Test |
 
 ## Dependencies
 

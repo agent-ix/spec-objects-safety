@@ -20,9 +20,7 @@ python = ">=3.13,<3.14"
 
 
 [tool.poetry.group.dev.dependencies]
-# FR-035 module-manifest gate, shipped WITH the module rather than retrofitted.
-# The schema is package data on spec-artifacts-iso — imported, not copied.
-spec-artifacts-iso = {version = "^0.18.0", source = "internal-pypi"}
+# Used by the emitted-schema and record tests, not for any module-manifest gate.
 jsonschema = "^4.25.0"
 black = "^26.1.0"
 poetry-dynamic-versioning = "^1.9.1"
@@ -34,6 +32,11 @@ pytest-cov = "^7.0.0"
 pytest-json-report = "^1.5.0"
 ruff = "^0.14.13"
 pytest-results = { version = "^0.2.0", python = ">=3.12" }
+# spec-artifacts-iso owns the shared edge vocabulary (its FR-004). TC-007 and
+# TC-011 read `edge_types` from its installed manifest, so a verb this module
+# reaches for that iso has not declared fails here. Its module-manifest schema
+# is not read: that schema belongs to filament-core-service (PLAT-902).
+spec-artifacts-iso = {version = "^0.18.0", source = "internal-pypi"}
 
 [tool.poetry.scripts]
 build-tools = "scripts.build_tools:main"
