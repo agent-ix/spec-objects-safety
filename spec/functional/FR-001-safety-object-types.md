@@ -81,7 +81,6 @@ gap visible — and the gap is the finding.
 | FR-001-AC-2 | `hazard` requires a `Condition` section body and an `Assessment` table with columns exactly `Severity \| Likelihood \| Rationale`; `Mitigation` is optional. | Test (TC-003) |
 | FR-001-AC-3 | `failure_mode` requires a `Description` section body and an `Analysis` table with columns exactly `Effect \| Cause \| Detection`. | Test (TC-003) |
 | FR-001-AC-4 | Each object type ships an authoring skeleton whose sections supply every heading its contract requires. | Test (TC-005, TC-006) |
-| FR-001-AC-5 | The manifest validates against the FR-035 module-manifest schema, with no skip and no escape hatch — the gate ships with the module rather than being retrofitted. | Test (TC-001) |
 | FR-001-AC-6 | Every lexicon entry is exactly `{definition: <non-empty string>}`, asserted structurally so an unquoted comma inside a YAML flow mapping cannot silently truncate one. | Test (TC-004) |
 | FR-001-AC-7 | Every `allowed_links` verb is present in the iso edge vocabulary — as a forward key or as a declared inverse label — so a future edit reaching for a new verb fails here rather than minting one locally. | Test (TC-007) |
 

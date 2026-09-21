@@ -66,9 +66,9 @@ assert what the requirement says.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| FR-001 | FR-001-AC-1..7, FR-001-CON-1..2 | TC-001..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
+| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..9, FR-002-CON-1..5 | TC-012..TC-025 | ✅ |
-| FR-003 | FR-003-AC-1..7, FR-003-CON-1..3 | TC-026..TC-034 | ✅ AC-6's naming half is an expected failure |
+| FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
@@ -89,7 +89,6 @@ assert what the requirement says.
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
-| TC-001 | The manifest validates against the FR-035 module-manifest schema, imported rather than copied — no skip and no escape hatch | Unit | P0 | FR-001-AC-5 | ✅ |
 | TC-002 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and `allowed_links` | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-003 | `hazard` requires Condition plus an Assessment table; `failure_mode` requires Description plus an Analysis table, and the two shapes differ | Unit | P0 | FR-001-AC-2, FR-001-AC-3 | ✅ |
 | TC-004 | Every lexicon entry is exactly `{definition: <text>}`, asserted structurally | Unit | P0 | FR-001-AC-6 | ✅ |
@@ -119,8 +118,6 @@ assert what the requirement says.
 | TC-030 | Quire's registry loader lists both archetypes and `validate_document` reports no `semantic.*` load failure on any skeleton | Integration | P0 | FR-003-AC-4 | ✅ |
 | TC-031 | The `traceability` model is fact-for-fact the 0.2.0 model | Unit | P0 | FR-003-AC-5 | ✅ |
 | TC-032 | An unknown `semantic` key and an altered digest are each refused by the loader; the refusal naming the key or path is an expected failure | Integration | P1 | FR-003-AC-6 | ✅ refusal verified; the naming half is an expected failure on quire-rs#221 and quire-rs#394 |
-| TC-033 | The manifest validates against the FR-035 module-manifest schema at CR-012 | Unit | P0 | FR-003-AC-7 | ✅ |
-| TC-034 | The CR-012 schema differs from the installed `spec-artifacts-iso` release only at the pointers CR-012 introduces, and the gate never skips | Unit | P0 | FR-003-AC-7, FR-003-CON-3 | ✅ |
 | TC-035 | `Hazard.json` and `FailureMode.json` differ in a required key, a forbidden key or an item rule; neither is `type: object` only | Unit | P0 | FR-004-AC-1 | ✅ |
 | TC-036 | Hazard: an identity record validates; the identity flag removed fails; no `fields` fails | Integration | P0 | FR-004-AC-2 | ✅ |
 | TC-037 | Failure mode: an identity record validates; `assessment`, `context` or `operations` each fail | Integration | P0 | FR-004-AC-3 | ✅ |
@@ -170,12 +167,13 @@ index this repository may commit a dependency against (`internal-pypi` serves
 can be reported green without the engine under test — TC-057 is the test of
 that policy.
 
-The FR-035 gate (TC-033, TC-034) runs against the module-manifest schema at
-`agent-ix/spec-artifacts-iso` CR-012 (`6686f11`), because no released
-distribution carries it (`agent-ix/spec-artifacts-iso#36`). TC-034 proves the pinned copy differs from the
-installed release only at the pointers CR-012 introduces, so the copy cannot
-drift into a weaker gate; when a release carries the `semantic` key, TC-034
-fails and tells the maintainer to delete the pinned copy.
+Conformance to the FR-035 module-manifest schema is observed where that schema
+is applied: Quire's registry loader (TC-030, TC-032) and `quoin module install`
+(IT-001), each of which carries it, and `filament-core-service` at activation.
+This repository holds no copy of it to judge the manifest against (PLAT-902).
+`spec-artifacts-iso` remains a dev dependency for a different reason: TC-007 and
+TC-011 read the shared `edge_types` vocabulary from its own manifest, which it
+owns under its FR-004.
 
 Rows over the record keys the extractor does not populate (`assessment`,
 `context`, `analysis`, `status`, `provenance`, `evidence`) are verified against

@@ -39,8 +39,6 @@ TYPESPEC_SOURCE = REPO_ROOT / "typespec" / "main.tsp"
 FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 NEGATIVE_DIR = FIXTURES_DIR / "negative"
 BASELINE_DIR = FIXTURES_DIR / "baseline-0.2.0"
-PINNED_MANIFEST_SCHEMA = FIXTURES_DIR / "module-manifest.schema.json"
-
 SEMANTIC_CORE_DIR = (
     REPO_ROOT
     / "node_modules"
@@ -50,29 +48,6 @@ SEMANTIC_CORE_DIR = (
     / "json-schema"
 )
 SEMANTIC_CORE_BASE = "https://schemas.agent-ix.org/semantic-core/0.1.0/"
-
-# The revision of `spec-artifacts-iso` whose module-manifest schema carries the
-# CR-012 `semantic` block and `data_schema` reference form.
-PINNED_SCHEMA_REVISION = "6686f112f2c38602c9d39c88e8134a945c34bbd6"
-
-# The JSON pointer prefixes the pinned copy is allowed to differ at. TC 034
-# asserts the pinned copy and the installed release differ nowhere else, so the
-# copy cannot drift into a weaker gate while `agent-ix/spec-artifacts-iso#36` is
-# open. Each entry names a change that landed on `spec-artifacts-iso` main after
-# the newest tag:
-#   * `/description` and `/properties/semantic` — CR-012's semantic block.
-#   * the two `data_schema` pointers — CR-012's `{schema, digest}` reference
-#     form, the shape this manifest uses.
-#   * `source_exclude` — an unrelated traceability addition that rode the same
-#     unreleased range; listed because it is in the copy, not because this
-#     module uses it.
-PINNED_SCHEMA_ALLOWED_DIFFS = (
-    "/description",
-    "/properties/semantic",
-    "/$defs/ObjectTypeEntry/properties/data_schema",
-    "/$defs/ArtifactTypeEntry/properties/data_schema",
-    "/$defs/TraceabilityModel/properties/source_exclude",
-)
 
 QUIRE_MISSING = (
     "the Quire wheel exposing `extract_semantic` is not installed in this "

@@ -9,32 +9,16 @@ flow mappings for who knows how long (agent-ix/spec-objects-security#6, #8).
 
 from __future__ import annotations
 
-import json
 import pathlib
 
 import pytest
 import yaml
-from jsonschema import Draft202012Validator
-from spec_artifacts_iso import module_manifest_schema
 
 from tests.conftest import (
     MANIFEST_PATH,
     OBJECT_TYPES,
-    PINNED_MANIFEST_SCHEMA,
-    PINNED_SCHEMA_ALLOWED_DIFFS,
     SKELETONS_DIR,
 )
-
-
-def _pinned_manifest_schema() -> dict:
-    """The FR 035 schema at the revision that defines the `semantic` block.
-
-    NOT an escape hatch and NOT a skip: the gate always runs. It runs against a
-    pinned revision because no released `spec-artifacts-iso` carries CR-012
-    (`agent-ix/spec-artifacts-iso#36`), and TC 034 proves this copy differs from
-    the installed release only where CR-012 changed it.
-    """
-    return json.loads(PINNED_MANIFEST_SCHEMA.read_text())
 
 
 def _manifest() -> dict:
@@ -48,24 +32,6 @@ def test_manifest_loads() -> None:
     assert manifest["name"] == "spec-objects-safety"
     assert manifest["version"]
     assert isinstance(manifest.get("object_types", []), list)
-
-
-@pytest.mark.trace("TC-001", "TC-033", "FR-001-AC-5", "FR-003-AC-7")
-def test_manifest_validates_against_fr035_schema() -> None:
-    """The manifest validates against the FR 035 module-manifest schema.
-
-    No skip and no escape hatch. Both were deleted upstream for cause: a
-    `pytest.skip` when the schema could not be found reported this gate green
-    while running nothing (agent-ix/spec-artifacts-iso#15). The schema is
-    package data on `spec-artifacts-iso`, imported rather than copied, so there
-    is one source and no branch on which this can quietly not run.
-    """
-    errors = list(
-        Draft202012Validator(_pinned_manifest_schema()).iter_errors(_manifest())
-    )
-    assert not errors, [
-        f"{'.'.join(str(p) for p in e.absolute_path)}: {e.message}" for e in errors
-    ]
 
 
 @pytest.mark.trace("TC-002", "FR-001-AC-1")
@@ -282,58 +248,3 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
             assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
     for verb in manifest["traceability"]["acyclic_edges"]:
         assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
-
-
-@pytest.mark.trace("TC-034", "FR-003-AC-7", "FR-003-CON-3")
-def test_the_pinned_fr035_schema_differs_only_where_cr012_changed_it() -> None:
-    """The pinned copy is the released schema plus CR-012, and nothing else.
-
-    The gate this module ships never skips, so when the packaged schema cannot
-    express the manifest under test the gate runs against a pinned revision
-    instead. That is only honest while the pinned copy is provably the released
-    schema plus the CR-012 additions: any other difference would mean the
-    module is judged against a schema of its own making.
-
-    When a `spec-artifacts-iso` release finally carries the `semantic` key
-    (agent-ix/spec-artifacts-iso#36) this test fails on the first assertion, and
-    the fix is to delete the pinned copy and go back to the packaged schema.
-    """
-    installed = module_manifest_schema()
-    pinned = _pinned_manifest_schema()
-
-    assert "semantic" not in installed["properties"], (
-        "the installed spec-artifacts-iso now carries the `semantic` key: delete "
-        "tests/fixtures/module-manifest.schema.json and validate against "
-        "module_manifest_schema() (agent-ix/spec-artifacts-iso#36)"
-    )
-
-    def differing(a, b, path=""):
-        if type(a) is not type(b):
-            return [path]
-        if isinstance(a, dict):
-            out = []
-            for key in sorted(set(a) | set(b)):
-                child = f"{path}/{key}"
-                if key not in a or key not in b:
-                    out.append(child)
-                else:
-                    out += differing(a[key], b[key], child)
-            return out
-        if isinstance(a, list):
-            if len(a) != len(b):
-                return [path]
-            out = []
-            for index, (left, right) in enumerate(zip(a, b)):
-                out += differing(left, right, f"{path}/{index}")
-            return out
-        return [] if a == b else [path]
-
-    unexpected = [
-        pointer
-        for pointer in differing(installed, pinned)
-        if not any(pointer.startswith(prefix) for prefix in PINNED_SCHEMA_ALLOWED_DIFFS)
-    ]
-    assert not unexpected, (
-        "the pinned FR 035 copy differs from the installed release outside the "
-        f"CR-012 pointers: {unexpected}"
-    )
