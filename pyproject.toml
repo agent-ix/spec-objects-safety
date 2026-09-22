@@ -5,7 +5,7 @@ license = "AGPL-3.0-or-later"
 
 [tool.poetry]
 name = "spec_objects_safety"
-version = "0.1.0"  # Placeholder, dynamically replaced
+version = "0.4.0.post7.dev0+dfd133d"  # Placeholder, dynamically replaced
 description = "Filament Module: safety ObjectTypes (hazard, failure_mode) — IEC 61508 / ISO 26262 / FMEA"
 authors = ["Agent IX <agents@agent-ix.dev>"]
 packages = [{ include = "spec_objects_safety" }]
@@ -168,7 +168,7 @@ url = "https://us-west1-python.pkg.dev/agent-ix/internal-pypi/simple/"
 priority = "supplemental"
 
 [tool.poetry-dynamic-versioning]
-enable = true
+enable = false
 style = "pep440"
 
 [build-system]
