@@ -18,7 +18,6 @@ from tests.conftest import (
     load_manifest,
     locators,
     object_type,
-    semantic_core_engine_xfail,
 )
 
 LEGACY_SKELETONS = ("hazard.md", "failure_mode.md")
@@ -37,7 +36,6 @@ def test_zero_020_locators_changed():
 
 
 @pytest.mark.trace("TC-066", "NFR-001-AC-2")
-@semantic_core_engine_xfail()
 def test_every_020_skeleton_still_validates_under_030(quire_engine):
     """The 0.2.0 authoring form, kept and re-run.
 
@@ -57,7 +55,6 @@ def test_every_020_skeleton_still_validates_under_030(quire_engine):
 
 
 @pytest.mark.trace("TC-067", "NFR-001-AC-3")
-@semantic_core_engine_xfail()
 def test_a_legacy_prose_properties_block_is_reported_as_a_legacy_form(quire_engine):
     """The warning half of the criterion, which does hold today."""
     path = BASELINE_DIR / "legacy-properties-prose.md"

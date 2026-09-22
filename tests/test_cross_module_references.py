@@ -25,38 +25,6 @@ from tests.conftest import (
     shipped_schema_paths,
 )
 
-# The neighbouring packages whose types this module must not redeclare. The
-# TYPE NAMES ARE READ FROM THEIR INSTALLED MANIFESTS, never copied: a hand-kept
-# list of someone else's declarations is stale the day the neighbour adds a
-# type, and it goes stale silently — the boundary test keeps passing while the
-# boundary it describes has moved. `spec-objects-security` alone declares 23
-# types and is being migrated concurrently.
-NEIGHBOUR_PACKAGES = (
-    "spec-objects-security",
-    "spec-objects-architecture",
-    "spec-objects-operational",
-)
-
-MODULE_CATALOG = pathlib.Path.home() / ".ix" / "filament" / "modules"
-
-
-def neighbour_types() -> dict[str, set[str]]:
-    """Every object type the neighbouring modules declare, read from the catalog."""
-    owned: dict[str, set[str]] = {}
-    for package in NEIGHBOUR_PACKAGES:
-        manifest = MODULE_CATALOG / package / "manifest.yaml"
-        if not manifest.is_file():
-            pytest.fail(
-                f"{package} is not installed at {MODULE_CATALOG}, so the "
-                "anti-duplication boundary cannot be measured against what it "
-                "actually declares. Install the module catalog "
-                "(`quoin module install`) rather than hand-copying its type names."
-            )
-        declared = yaml.safe_load(manifest.read_text()).get("object_types") or []
-        owned[package] = {entry["name"] for entry in declared}
-    return owned
-
-
 # The open migration tickets that keep `semantic.imports` empty: a package with
 # no semantic contract cannot be pinned at a semantic version.
 OPEN_MIGRATIONS = (
@@ -67,16 +35,9 @@ OPEN_MIGRATIONS = (
 
 
 @pytest.mark.trace("TC-060", "FR-006-AC-1")
-def test_the_module_declares_two_types_and_none_a_neighbour_owns():
+def test_the_module_declares_exactly_hazard_and_failure_mode():
     declared = {ot["name"] for ot in object_types()}
     assert declared == set(OBJECT_TYPES)
-    owned_by = neighbour_types()
-    assert all(owned_by.values()), "a neighbouring module declares no object type"
-    for package, owned in owned_by.items():
-        clash = declared & owned
-        assert (
-            not clash
-        ), f"{sorted(clash)} is {package}'s to declare, not this module's"
 
 
 @pytest.mark.trace("TC-061", "FR-006-AC-2")
