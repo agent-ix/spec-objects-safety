@@ -24,3 +24,5 @@ jobs:
     uses: agent-ix/nodejs-actions/.github/workflows/release-npm-module.yml@main
     with:
       version: ${{ inputs.version }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
