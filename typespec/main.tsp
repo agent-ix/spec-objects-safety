@@ -10,7 +10,7 @@ using AgentIx.Semantic.Core;
  * One model per safety object type this module contributes, each validating
  * that type's Quire declaration record (fields, relations, clauses; quire-rs
  * FR-070..FR-072) with type-specific required keys, forbidden keys, and item
- * rules. Every grammar item is a `$ref` to `@agent-ix/semantic-core` 0.1.0 and
+ * rules. Every grammar item is a `$ref` to `@agent-ix/semantic-core` 0.3.0 and
  * is never redeclared here; this namespace contributes archetype shapes only.
  *
  * The `$id` base embeds the manifest `version` by intent: one schema URL names

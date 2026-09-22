@@ -7,7 +7,7 @@ semantic:
   # this contract version refuses the module explicitly instead of loading it as
   # an empty model.
   contract_version: 1.0.0
-  semantic_core: 0.1.0
+  semantic_core: 0.3.0
   package: agent-ix/spec-objects-safety
   exports:
   - hazard
@@ -107,7 +107,7 @@ object_types:
     references: [hazard, failure_mode]
   data_schema:
     schema: schemas/Hazard.json
-    digest: sha256:958d1fe487841eb54982c346f289305c01b90409c60bae84cb48a4890c18cc81
+    digest: sha256:a57e5dda9d428d3fb2dc6ada7a4e868f91ded899b5858a57e2e9ccb4fd463676
   body_extraction:
     yield_pattern:
       match:
@@ -186,7 +186,7 @@ object_types:
     references: [failure_mode, hazard]
   data_schema:
     schema: schemas/FailureMode.json
-    digest: sha256:fe67febf8c7ee4b11599ee7d74a9adc813b4a26233c252ff4413299929eee169
+    digest: sha256:58750edd3538680bc5b0668ed4cac956f76b943fa7c6f5c6e6428a6c173f486f
   body_extraction:
     yield_pattern:
       match:

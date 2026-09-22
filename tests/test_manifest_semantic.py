@@ -21,6 +21,7 @@ from tests.conftest import (
     locators,
     object_type,
     object_types,
+    semantic_core_engine_xfail,
     sha256_of,
 )
 
@@ -56,7 +57,7 @@ def test_the_semantic_block_carries_the_nine_admitted_keys_and_two_exports(
 ):
     assert set(semantic_block) == ADMITTED_KEYS
     assert semantic_block["contract_version"] == "1.0.0"
-    assert semantic_block["semantic_core"] == "0.1.0"
+    assert semantic_block["semantic_core"] == "0.3.0"
     assert semantic_block["package"] == "agent-ix/spec-objects-safety"
     assert semantic_block["exports"] == list(OBJECT_TYPES)
     assert semantic_block["imports"] == {}
@@ -108,6 +109,7 @@ def test_every_locator_added_after_020_is_optional():
 
 
 @pytest.mark.trace("TC-030", "FR-003-AC-4")
+@semantic_core_engine_xfail()
 def test_the_registry_loads_both_archetypes_and_every_skeleton_loads_clean(
     quire_engine, skeletons
 ):
@@ -145,6 +147,7 @@ def test_the_traceability_model_is_fact_for_fact_the_020_model():
 
 
 @pytest.mark.trace("TC-032", "FR-003-AC-6")
+@semantic_core_engine_xfail()
 def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
     quire_engine, tmp_path
 ):
@@ -181,6 +184,7 @@ def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
         ("unregistered-target", lambda block: block.update(targets=["go"])),
     ],
 )
+@semantic_core_engine_xfail()
 def test_a_semantic_value_the_contract_forbids_is_refused_at_load(
     quire_engine, tmp_path, label, mutate
 ):

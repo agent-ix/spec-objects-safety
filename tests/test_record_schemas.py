@@ -37,10 +37,20 @@ def valid(validator, record) -> bool:
     return validator.is_valid(record)
 
 
+# Multiplicity.json (semantic-core 0.3.0) requires `ordered`/`unique`; a
+# producer clamps both `false` on a singular multiplicity (`upper` at most
+# one). Every field these two helpers build is a singular kernel scalar, so
+# both are `false`.
+SINGULAR = {"ordered": False, "unique": False}
+
+
 def identity_field(name: str) -> dict:
     return {
         "name": name,
-        "type": {"target": "UUID", "multiplicity": {"lower": 1, "upper": 1}},
+        "type": {
+            "target": "UUID",
+            "multiplicity": {"lower": 1, "upper": 1, **SINGULAR},
+        },
         "identity": True,
     }
 
@@ -48,7 +58,10 @@ def identity_field(name: str) -> dict:
 def plain_field(name: str) -> dict:
     return {
         "name": name,
-        "type": {"target": "String", "multiplicity": {"lower": 1, "upper": 1}},
+        "type": {
+            "target": "String",
+            "multiplicity": {"lower": 1, "upper": 1, **SINGULAR},
+        },
     }
 
 
