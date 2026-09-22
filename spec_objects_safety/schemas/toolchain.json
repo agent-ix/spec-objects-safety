@@ -9,7 +9,7 @@
   },
   "semanticCore": {
     "name": "@agent-ix/semantic-core",
-    "version": "0.1.0"
+    "version": "0.3.0"
   },
   "base": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/",
   "normalization": {
@@ -37,5 +37,5 @@
     "Provenance.json",
     "Severity.json"
   ],
-  "digest": "sha256:2b380476fed27344d3b12b19f5b2f46f0869c2895d4104a3880d586faaf1a85b"
+  "digest": "sha256:e4e4b594e2c1d3ea4f1fd04760e9709e29932e7137dde080fb4330d78c28e1d5"
 }

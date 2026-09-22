@@ -99,7 +99,7 @@ assert what the requirement says.
 | TC-011 | Every relation names an object type this module declares and a verb the iso vocabulary carries | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-012 | The emitted set equals the fifteen models `toolchain.json` lists, with compiler and emitter 1.15.0 recorded | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name, with the version read from the manifest | Unit | P0 | FR-002-AC-2 | ✅ |
-| TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.1.0 | Unit | P0 | FR-002-AC-3 | ✅ |
+| TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.3.0 | Unit | P0 | FR-002-AC-3 | ✅ |
 | TC-015 | `make schemas-check` exits zero on the committed tree and non-zero naming a mutated schema or digest | Integration | P1 | FR-002-AC-4 | ✅ |
 | TC-016 | A `@jsonSchema` base version differing from the manifest version fails the generator naming both | Integration | P1 | FR-002-AC-5 | ✅ |
 | TC-017 | The built wheel contains every emitted schema file | Integration | P1 | FR-002-AC-6 | ✅ |
@@ -109,7 +109,7 @@ assert what the requirement says.
 | TC-021 | Two generator runs over one source are byte-identical | Integration | P1 | FR-002-CON-3 | ✅ |
 | TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
 | TC-023 | No `.npmrc`, no `file:`/`link:` dependency, exact toolchain pins in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
-| TC-024 | `package-lock.json` resolves every package from npmjs except `@agent-ix/semantic-core` | Unit | P2 | FR-002-CON-4 | ✅ |
+| TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
 | TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Unit | P2 | FR-002-CON-5 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
 | TC-027 | Every exported type's `data_schema` is the reference form whose file hashes to the recorded digest | Unit | P0 | FR-003-AC-2 | ✅ |

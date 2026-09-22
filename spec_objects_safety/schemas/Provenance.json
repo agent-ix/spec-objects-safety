@@ -20,7 +20,7 @@
       "minLength": 1
     },
     "sourceSpan": {
-      "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/SourceLocus.json"
+      "$ref": "https://schemas.agent-ix.org/semantic-core/0.3.0/SourceLocus.json"
     }
   },
   "required": [

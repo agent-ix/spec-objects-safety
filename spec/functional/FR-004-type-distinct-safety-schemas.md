@@ -20,7 +20,7 @@ one.
 
 ## Inputs
 
-- The semantic-core declaration grammar 0.1.0.
+- The semantic-core declaration grammar 0.3.0.
 - The declared safety vocabulary, fixed here rather than only in the emitted
   schemas, because the epistemic property below is a claim about these exact
   member sets:
@@ -69,7 +69,7 @@ one.
 - `Hazard.relations` SHALL NOT carry a minimum-item or `contains` rule, because a hazard that arises from no declared failure mode is a valid record — the STPA case this module exists for.
 - No schema SHALL declare a `controls` or `mitigations` key: the mitigation edge is authored from the requirement's end and is checked by the manifest `traceability` model.
 - No schema SHALL redeclare a semantic-core model.
-- Every grammar item in a shipped schema SHALL be a `$ref` to `@agent-ix/semantic-core` 0.1.0.
+- Every grammar item in a shipped schema SHALL be a `$ref` to `@agent-ix/semantic-core` 0.3.0.
 - No schema SHALL declare a safety-domain type that another module already owns; a control, risk, asset, interface, incident or evidence record is named by `SemanticId`.
 
 ## Constraints
@@ -96,7 +96,7 @@ one.
 | FR-004-AC-13 | Every record and value schema declares both `unevaluatedProperties` and `additionalProperties: false`, so a forbidden key is refused on a pre-2020-12 validator as well. | Test |
 | FR-004-AC-14 | No shipped schema names an ASIL, a SIL or any other integrity level, and `Severity` is the four-band harm scale rather than `S0..S3`. | Test |
 | FR-004-AC-9 | A hazard record with no `relations` validates, and a hazard record with one `arises_from` relation validates. | Test |
-| FR-004-AC-10 | No module schema redeclares a semantic-core model; every grammar item is a `$ref` to semantic-core 0.1.0. | Test |
+| FR-004-AC-10 | No module schema redeclares a semantic-core model; every grammar item is a `$ref` to semantic-core 0.3.0. | Test |
 | FR-004-AC-11 | An analysis whose `detection` is `none` and one whose `detection` is `not_assessed` are both accepted and are distinct values. | Test |
 
 ## Dependencies

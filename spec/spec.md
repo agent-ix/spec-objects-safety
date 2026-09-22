@@ -44,7 +44,7 @@ sees the contract that was authored instead of guessing at it.
   object types it contributes, their body contracts, their authoring skeletons,
   and the domain lexicon.
 - The semantic-module contract (issue #2): a TypeSpec source importing
-  `@agent-ix/semantic-core` 0.1.0, the emitted JSON Schema per declared model
+  `@agent-ix/semantic-core` 0.3.0, the emitted JSON Schema per declared model
   shipped under `spec_objects_safety/schemas/`, the manifest `semantic` block
   with reference-form `data_schema`, and the skeletons rewritten as executable
   typed fixtures with negative counterparts.
