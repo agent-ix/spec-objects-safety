@@ -24,10 +24,8 @@ shipped teaching example and the shipped contract cannot disagree.
 
 ## Inputs
 
-- The Quire wheel exposing `extract_semantic`, at 0.46.0. It is not a declared
-  dependency: `internal-pypi` serves 0.33.0 at most and no `quire-rs` tag
-  carries the semantic layer, so it is provisioned by `make dev-quire` and
-  `agent-ix/quire-rs#392` is the blocking issue.
+- The Quire wheel exposing `extract_semantic`, at exactly 0.47.1 (the version the lock pins and the suite checks), declared as
+  a dev dependency resolved from `internal-pypi`.
 - The emitted schemas of [FR-002](./FR-002-emitted-json-schemas.md) and the
   manifest of [FR-003](./FR-003-semantic-manifest-contract.md).
 - The typed-table and `sysml` cell grammars of quoin FR-071 and the clause
@@ -87,7 +85,7 @@ shipped teaching example and the shipped contract cannot disagree.
 | FR-005-AC-7 | Every skeleton is placeholder-free and its body outside frontmatter and comments exceeds 200 characters. | Test |
 | FR-005-AC-8 | Skeleton titles are distinct `Identifier`s outside `KernelScalar`, and `object` equals `type` in every skeleton frontmatter. | Test |
 | FR-005-AC-9 | No `## Properties` row names a column of the `## Assessment` or `## Analysis` table of the same type. | Test |
-| FR-005-AC-10 | With the Quire wheel absent, the semantic tests fail naming `make dev-quire` and `agent-ix/quire-rs#392`; none is skipped. | Test |
+| FR-005-AC-10 | With the Quire wheel absent, the semantic tests fail naming `poetry install`; none is skipped. | Test |
 
 ## Dependencies
 

@@ -125,12 +125,6 @@ sees the contract that was authored instead of guessing at it.
   NFR-001-AC-3 is carried as an explicit expected failure beside it rather than
   worked around by relaxing a schema. NFR-001-AC-2 itself holds — every
   checked-in 0.2.0 skeleton validates under 0.3.0.
-- Publishing the Quire 0.46.0 wheel to an index a repository may commit
-  against: `agent-ix/quire-rs#392`. `internal-pypi` serves 0.33.0 at most, so
-  this module provisions the wheel with a documented `make dev-quire` target
-  and its semantic tests fail rather than skip when the engine is absent
-  (FR-005-CON-3). Declaring `quire` as a committed dev dependency waits on that
-  issue.
 - Publishing a `spec-artifacts-iso` release whose FR-035 module-manifest schema
   carries the `semantic` block and the `data_schema` reference form: the schema
   landed on `main` at `6686f11` (CR-012) and no tag carries it, `v0.18.0`

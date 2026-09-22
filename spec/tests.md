@@ -141,10 +141,10 @@ assert what the requirement says.
 | TC-054 | Every skeleton is placeholder-free with non-empty asserted sections | Unit | P2 | FR-005-AC-7 | ✅ |
 | TC-055 | Skeleton titles are distinct `Identifier`s outside `KernelScalar`, and `object` equals `type` | Unit | P1 | FR-005-AC-8 | ✅ |
 | TC-056 | No `## Properties` row names a column of the same type's `Assessment` or `Analysis` table | Unit | P1 | FR-005-AC-9 | ✅ |
-| TC-057 | With the engine absent the semantic helper fails naming `make dev-quire` and quire-rs#392, and no test skips | Unit | P0 | FR-005-AC-10, FR-005-CON-3 | ✅ |
+| TC-057 | With the engine absent the semantic helper fails naming `poetry install`, and no test skips | Unit | P0 | FR-005-AC-10, FR-005-CON-3 | ✅ |
 | TC-058 | A Properties section holding both forms is refused at the second form | Integration | P1 | FR-005-CON-2 | ✅ |
 | TC-059 | The tracked tree holds no `corpus/` path, no `fixtures/semantic-module` path and no `/vendor/` path; an empty listing fails the gate rather than passing it | Static | P2 | FR-005-CON-1 | ✅ |
-| TC-060 | The manifest declares exactly two object types and none a neighbouring module owns | Unit | P0 | FR-006-AC-1 | ✅ |
+| TC-060 | The manifest declares exactly `hazard` and `failure_mode` | Unit | P0 | FR-006-AC-1 | ✅ |
 | TC-061 | No schema declares `controls` or `mitigations`, and every cross-module reference is a `SemanticId` | Unit | P0 | FR-006-AC-2 | ✅ |
 | TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |
 | TC-063 | Every `allowed_links` and `traceability` verb exists in the iso edge vocabulary | Unit | P0 | FR-006-AC-4 | ✅ |
@@ -160,12 +160,10 @@ assert what the requirement says.
 ## Test Environment
 
 Every `Integration` row that names Quire runs against the Quire wheel FR-005
-Inputs pins (0.46.0), provisioned by `make dev-quire`. That wheel is not on any
-index this repository may commit a dependency against (`internal-pypi` serves
-0.33.0 at most); `agent-ix/quire-rs#392` is the blocking issue. The suite
-**fails** rather than skips when `extract_semantic` is absent, so no row here
-can be reported green without the engine under test — TC-057 is the test of
-that policy.
+Inputs pins (exactly 0.47.1), a dev dependency resolved from `internal-pypi`
+by `poetry install`. The suite **fails** rather than skips when
+`extract_semantic` is absent, so no row here can be reported green without the
+engine under test — TC-057 is the test of that policy.
 
 Conformance to the FR-035 module-manifest schema is observed where that schema
 is applied: Quire's registry loader (TC-030, TC-032) and `quoin module install`

@@ -21,7 +21,6 @@ from tests.conftest import (
     locators,
     object_type,
     object_types,
-    semantic_core_engine_xfail,
     sha256_of,
 )
 
@@ -109,7 +108,6 @@ def test_every_locator_added_after_020_is_optional():
 
 
 @pytest.mark.trace("TC-030", "FR-003-AC-4")
-@semantic_core_engine_xfail()
 def test_the_registry_loads_both_archetypes_and_every_skeleton_loads_clean(
     quire_engine, skeletons
 ):
@@ -147,11 +145,10 @@ def test_the_traceability_model_is_fact_for_fact_the_020_model():
 
 
 @pytest.mark.trace("TC-032", "FR-003-AC-6")
-@semantic_core_engine_xfail()
 def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
     quire_engine, tmp_path
 ):
-    """Measured against quire 0.46.0: an unknown `semantic` key drops every
+    """Measured against quire 0.47.1: an unknown `semantic` key drops every
     object type of the module (the manifest is refused whole), while a wrong
     digest drops the refused object type alone."""
 
@@ -184,7 +181,6 @@ def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
         ("unregistered-target", lambda block: block.update(targets=["go"])),
     ],
 )
-@semantic_core_engine_xfail()
 def test_a_semantic_value_the_contract_forbids_is_refused_at_load(
     quire_engine, tmp_path, label, mutate
 ):
@@ -212,7 +208,7 @@ def test_a_semantic_value_the_contract_forbids_is_refused_at_load(
     strict=True,
     reason=(
         "FR-003-AC-6 requires the refusal to NAME the offending key and schema "
-        "path. quire 0.46.0 empties the registry silently instead: no load "
+        "path. quire 0.47.1 empties the registry silently instead: no load "
         "failure, no semantic.* code, nothing naming `foo` or the path. Blocked "
         "on agent-ix/quire-rs#221 (unknown key) and agent-ix/quire-rs#394 "
         "(digest). The criterion stands; the schema is not relaxed and the test "
