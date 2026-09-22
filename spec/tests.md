@@ -160,7 +160,7 @@ assert what the requirement says.
 ## Test Environment
 
 Every `Integration` row that names Quire runs against the Quire wheel FR-005
-Inputs pins (0.47.1 or later), a dev dependency resolved from `internal-pypi`
+Inputs pins (exactly 0.47.1), a dev dependency resolved from `internal-pypi`
 by `poetry install`. The suite **fails** rather than skips when
 `extract_semantic` is absent, so no row here can be reported green without the
 engine under test — TC-057 is the test of that policy.

@@ -1,5 +1,5 @@
-"""Cross-module reference tests (FR 006): what this module points at and what
-it refuses to redeclare.
+"""Cross-module reference tests (FR 006): what this module points at and the
+types it declares.
 
 The safety domain overlaps four neighbours — security (control, risk, asset),
 architecture (interface, external contract), operational (incident, runbook) and

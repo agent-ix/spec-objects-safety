@@ -24,7 +24,7 @@ shipped teaching example and the shipped contract cannot disagree.
 
 ## Inputs
 
-- The Quire wheel exposing `extract_semantic`, at 0.47.1 or later, declared as
+- The Quire wheel exposing `extract_semantic`, at exactly 0.47.1 (the version the lock pins and the suite checks), declared as
   a dev dependency resolved from `internal-pypi`.
 - The emitted schemas of [FR-002](./FR-002-emitted-json-schemas.md) and the
   manifest of [FR-003](./FR-003-semantic-manifest-contract.md).

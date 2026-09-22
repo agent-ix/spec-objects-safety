@@ -71,7 +71,7 @@ def test_a_legacy_prose_properties_block_is_reported_as_a_legacy_form(quire_engi
     strict=True,
     reason=(
         "NFR 001 AC 3 requires a legacy prose `## Properties` block to be a "
-        "warning and NOT an error under `legacy_forms: warning`. quire 0.46.0 "
+        "warning and NOT an error under `legacy_forms: warning`. quire 0.47.1 "
         "validates the `unavailable` declaration as `{}` and then reports "
         "`semantic.record-invalid` for the missing `fields`, so the document "
         "errors as well as warning. Blocked on agent-ix/quire-rs#391. The "

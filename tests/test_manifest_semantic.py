@@ -148,7 +148,7 @@ def test_the_traceability_model_is_fact_for_fact_the_020_model():
 def test_an_unknown_semantic_key_and_an_altered_digest_are_refused(
     quire_engine, tmp_path
 ):
-    """Measured against quire 0.46.0: an unknown `semantic` key drops every
+    """Measured against quire 0.47.1: an unknown `semantic` key drops every
     object type of the module (the manifest is refused whole), while a wrong
     digest drops the refused object type alone."""
 
@@ -208,7 +208,7 @@ def test_a_semantic_value_the_contract_forbids_is_refused_at_load(
     strict=True,
     reason=(
         "FR-003-AC-6 requires the refusal to NAME the offending key and schema "
-        "path. quire 0.46.0 empties the registry silently instead: no load "
+        "path. quire 0.47.1 empties the registry silently instead: no load "
         "failure, no semantic.* code, nothing naming `foo` or the path. Blocked "
         "on agent-ix/quire-rs#221 (unknown key) and agent-ix/quire-rs#394 "
         "(digest). The criterion stands; the schema is not relaxed and the test "
