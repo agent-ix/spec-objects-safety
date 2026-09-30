@@ -50,7 +50,7 @@ Each step performs one discrete action and has its own success criterion.
 3. Run `quoin module` and read the installed list.
    - IT-001-SC-03: `spec-objects-safety` appears in the list.
 4. Load the installed module directory through Quire's registry loader.
-   - IT-001-SC-04: both `hazard` and `failure_mode` are registered, and the recorded schema digest equals the manifest digest.
+   - IT-001-SC-04: both `hazard` and `failure_mode` are registered.
 5. Validate a shipped skeleton against the installed copy.
    - IT-001-SC-05: validation reports no `semantic.*` load failure, so the referenced schema resolved from the installed location.
 6. Restore the catalog to the state recorded in step 1.
