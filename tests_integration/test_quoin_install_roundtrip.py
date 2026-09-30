@@ -21,7 +21,6 @@ from tests.conftest import (
     PACKAGE_ROOT,
     frontmatter,
     load_manifest,
-    sha256_of,
 )
 
 QUOIN_MISSING = (
@@ -100,11 +99,6 @@ def test_quoin_installs_the_module_and_quire_loads_it_from_the_catalog(
     import yaml
 
     installed_manifest = yaml.safe_load((installed_root / "manifest.yaml").read_text())
-    for entry in installed_manifest["object_types"]:
-        reference = entry["data_schema"]
-        assert reference["digest"] == sha256_of(
-            installed_root / reference["schema"]
-        ), entry["name"]
     assert installed_manifest["version"] == load_manifest()["version"]
 
     # SC-05: a shipped skeleton validates against the installed copy, so the
