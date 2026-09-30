@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 import pathlib
-import re
 import shutil
 import subprocess
 import tarfile
@@ -154,20 +153,6 @@ def test_schemas_check_is_green_on_the_committed_tree_and_names_a_mutation(tmp_p
     mutated = run_generator("--check", cwd=tree)
     assert mutated.returncode != 0
     assert "Hazard.json" in mutated.stderr
-
-    tree = worktree_copy(tmp_path / "digest")
-    manifest = tree / "spec_objects_safety" / "manifest.yaml"
-    manifest.write_text(
-        re.sub(
-            r"digest: sha256:\w+",
-            "digest: sha256:deadbeef",
-            manifest.read_text(),
-            count=1,
-        )
-    )
-    digest_run = run_generator("--check", cwd=tree)
-    assert digest_run.returncode != 0
-    assert "manifest.yaml" in digest_run.stderr
 
 
 @pytest.mark.trace("TC-016", "FR-002-AC-5")

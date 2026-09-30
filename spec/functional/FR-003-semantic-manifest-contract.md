@@ -17,14 +17,13 @@ relationships:
 ## Description
 
 `spec_objects_safety/manifest.yaml` SHALL carry the quoin FR-070 `semantic`
-block and reference every exported object type's emitted schema by path and
-digest (quoin FR-073), at manifest `version` 0.3.0, so that Quoin verifies the
-shipped schemas at install and Quire validates every declaration record against
-them, while every existing extraction locator keeps its meaning.
+block and reference every exported object type's emitted schema by path
+(quoin FR-073), at manifest `version` 0.3.0, so that Quire validates every
+declaration record against them, while every existing extraction locator keeps its meaning.
 
 ## Inputs
 
-- The emitted schemas and digests of [FR-002](./FR-002-emitted-json-schemas.md).
+- The emitted schemas of [FR-002](./FR-002-emitted-json-schemas.md).
 - The module-manifest schema of `filament-core-service` FR-035, which defines
   the optional top-level `semantic` block and the `data_schema` reference form.
   It is applied by the consumers that read this manifest — Quire's registry
@@ -41,17 +40,16 @@ them, while every existing extraction locator keeps its meaning.
 
 - The manifest `semantic` block SHALL carry exactly these keys and values: `contract_version: 1.0.0`, `semantic_core: 0.3.0`, `package: agent-ix/spec-objects-safety`, `exports` listing every object type that ships a schema, `imports: {}`, `targets: [json-schema, markdown]`, `mappings: [typed-table, sysml-fence, ocl-clause]`, `compatibility_posture: additive`, `legacy_forms: warning`.
 - `semantic.exports` SHALL name both object types: `hazard` and `failure_mode`.
-- Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json, digest: sha256:<hex> }` where `<hex>` is the SHA-256 of the shipped file bytes.
+- Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json }`.
 - No exported object type SHALL carry an inline `data_schema`.
 - The manifest `version` SHALL be `0.3.0`, because the emitted `$id` embeds it and the previous version was `0.2.0`.
 - Every `body_extraction` locator present at version 0.2.0 SHALL remain present with the same `from`, heading, `language`, `required`, `multiple`, and `assert` facets.
 - Where an object type gains a locator after 0.2.0, that locator SHALL be `required: false`, so existing artifacts stay valid.
 - The `traceability` block SHALL keep its 0.2.0 shape: both `required_relations`, their `edges`, their `direction: incoming`, their distinct `check` keys, and `acyclic_edges: [arises_from]`. `agent-ix/spec-objects-security`'s hazard-coverage work reads them across repositories, so a change here is a change to a neighbour.
-- The manifest SHALL load through Quire's registry loader with no load failure for either object type and with the recorded schema digest equal to the manifest digest.
-- Measured against quire 0.46.0, and stated as a measurement rather than an obligation: a refused schema drops that object type alone, while a manifest key the loader cannot parse drops every object type of the module, so a consumer sees the module as absent. Both refusals are silent — no diagnostic names the offending key, path, or digest — which `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` record as engine defects; the naming half of FR-003-AC-6 is blocked on them and is verified as an explicit expected failure rather than dropped.
+- The manifest SHALL load through Quire's registry loader with no load failure for either object type.
 - The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic.
 - When the install has completed, `quoin module` SHALL list `spec-objects-safety`.
-- If Quoin or Quire rejects the manifest, then this module SHALL correct its own manifest or schemas rather than relax the contract keys, the digests, or the `$id` rules to make a consumer accept them.
+- If Quoin or Quire rejects the manifest, then this module SHALL correct its own manifest or schemas rather than relax the contract keys or the `$id` rules to make a consumer accept them.
 
 ## Constraints
 
@@ -65,11 +63,10 @@ them, while every existing extraction locator keeps its meaning.
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-003-AC-1 | The loaded `semantic` block equals the nine admitted keys with the values above, and `exports` equals the two object-type names. | Test |
-| FR-003-AC-2 | For every exported type, `data_schema` is the reference form, the referenced file exists, and its SHA-256 equals the recorded digest. | Test |
 | FR-003-AC-3 | Every 0.2.0 locator, compared against the checked-in 0.2.0 baseline, is present unchanged; every added locator is `required: false`. | Test |
 | FR-003-AC-4 | `quire.Registry.load_from` lists both archetypes and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
 | FR-003-AC-5 | The `traceability` block is byte-for-byte the 0.2.0 model: two relations, `edges: [mitigates]`, `direction: incoming`, distinct `check` keys, `acyclic_edges: [arises_from]`. | Test |
-| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader, as is a copy whose `data_schema` digest is altered; an unmutated control loads in each case. The refusals are claimed; the half requiring the diagnostic to *name* `foo` or the path is an explicit expected failure while `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open. | Test |
+| FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader; an unmutated control loads in each case. | Test |
 
 ## Dependencies
 

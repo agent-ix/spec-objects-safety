@@ -17,7 +17,7 @@ contracts, their authoring skeletons, the domain lexicon, and the
 Since 0.3.0 it is a **semantic module** (quoin FR-070): the archetypes are
 authored in `typespec/main.tsp` against `@agent-ix/semantic-core`, emitted to
 JSON Schema 2020-12 under `spec_objects_safety/schemas/`, and referenced from
-the manifest by path and digest.
+the manifest by path.
 
 The rule those schemas exist to enforce: every scored axis — severity,
 likelihood, ISO 26262 exposure and controllability, FMEA detection — admits
@@ -31,7 +31,7 @@ naming who accepted the risk and when.
 
 ```bash
 make schemas        # re-emit spec_objects_safety/schemas/ from typespec/main.tsp
-make schemas-check  # fail on schema or digest drift (also run by `make lint`)
+make schemas-check  # fail on schema drift (also run by `make lint`)
 make dev-quire      # install the Quire wheel the semantic tests need
 ```
 
@@ -133,7 +133,7 @@ make build
 | `test` | Run tests |
 | `lint` | Run linting (Ruff + Black check + schema drift gate) |
 | `schemas` | Re-emit `spec_objects_safety/schemas/` from `typespec/main.tsp` |
-| `schemas-check` | Fail on schema or manifest-digest drift |
+| `schemas-check` | Fail on schema drift |
 | `dev-quire` | Install the Quire wheel the semantic tests need |
 | `format` | Auto-format code (Black + Ruff --fix) |
 | `shell` | Open Poetry shell |

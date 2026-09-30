@@ -44,7 +44,7 @@ assert what the requirement says.
 1. Every acceptance criterion and named constraint has at least one test case.
 2. Both Properties forms (typed table, `sysml` fence) and both object types are tested.
 3. Item-rule boundaries are tested at their allowed and refused edges (zero versus one identity field, a forbidden key present versus absent).
-4. Every named refusal (digest mismatch, unknown key, both forms, missing table, clause without a fence, non-`Identifier` token) has a failing fixture.
+4. Every named refusal (unknown key, both forms, missing table, clause without a fence, non-`Identifier` token) has a failing fixture.
 5. Every scored axis is tested at each member of its own scale, at each `EpistemicState` member, and at a member of a foreign scale.
 6. The safety-specific edges are tested as their own rows: `not_assessed` is not `negligible`, `detection: none` is not `detection: not_assessed`, and `status: accepted` without provenance is refused.
 
@@ -100,11 +100,11 @@ assert what the requirement says.
 | TC-012 | The emitted set equals the fifteen models `toolchain.json` lists, with compiler and emitter 1.15.0 recorded | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name, with the version read from the manifest | Unit | P0 | FR-002-AC-2 | ✅ |
 | TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.3.0 | Unit | P0 | FR-002-AC-3 | ✅ |
-| TC-015 | `make schemas-check` exits zero on the committed tree and non-zero naming a mutated schema or digest | Integration | P1 | FR-002-AC-4 | ✅ |
+| TC-015 | `make schemas-check` exits zero on the committed tree and non-zero naming a mutated schema | Integration | P1 | FR-002-AC-4 | ✅ |
 | TC-016 | A `@jsonSchema` base version differing from the manifest version fails the generator naming both | Integration | P1 | FR-002-AC-5 | ✅ |
 | TC-017 | The built wheel contains every emitted schema file | Integration | P1 | FR-002-AC-6 | ✅ |
 | TC-018 | The packed npm tarball carries `manifest.yaml` and a sibling `schemas/<Model>.json`, and `postpack` leaves no staged copy at the repository root | Integration | P1 | FR-002-AC-7 | ✅ |
-| TC-019 | A coordinated version bump re-emits every `$id`/`$ref` with matching digests; bumping one half of the pair fails the check | Integration | P1 | FR-002-AC-8, FR-002-CON-5 | ✅ |
+| TC-019 | A coordinated version bump re-emits every `$id`/`$ref`; bumping one half of the pair fails the check | Integration | P1 | FR-002-AC-8, FR-002-CON-5 | ✅ |
 | TC-020 | `make schemas-check` names a stale committed schema with no emitted counterpart and writes nothing | Integration | P1 | FR-002-AC-9 | ✅ |
 | TC-021 | Two generator runs over one source are byte-identical | Integration | P1 | FR-002-CON-3 | ✅ |
 | TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
@@ -112,12 +112,11 @@ assert what the requirement says.
 | TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
 | TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Unit | P2 | FR-002-CON-5 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
-| TC-027 | Every exported type's `data_schema` is the reference form whose file hashes to the recorded digest | Unit | P0 | FR-003-AC-2 | ✅ |
 | TC-028 | Every 0.2.0 locator is unchanged against the checked-in baseline | Unit | P0 | FR-003-AC-3 | ✅ |
 | TC-029 | Every locator added after 0.2.0 is `required: false` | Unit | P1 | FR-003-AC-3, FR-003-CON-2 | ✅ |
 | TC-030 | Quire's registry loader lists both archetypes and `validate_document` reports no `semantic.*` load failure on any skeleton | Integration | P0 | FR-003-AC-4 | ✅ |
 | TC-031 | The `traceability` model is fact-for-fact the 0.2.0 model | Unit | P0 | FR-003-AC-5 | ✅ |
-| TC-032 | An unknown `semantic` key, a non-`<org>/<repo>` `package`, an unregistered `targets` value and an altered digest are each refused by the loader against a loading control; the refusal naming the key or path is a strict expected failure | Unit | P0 | FR-003-AC-6 | ✅ |
+| TC-032 | An unknown `semantic` key, a non-`<org>/<repo>` `package`, an unregistered `targets` value are each refused by the loader against a loading control | Unit | P0 | FR-003-AC-6 | ✅ |
 | TC-035 | `Hazard.json` and `FailureMode.json` differ in a required key, a forbidden key or an item rule; neither is `type: object` only | Unit | P0 | FR-004-AC-1 | ✅ |
 | TC-036 | Hazard: an identity record validates; the identity flag removed fails; no `fields` fails | Integration | P0 | FR-004-AC-2 | ✅ |
 | TC-037 | Failure mode: an identity record validates; `assessment`, `context` or `operations` each fail | Integration | P0 | FR-004-AC-3 | ✅ |

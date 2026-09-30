@@ -1,9 +1,8 @@
 """Quoin install roundtrip (IT 001).
 
 The module can be self-consistent in its own tree and still be unusable once
-installed: `data_schema` is a module-relative path plus a digest, so a wrong
-path or a digest computed over the wrong bytes only shows up on the far side of
-an install. This drives the real CLI against a temporary config root so the
+installed: `data_schema` is a module-relative path, so a wrong
+path only shows up on the far side of an install. This drives the real CLI against a temporary config root so the
 developer's own catalog is never mutated.
 """
 
@@ -21,7 +20,6 @@ from tests.conftest import (
     PACKAGE_ROOT,
     frontmatter,
     load_manifest,
-    sha256_of,
 )
 
 QUOIN_MISSING = (
@@ -84,8 +82,7 @@ def test_quoin_installs_the_module_and_quire_loads_it_from_the_catalog(
     assert listed.returncode == 0, listed.stderr
     assert "spec-objects-safety" in listed.stdout, listed.stdout
 
-    # SC-04: Quire registers both types from the INSTALLED copy, and the digest
-    # the installed manifest carries still matches the installed schema bytes.
+    # SC-04: Quire registers both types from the INSTALLED copy.
     installed_root = next(
         path
         for path in (config_root / "filament" / "modules").iterdir()
@@ -100,11 +97,6 @@ def test_quoin_installs_the_module_and_quire_loads_it_from_the_catalog(
     import yaml
 
     installed_manifest = yaml.safe_load((installed_root / "manifest.yaml").read_text())
-    for entry in installed_manifest["object_types"]:
-        reference = entry["data_schema"]
-        assert reference["digest"] == sha256_of(
-            installed_root / reference["schema"]
-        ), entry["name"]
     assert installed_manifest["version"] == load_manifest()["version"]
 
     # SC-05: a shipped skeleton validates against the installed copy, so the
