@@ -2,8 +2,8 @@
 
 The module can be self-consistent in its own tree and still be unusable once
 installed: `data_schema` is a module-relative path, so a wrong
-path only shows up on the far side of an install. This drives the real CLI against a temporary config root so the
-developer's own catalog is never mutated.
+path only shows up on the far side of an install. This drives the real CLI
+against a temporary config root so the developer's own catalog is never mutated.
 """
 
 from __future__ import annotations
