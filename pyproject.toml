@@ -30,14 +30,14 @@ py-project = "^0.4.4"
 pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
 pytest-json-report = "^1.5.0"
-quire = { version = "^0.47.1", source = "internal-pypi" }
+quire = { version = "^0.49.0", source = "internal-pypi" }
 ruff = "^0.14.13"
 pytest-results = { version = "^0.2.0", python = ">=3.12" }
 # spec-artifacts-iso owns the shared edge vocabulary (its FR-004). TC-007 and
 # TC-011 read `edge_types` from its installed manifest, so a verb this module
 # reaches for that iso has not declared fails here. Its module-manifest schema
 # is not read: that schema belongs to filament-core-service (PLAT-902).
-spec-artifacts-iso = {version = "^0.18.0", source = "internal-pypi"}
+spec-artifacts-iso = {version = "^0.21.1", source = "internal-pypi"}
 
 [tool.poetry.scripts]
 build-tools = "scripts.build_tools:main"
