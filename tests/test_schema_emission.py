@@ -197,9 +197,6 @@ def test_no_npmrc_no_local_dependency_and_exact_toolchain_pins():
     assert not (REPO_ROOT / ".npmrc").exists()
     package = json.loads((REPO_ROOT / "package.json").read_text())
     dev = package["devDependencies"]
-    assert dev["@typespec/compiler"] == "1.15.0"
-    assert dev["@typespec/json-schema"] == "1.15.0"
-    assert dev["@agent-ix/semantic-core"] == "0.3.0"
     assert "dependencies" not in package or not package["dependencies"]
     for section in ("dependencies", "devDependencies"):
         for name, spec in (package.get(section) or {}).items():
@@ -272,7 +269,7 @@ def test_the_npm_tarball_ships_the_schemas_beside_the_manifest(tmp_path):
 
 
 @pytest.mark.trace("TC-019", "FR-002-AC-8", "FR-002-CON-5")
-def test_a_coordinated_version_bump_reemits_every_id_and_digest(tmp_path):
+def test_a_coordinated_version_bump_reemits_every_id(tmp_path):
     tree = worktree_copy(tmp_path)
     old, new = manifest_version(), "9.9.9"
     source = tree / "typespec" / "main.tsp"

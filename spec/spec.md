@@ -115,8 +115,7 @@ sees the contract that was authored instead of guessing at it.
   faked here, so issue #2's "generated packages preserve traceability and
   evidence references" is carried by those tickets, not discharged here.
 - Naming what a module load refused: `agent-ix/quire-rs#221` (an unknown
-  manifest key empties the model silently) and `agent-ix/quire-rs#394` (a
-  `data_schema` digest mismatch drops the object type with no diagnostic).
+  manifest key empties the model silently).
   FR-003-AC-6's "naming the key or the path" half is blocked on them and is
   carried as an explicit expected failure.
 - Treating a legacy prose `## Properties` block as a warning rather than an
@@ -127,7 +126,7 @@ sees the contract that was authored instead of guessing at it.
   checked-in 0.2.0 skeleton validates under 0.3.0.
 - Publishing a `spec-artifacts-iso` release whose FR-035 module-manifest schema
   carries the `semantic` block and the `data_schema` reference form: the schema
-  landed on `main` at `6686f11` (CR-012) and no tag carries it, `v0.18.0`
+  landed on `main` (CR-012) and no tag carries it, `v0.18.0`
   included; `agent-ix/spec-artifacts-iso#36` is the blocking issue. This module
   states no criterion over that schema as a document and holds no copy of it
   (PLAT-902). What is executed here is what the consumers accept: Quire's
@@ -203,7 +202,7 @@ every criterion's test case.
 - `agent-ix/filament-core-data` FR-031..FR-034 (semantic-core grammar, scalars,
   JSON Schema projection, lowering) and ADR-0005 (TypeSpec source).
 - `agent-ix/quoin` FR-070..FR-075 (semantic-module contract, mappings,
-  `data_schema` by digest, legacy forms, package exports).
+  `data_schema` references, legacy forms, package exports).
 - `agent-ix/quire-rs` FR-069..FR-072 (contract at load, typed Properties,
   clauses and operations, extraction surface) and FR-058 (upward-trace
   completeness).

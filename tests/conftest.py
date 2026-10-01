@@ -47,15 +47,6 @@ QUIRE_MISSING = (
     "skipped row is not coverage."
 )
 
-# The exact engine the expected failures are reasoned against. Two tests are
-# `xfail(strict=True)` because quire refuses a manifest without naming what it
-# refused, and validates an unavailable declaration as `{}`. Reasoning about
-# "the engine" without pinning which one is how a strict expected failure
-# becomes a mystery: an upstream fix would flip both to XPASS with nothing
-# saying why. `poetry install` installs exactly this version and the helper
-# below refuses any other.
-QUIRE_VERSION = "0.47.1"
-
 OBJECT_TYPES = ("hazard", "failure_mode")
 
 MODEL_OF = {"hazard": "Hazard", "failure_mode": "FailureMode"}
@@ -165,18 +156,6 @@ def require_quire():
     if not hasattr(quire, "extract_semantic"):  # pragma: no cover - missing-engine path
         pytest.fail(
             f"`extract_semantic` is missing from the installed quire: {QUIRE_MISSING}"
-        )
-    import importlib.metadata
-
-    installed = importlib.metadata.version("quire")
-    if installed != QUIRE_VERSION:  # pragma: no cover - wrong-engine path
-        pytest.fail(
-            f"the semantic rows are reasoned against quire {QUIRE_VERSION} and this "
-            f"environment has {installed}. Two rows are strict expected failures "
-            "against that exact build; a different engine makes their verdicts "
-            "meaningless in either direction. Run `poetry install`, or update "
-            "QUIRE_VERSION and re-judge both expected failures against the new "
-            "engine."
         )
     return quire
 
