@@ -18,7 +18,7 @@ relationships:
 
 `spec_objects_safety/manifest.yaml` SHALL carry the quoin FR-070 `semantic`
 block and reference every exported object type's emitted schema by path
-(quoin FR-073), at manifest `version` 0.3.0, so that Quire validates every
+(quoin FR-073), so that Quire validates every
 declaration record against them, while every existing extraction locator keeps its meaning.
 
 ## Inputs
@@ -42,7 +42,6 @@ declaration record against them, while every existing extraction locator keeps i
 - `semantic.exports` SHALL name both object types: `hazard` and `failure_mode`.
 - Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json }`.
 - No exported object type SHALL carry an inline `data_schema`.
-- The manifest `version` SHALL be `0.3.0`, because the emitted `$id` embeds it and the previous version was `0.2.0`.
 - Every `body_extraction` locator present at version 0.2.0 SHALL remain present with the same `from`, heading, `language`, `required`, `multiple`, and `assert` facets.
 - Where an object type gains a locator after 0.2.0, that locator SHALL be `required: false`, so existing artifacts stay valid.
 - The `traceability` block SHALL keep its 0.2.0 shape: both `required_relations`, their `edges`, their `direction: incoming`, their distinct `check` keys, and `acyclic_edges: [arises_from]`. `agent-ix/spec-objects-security`'s hazard-coverage work reads them across repositories, so a change here is a change to a neighbour.

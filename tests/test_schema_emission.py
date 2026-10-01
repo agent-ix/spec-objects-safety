@@ -24,12 +24,11 @@ import pytest
 from tests.conftest import (
     MANIFEST_PATH,
     MODEL_OF,
+    MODULE_BASE,
     OBJECT_TYPES,
     REPO_ROOT,
     SCHEMAS_DIR,
     SEMANTIC_CORE_BASE,
-    manifest_version,
-    module_base,
 )
 
 GENERATOR = REPO_ROOT / "scripts" / "generate-schemas.mjs"
@@ -77,7 +76,7 @@ def worktree_copy(tmp_path: pathlib.Path) -> pathlib.Path:
 
 @pytest.mark.trace("TC-013", "FR-002-AC-2")
 def test_every_schema_declares_2020_12_and_an_id_matching_its_file_name():
-    base = module_base()
+    base = MODULE_BASE
     for name, schema in shipped_schemas().items():
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema", name
         assert schema["$id"] == f"{base}{name}", name
@@ -85,7 +84,7 @@ def test_every_schema_declares_2020_12_and_an_id_matching_its_file_name():
 
 @pytest.mark.trace("TC-014", "FR-002-AC-3")
 def test_every_ref_resolves_to_a_shipped_sibling_or_semantic_core():
-    base = module_base()
+    base = MODULE_BASE
     shipped = shipped_schemas()
     refs: list[tuple[str, str]] = []
 
@@ -124,17 +123,6 @@ def test_schemas_check_is_green_on_the_committed_tree_and_names_a_mutation(tmp_p
     mutated = run_generator("--check", cwd=tree)
     assert mutated.returncode != 0
     assert "Hazard.json" in mutated.stderr
-
-
-@pytest.mark.trace("TC-016", "FR-002-AC-5")
-def test_a_base_version_differing_from_the_manifest_version_fails_naming_both(tmp_path):
-    tree = worktree_copy(tmp_path)
-    source = tree / "typespec" / "main.tsp"
-    source.write_text(source.read_text().replace(f"/{manifest_version()}/", "/9.9.9/"))
-    result = run_generator(cwd=tree)
-    assert result.returncode != 0
-    assert "9.9.9" in result.stderr
-    assert manifest_version() in result.stderr
 
 
 @pytest.mark.trace("TC-017", "FR-002-AC-6")
@@ -206,9 +194,8 @@ def test_no_npmrc_no_local_dependency_and_exact_toolchain_pins():
 
 @pytest.mark.trace("TC-024", "FR-002-CON-4")
 def test_the_lockfile_resolves_public_packages_from_npmjs():
-    """`@agent-ix/semantic-core` 0.3.0 is the first version ever published to a
-    real, CI-reachable registry (GitHub Packages) — 0.1.0/0.2.0 never left the
-    private `npm.ix` dev-only mirror. Every package in the lockfile SHALL now
+    """`@agent-ix/semantic-core` is published to a real, CI-reachable registry
+    (GitHub Packages), never the private `npm.ix` dev-only mirror. Every package in the lockfile SHALL now
     resolve from a real registry and none from `npm.ix`."""
     lock = json.loads((REPO_ROOT / "package-lock.json").read_text())
     for path, entry in lock["packages"].items():
@@ -268,37 +255,6 @@ def test_the_npm_tarball_ships_the_schemas_beside_the_manifest(tmp_path):
         assert f"package/schemas/{MODEL_OF[name]}.json" in names
 
 
-@pytest.mark.trace("TC-019", "FR-002-AC-8", "FR-002-CON-5")
-def test_a_coordinated_version_bump_reemits_every_id(tmp_path):
-    tree = worktree_copy(tmp_path)
-    old, new = manifest_version(), "9.9.9"
-    source = tree / "typespec" / "main.tsp"
-    manifest = tree / "spec_objects_safety" / "manifest.yaml"
-    source.write_text(source.read_text().replace(f"/{old}/", f"/{new}/"))
-
-    # Half a bump: the source moved, the manifest did not.
-    half = run_generator("--check", cwd=tree)
-    assert half.returncode != 0
-    assert new in half.stderr and old in half.stderr
-
-    manifest.write_text(
-        manifest.read_text().replace(f"\nversion: {old}\n", f"\nversion: {new}\n", 1)
-    )
-    assert run_generator(cwd=tree).returncode == 0
-    old_base = f"https://schemas.agent-ix.org/agent-ix/spec-objects-safety/{old}/"
-    bumped_base = f"https://schemas.agent-ix.org/agent-ix/spec-objects-safety/{new}/"
-    out = tree / "spec_objects_safety" / "schemas"
-    for path in out.glob("*.json"):
-        schema = json.loads(path.read_text())
-        assert schema["$id"] == f"{bumped_base}{path.name}"
-        # Scoped to the module's OWN old base, not a bare version-number
-        # substring: `old` and the pinned semantic-core version are both
-        # "0.3.0" today, and a semantic-core `$ref` legitimately keeps that
-        # version regardless of this module's own bump.
-        assert old_base not in json.dumps(schema)
-    assert run_generator("--check", cwd=tree).returncode == 0
-
-
 @pytest.mark.trace("TC-020", "FR-002-AC-9")
 def test_schemas_check_names_a_stale_committed_schema_and_writes_nothing(tmp_path):
     tree = worktree_copy(tmp_path)
@@ -316,18 +272,3 @@ def test_schemas_check_names_a_stale_committed_schema_and_writes_nothing(tmp_pat
         tree / "spec_objects_safety" / "manifest.yaml"
     ).read_bytes() == manifest_before
 
-
-@pytest.mark.trace("TC-025", "FR-002-CON-5")
-def test_no_test_hard_codes_the_id_version_segment():
-    """FR 002 CON-5: a criterion that hard-codes the version churns per release."""
-    version = manifest_version()
-    literal = f"spec-objects-safety/{version}/"
-    suites = [
-        *(REPO_ROOT / "tests").rglob("*.py"),
-        *(REPO_ROOT / "tests_integration").rglob("*.py"),
-    ]
-    assert len(suites) > len(list((REPO_ROOT / "tests").rglob("*.py")))
-    for path in sorted(suites):
-        assert (
-            literal not in path.read_text()
-        ), f"{path} hard-codes the $id version segment"

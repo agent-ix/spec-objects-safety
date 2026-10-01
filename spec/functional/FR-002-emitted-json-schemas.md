@@ -15,7 +15,7 @@ relationships:
 ## Description
 
 The module build SHALL emit one JSON Schema 2020-12 document per declared model
-from a TypeSpec source that imports `@agent-ix/semantic-core` 0.3.0, using the
+from a TypeSpec source that imports `@agent-ix/semantic-core`, using the
 official `@typespec/json-schema` emitter at a pinned toolchain, into
 `spec_objects_safety/schemas/`, so that the shipped schema is the compiled one
 and any drift between source and shipped bytes fails the build.
@@ -23,8 +23,7 @@ and any drift between source and shipped bytes fails the build.
 ## Inputs
 
 - `typespec/main.tsp`: namespace `AgentIx.SpecObjects.Safety`, decorated
-  `@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-objects-safety/<version>/")`
-  where `<version>` is the manifest `version`.
+  `@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-objects-safety/")`.
 - `@agent-ix/semantic-core` from GitHub Packages (`FieldDecl`, `TypeRef`,
   `Multiplicity`, `ConstraintDecl`, `RelationDecl`, `ClauseRef`, `SourceLocus`,
   `Identifier`, `SemanticId`, `KernelScalar`).
@@ -47,14 +46,8 @@ and any drift between source and shipped bytes fails the build.
 - If `tsp compile` fails or emits no module model, then the generator SHALL exit non-zero without touching the committed output.
 - If `node` is older than 20 or the compiler is not installed, then the generator SHALL exit non-zero naming the required Node version or the missing package.
 - In `--check` mode the generator SHALL write no file, neither under `spec_objects_safety/schemas/` nor in `manifest.yaml`.
-- Every emitted schema SHALL declare `$schema: https://json-schema.org/draft/2020-12/schema` and `$id: https://schemas.agent-ix.org/agent-ix/spec-objects-safety/<manifest version>/<Model>.json`.
-- The `$id` base SHALL embed the manifest `version`, so one schema URL names exactly one immutable byte sequence and a downstream fixture reader that pinned a version can never silently read a later version's bytes under the same URL.
-- If the manifest `version` changes, then the author SHALL edit the `@jsonSchema` base in `typespec/main.tsp` and the manifest `version` in one commit, re-run `make schemas`, and commit the re-emitted schemas and the rewritten `$id` and `$ref` values together.
-- If a commit carries one half of that pair, then `make schemas-check` SHALL refuse it.
-- No acceptance criterion, test, or fixture SHALL hard-code the version segment of the `$id` base.
-- Each acceptance criterion, test, and fixture SHALL read the version segment of the `$id` base from the manifest `version`.
+- Every emitted schema SHALL declare `$schema: https://json-schema.org/draft/2020-12/schema` and `$id: https://schemas.agent-ix.org/agent-ix/spec-objects-safety/<Model>.json`.
 - Every `$ref` in an emitted schema SHALL name either a sibling under the module base that ships in `schemas/`, or `https://schemas.agent-ix.org/semantic-core/0.3.0/<Model>.json`.
-- If the `@jsonSchema` base version in `typespec/main.tsp` differs from the manifest `version`, then the generator SHALL fail naming both values.
 - `make schemas-check` SHALL run the generator with `--check`.
 - `make lint` SHALL run `make schemas-check`, so a `typespec/` edit that was never regenerated fails before push rather than at review.
 - If any emitted file differs from the committed output, or a committed file under `spec_objects_safety/schemas/` is stale, then the check SHALL exit non-zero naming each such file.
@@ -70,22 +63,19 @@ and any drift between source and shipped bytes fails the build.
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
 | FR-002-CON-1 | The build SHALL use the official `@typespec/json-schema` emitter only; no custom emitter and no hand-edited emitted file. | Architecture | Test |
-| FR-002-CON-2 | The repository SHALL carry no `.npmrc`, no `file:` or `link:` dependency, and no upper version bound on the TypeSpec toolchain beyond the exact pin. | Packaging | Test |
+| FR-002-CON-2 | The repository SHALL carry no `.npmrc`, no `file:` or `link:` dependency, and no upper version bound on the TypeSpec toolchain . | Packaging | Test |
 | FR-002-CON-3 | Emission SHALL be deterministic: two runs over one source produce byte-identical files. | Integrity | Test |
 | FR-002-CON-4 | `package-lock.json` SHALL resolve every package from a real, CI-reachable registry — `registry.npmjs.org` for the public TypeSpec toolchain packages, GitHub Packages (`npm.pkg.github.com`) for `@agent-ix/semantic-core` — and never from `npm.ix`, the private dev-only mirror that served `@agent-ix/semantic-core` `0.1.0`/`0.2.0` before either was ever published anywhere real. | Packaging | Test |
-| FR-002-CON-5 | The `$id` base SHALL embed the manifest `version`, bumped as one atomic regeneration (source base, manifest version, schemas in one commit). | Compatibility | Test |
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-002-AC-2 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name under the module base, with the version segment read from `manifest.yaml` rather than hard-coded. | Test |
-| FR-002-AC-3 | Every `$ref` across the shipped schemas resolves to a shipped sibling or to semantic-core `0.3.0`; a `$ref` to any other host or version is absent. | Test |
+| FR-002-AC-2 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name under the module base. | Test |
+| FR-002-AC-3 | Every `$ref` across the shipped schemas resolves to a shipped sibling or to semantic-core; a `$ref` to any other host is absent. | Test |
 | FR-002-AC-4 | `make schemas-check` on the committed tree exits zero; after one byte of any shipped schema is changed, it exits non-zero naming that file. | Test |
-| FR-002-AC-5 | A `@jsonSchema` base whose version segment differs from the manifest `version` makes the generator fail naming both versions. | Test |
 | FR-002-AC-6 | The wheel built by `make build` contains `spec_objects_safety/schemas/<Model>.json` for every emitted model. | Test |
 | FR-002-AC-7 | The npm tarball produced by `npm pack` contains `manifest.yaml` and a sibling `schemas/<Model>.json` for every exported type, so a manifest-relative `schema:` path resolves inside the tarball, and `postpack` leaves no staged copy at the repository root. | Test |
-| FR-002-AC-8 | Bumping the manifest `version` and the `@jsonSchema` base together and re-running the generator yields every `$id` and every sibling `$ref` at the new version; `make schemas-check` then exits zero, while bumping only one of the pair exits non-zero. | Test |
 | FR-002-AC-9 | `make schemas-check` on a committed tree carrying an extra `spec_objects_safety/schemas/Stale.json` with no emitted counterpart exits non-zero naming that file, and writes nothing. | Test |
 
 ## Dependencies
