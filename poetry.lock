@@ -938,17 +938,17 @@ files = [
 
 [[package]]
 name = "quire"
-version = "0.49.0"
+version = "0.50.0"
 description = "Python bindings for quire-rs: parse, corpus load, and whole-spec queries (FR-023)."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "quire-0.49.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:18a68fd7b5486082a6807f2b1d1a47cef055690541b76dce196f71d3cc20e810"},
-    {file = "quire-0.49.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:ff5877fd03bb01a67036520e80962134f3004953556a5bbf6e0b548232102187"},
-    {file = "quire-0.49.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1389b18916672b3d04ff323412095278719a15bd1f34e867940b4261e837500f"},
-    {file = "quire-0.49.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8c20e6105c181c03aca8611b57a681941c82acdf9194afd373d221e8f1432271"},
-    {file = "quire-0.49.0-cp39-abi3-win_amd64.whl", hash = "sha256:b1f3b53d930f60b44311fa58860c65760dac2e0f86afffd4fddf2a26db89accd"},
+    {file = "quire-0.50.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:19fc945a86870f151a6a87dce69d25845e250ed91e66cfec06e4c159f44ffe3a"},
+    {file = "quire-0.50.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:74413c84ea63cb37e78301de6c3e7d3fd1768259f877ef074cfd717551d70c83"},
+    {file = "quire-0.50.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5d4cda974a1b241d592068fdb48aeea2103aaa63357c89105b7b6fad3331efa3"},
+    {file = "quire-0.50.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d4bb6ea5a8ae42c67a2eb93766f2544d2ad674120e91d51ccdbfac56354e236f"},
+    {file = "quire-0.50.0-cp39-abi3-win_amd64.whl", hash = "sha256:384c44ece0c40ae6876e7f2ef8cab6d7ddb5a19e33d0f9126bfeef8c6731935b"},
 ]
 
 [package.source]
@@ -1150,14 +1150,14 @@ type = ["importlib_metadata (>=7.0.2) ; python_version < \"3.10\"", "jaraco.deve
 
 [[package]]
 name = "spec-artifacts-iso"
-version = "0.21.1"
+version = "0.22.0"
 description = "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)"
 optional = false
 python-versions = ">=3.13,<3.14"
 groups = ["dev"]
 files = [
-    {file = "spec_artifacts_iso-0.21.1-py3-none-any.whl", hash = "sha256:5e6b168d4ac3a128b298739453a08a4e699935d0f5501f930a09b22228abbd10"},
-    {file = "spec_artifacts_iso-0.21.1.tar.gz", hash = "sha256:6ef0fc222f8a94f46f0a143445f1a4aa1dc274fc3b16113e3976e4f1d6d6a80a"},
+    {file = "spec_artifacts_iso-0.22.0-py3-none-any.whl", hash = "sha256:c624f60e9c2a05164076776f1b703f96965fef5270c2b2c3d94a484300a9253b"},
+    {file = "spec_artifacts_iso-0.22.0.tar.gz", hash = "sha256:418c035ea253d4d6f971df0c57a204f14affca3160b54e5fdaaaaac8706609b8"},
 ]
 
 [package.source]
@@ -1180,4 +1180,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "239c53f2f741f5bba4bf32a3f0c1f1dd4a0b5780fe139a3b5470b99118c270a3"
+content-hash = "02c3a28222204f2743c2fea2496892116381c5cbe5ab10926dce69e4b874d9a2"

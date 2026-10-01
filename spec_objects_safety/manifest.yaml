@@ -7,7 +7,7 @@ semantic:
   # this contract version refuses the module explicitly instead of loading it as
   # an empty model.
   contract_version: 1.0.0
-  semantic_core: 0.3.0
+  semantic_core: 0.3.2
   package: agent-ix/spec-objects-safety
   exports:
   - hazard

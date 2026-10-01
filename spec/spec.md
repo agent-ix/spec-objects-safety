@@ -119,8 +119,8 @@ sees the contract that was authored instead of guessing at it.
   carried as an explicit expected failure.
 - Publishing a `spec-artifacts-iso` release whose FR-035 module-manifest schema
   carries the `semantic` block and the `data_schema` reference form: the schema
-  landed on `main` (CR-012) and no tag carries it, `v0.18.0`
-  included; `agent-ix/spec-artifacts-iso#36` is the blocking issue. This module
+  landed on `main` (CR-012); `agent-ix/spec-artifacts-iso#36` is the blocking
+  issue. This module
   states no criterion over that schema as a document and holds no copy of it
   (PLAT-902). What is executed here is what the consumers accept: Quire's
   registry loader (FR-003-AC-4, FR-003-AC-6) and the `quoin module install`
