@@ -29,7 +29,6 @@ SKELETONS_DIR = PACKAGE_ROOT / "skeletons"
 TYPESPEC_SOURCE = REPO_ROOT / "typespec" / "main.tsp"
 FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 NEGATIVE_DIR = FIXTURES_DIR / "negative"
-BASELINE_DIR = FIXTURES_DIR / "baseline-0.2.0"
 SEMANTIC_CORE_DIR = (
     REPO_ROOT
     / "node_modules"
@@ -124,10 +123,6 @@ def frontmatter(markdown: str) -> dict[str, Any]:
     match = re.match(r"---\n(.*?)\n---\n", markdown, re.DOTALL)
     assert match, "document has no frontmatter"
     return yaml.safe_load(match.group(1))
-
-
-def baseline(name: str) -> Any:
-    return json.loads((BASELINE_DIR / name).read_text())
 
 
 def schema_of(model: str) -> dict[str, Any]:

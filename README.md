@@ -14,7 +14,7 @@ declares two object types — `hazard` (a system state that can lead to harm) an
 contracts, their authoring skeletons, the domain lexicon, and the
 `traceability` model that reports a hazard nothing mitigates.
 
-Since 0.3.0 it is a **semantic module** (quoin FR-070): the archetypes are
+It is a **semantic module** (quoin FR-070): the archetypes are
 authored in `typespec/main.tsp` against `@agent-ix/semantic-core`, emitted to
 JSON Schema 2020-12 under `spec_objects_safety/schemas/`, and referenced from
 the manifest by path.

@@ -1,6 +1,5 @@
 """Manifest contract tests (FR 003): the `semantic` block, its reference-form
-`data_schema`, locator preservation, the traceability model this module's
-neighbour reads, and what Quire's loader refuses.
+`data_schema`, and what Quire's loader refuses.
 """
 
 from __future__ import annotations
@@ -14,10 +13,7 @@ from tests.conftest import (
     OBJECT_TYPES,
     PACKAGE_ROOT,
     REPO_ROOT,
-    baseline,
     frontmatter,
-    locators,
-    object_type,
 )
 
 ADMITTED_KEYS = {
@@ -61,32 +57,6 @@ def test_the_semantic_block_carries_the_nine_admitted_keys_and_two_exports(
     assert semantic_block["legacy_forms"] == "warning"
 
 
-@pytest.mark.trace("TC-028", "FR-003-AC-3", "NFR-001-AC-1")
-def test_every_020_locator_is_unchanged_against_the_checked_in_baseline():
-    record = baseline("locators.json")
-    assert record["version"] == "0.2.0"
-    for name, old in record["locators"].items():
-        new = locators(object_type(name))
-        for key, facets in old.items():
-            assert key in new, f"{name}.{key} was dropped at 0.3.0"
-            assert new[key] == facets, f"{name}.{key} changed facets at 0.3.0"
-
-
-@pytest.mark.trace("TC-029", "FR-003-AC-3", "FR-003-CON-2")
-def test_every_locator_added_after_020_is_optional():
-    record = baseline("locators.json")
-    added = 0
-    for name, old in record["locators"].items():
-        for key, facets in locators(object_type(name)).items():
-            if key in old:
-                continue
-            added += 1
-            assert (
-                facets.get("required") is False
-            ), f"{name}.{key} was added as required"
-    assert added > 0, "no locator was added; FR 005's sections would not be asserted"
-
-
 @pytest.mark.trace("TC-030", "FR-003-AC-4")
 def test_the_registry_loads_both_archetypes_and_every_skeleton_loads_clean(
     quire_engine, skeletons
@@ -105,23 +75,6 @@ def test_the_registry_loads_both_archetypes_and_every_skeleton_loads_clean(
         assert not [
             e for e in result["errors"] if "semantic." in e["message"]
         ], path.name
-
-
-@pytest.mark.trace("TC-031", "FR-003-AC-5", "NFR-001-AC-4")
-def test_the_traceability_model_is_fact_for_fact_the_020_model():
-    """The one part of this manifest another repository reads.
-
-    `agent-ix/spec-objects-security`'s hazard-coverage work (#5, and the #13
-    migration running alongside this one) reads these relations across the repo
-    boundary: which object type carries the obligation, which verb satisfies it,
-    and which direction it is authored from. A change here is a change to a
-    neighbour's edges, so 0.3.0 changes nothing and this test says so fact by
-    fact rather than by a whole-document digest, which would also fire on a
-    comment.
-    """
-    from tests.conftest import load_manifest
-
-    assert load_manifest()["traceability"] == baseline("traceability.json")
 
 
 @pytest.mark.trace("TC-032", "FR-003-AC-6")

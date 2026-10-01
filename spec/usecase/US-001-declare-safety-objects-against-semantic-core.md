@@ -22,7 +22,7 @@ FR-002..FR-006 choose those.
 
 ## Context
 
-The module shipped at version 0.2.0 with `data_schema: {type: object}` on both
+The module originally shipped with `data_schema: {type: object}` on both
 of its object types. That is not a contract: it accepts every record, so no
 consumer can tell a scored hazard from an empty one, and nothing downstream can
 generate a typed reader. Meanwhile the ecosystem has agreed one declaration
@@ -90,5 +90,4 @@ before those modules publish their own semantic contracts.
 ## Traceability (Informative)
 
 This story realises the stakeholder need for safety analysis recorded as
-validated, linkable objects, and is implemented by FR-002 through FR-006 with
-NFR-001 bounding the change.
+validated, linkable objects, and is implemented by FR-002 through FR-006.

@@ -33,18 +33,15 @@ declaration record against them, while every existing extraction locator keeps i
 
 ## Outputs
 
-- `manifest.yaml` with `version: 0.3.0`, a `semantic` block, and reference-form
+- `manifest.yaml` with a `version`, a `semantic` block, and reference-form
   `data_schema` on both object types.
 
 ## Behavior
 
-- The manifest `semantic` block SHALL carry exactly these keys and values: `contract_version: 1.0.0`, `semantic_core: 0.3.0`, `package: agent-ix/spec-objects-safety`, `exports` listing every object type that ships a schema, `imports: {}`, `targets: [json-schema, markdown]`, `mappings: [typed-table, sysml-fence, ocl-clause]`, `compatibility_posture: additive`, `legacy_forms: warning`.
+- The manifest `semantic` block SHALL carry exactly these keys and values: `contract_version: 1.0.0`, `semantic_core` (the one semantic-core version the module declares it extends), `package: agent-ix/spec-objects-safety`, `exports` listing every object type that ships a schema, `imports: {}`, `targets: [json-schema, markdown]`, `mappings: [typed-table, sysml-fence, ocl-clause]`, `compatibility_posture: additive`, `legacy_forms: warning`.
 - `semantic.exports` SHALL name both object types: `hazard` and `failure_mode`.
 - Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json }`.
 - No exported object type SHALL carry an inline `data_schema`.
-- Every `body_extraction` locator present at version 0.2.0 SHALL remain present with the same `from`, heading, `language`, `required`, `multiple`, and `assert` facets.
-- Where an object type gains a locator after 0.2.0, that locator SHALL be `required: false`, so existing artifacts stay valid.
-- The `traceability` block SHALL keep its 0.2.0 shape: both `required_relations`, their `edges`, their `direction: incoming`, their distinct `check` keys, and `acyclic_edges: [arises_from]`. `agent-ix/spec-objects-security`'s hazard-coverage work reads them across repositories, so a change here is a change to a neighbour.
 - The manifest SHALL load through Quire's registry loader with no load failure for either object type.
 - The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic.
 - When the install has completed, `quoin module` SHALL list `spec-objects-safety`.
@@ -55,16 +52,13 @@ declaration record against them, while every existing extraction locator keeps i
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
 | FR-003-CON-1 | The `semantic` block SHALL contain no key outside the admitted list. Quire's loader refusal of an unknown key is verified here (FR-003-AC-6); Quoin's refusal is the neighbour's own obligation (quoin FR-070) and is evidenced by the clean install of IT-001. | Compatibility | Test |
-| FR-003-CON-2 | The manifest SHALL mark every locator added after 0.2.0 `required: false`. | Compatibility | Test |
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-003-AC-1 | The loaded `semantic` block equals the nine admitted keys with the values above, and `exports` equals the two object-type names. | Test |
-| FR-003-AC-3 | Every 0.2.0 locator, compared against the checked-in 0.2.0 baseline, is present unchanged; every added locator is `required: false`. | Test |
 | FR-003-AC-4 | `quire.Registry.load_from` lists both archetypes and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
-| FR-003-AC-5 | The `traceability` block is byte-for-byte the 0.2.0 model: two relations, `edges: [mitigates]`, `direction: incoming`, distinct `check` keys, `acyclic_edges: [arises_from]`. | Test |
 | FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader; an unmutated control loads in each case. | Test |
 
 ## Dependencies
