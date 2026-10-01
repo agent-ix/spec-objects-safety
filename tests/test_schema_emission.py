@@ -184,7 +184,7 @@ def test_the_build_uses_the_official_emitter_only_and_no_file_is_hand_edited():
 def test_no_npmrc_no_local_dependency_and_exact_toolchain_pins():
     assert not (REPO_ROOT / ".npmrc").exists()
     package = json.loads((REPO_ROOT / "package.json").read_text())
-    dev = package["devDependencies"]
+    assert "devDependencies" in package
     assert "dependencies" not in package or not package["dependencies"]
     for section in ("dependencies", "devDependencies"):
         for name, spec in (package.get(section) or {}).items():
@@ -195,8 +195,9 @@ def test_no_npmrc_no_local_dependency_and_exact_toolchain_pins():
 @pytest.mark.trace("TC-024", "FR-002-CON-4")
 def test_the_lockfile_resolves_public_packages_from_npmjs():
     """`@agent-ix/semantic-core` is published to a real, CI-reachable registry
-    (GitHub Packages), never the private `npm.ix` dev-only mirror. Every package in the lockfile SHALL now
-    resolve from a real registry and none from `npm.ix`."""
+    (GitHub Packages), never the private `npm.ix` dev-only mirror. Every package
+    in the lockfile SHALL now resolve from a real registry and none from
+    `npm.ix`."""
     lock = json.loads((REPO_ROOT / "package-lock.json").read_text())
     for path, entry in lock["packages"].items():
         resolved = entry.get("resolved")
@@ -271,4 +272,3 @@ def test_schemas_check_names_a_stale_committed_schema_and_writes_nothing(tmp_pat
     assert (
         tree / "spec_objects_safety" / "manifest.yaml"
     ).read_bytes() == manifest_before
-
