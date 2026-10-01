@@ -151,7 +151,7 @@ def schema_of(model: str) -> dict[str, Any]:
 
 
 def shipped_schema_paths() -> list[pathlib.Path]:
-    return sorted(p for p in SCHEMAS_DIR.glob("*.json") if p.name != "toolchain.json")
+    return sorted(SCHEMAS_DIR.glob("*.json"))
 
 
 def require_quire():

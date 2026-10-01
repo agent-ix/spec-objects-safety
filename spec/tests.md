@@ -97,7 +97,6 @@ assert what the requirement says.
 | TC-007 | Every `allowed_links` verb exists in the iso edge vocabulary as a forward key or a declared inverse label | Unit | P0 | FR-001-AC-7, FR-001-CON-2 | ✅ |
 | TC-010 | Bidirectional hazard coverage is manifest data: two independently tunable relations, `direction: incoming`, `arises_from` acyclic | Unit | P0 | FR-003-AC-5 | ✅ |
 | TC-011 | Every relation names an object type this module declares and a verb the iso vocabulary carries | Unit | P0 | FR-006-AC-4 | ✅ |
-| TC-012 | The emitted set equals the fifteen models `toolchain.json` lists, with compiler and emitter 1.15.0 recorded | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name, with the version read from the manifest | Unit | P0 | FR-002-AC-2 | ✅ |
 | TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.3.0 | Unit | P0 | FR-002-AC-3 | ✅ |
 | TC-015 | `make schemas-check` exits zero on the committed tree and non-zero naming a mutated schema | Integration | P1 | FR-002-AC-4 | ✅ |

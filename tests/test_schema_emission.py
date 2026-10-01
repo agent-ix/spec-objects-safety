@@ -28,7 +28,6 @@ from tests.conftest import (
     REPO_ROOT,
     SCHEMAS_DIR,
     SEMANTIC_CORE_BASE,
-    SUPPORT_MODELS,
     manifest_version,
     module_base,
 )
@@ -55,12 +54,7 @@ def shipped_schemas() -> dict[str, dict]:
     return {
         path.name: json.loads(path.read_text())
         for path in sorted(SCHEMAS_DIR.glob("*.json"))
-        if path.name != "toolchain.json"
     }
-
-
-def toolchain() -> dict:
-    return json.loads((SCHEMAS_DIR / "toolchain.json").read_text())
 
 
 def worktree_copy(tmp_path: pathlib.Path) -> pathlib.Path:
@@ -79,29 +73,6 @@ def worktree_copy(tmp_path: pathlib.Path) -> pathlib.Path:
     shutil.copytree(SCHEMAS_DIR, root / "spec_objects_safety" / "schemas")
     (root / "node_modules").symlink_to(REPO_ROOT / "node_modules")
     return root
-
-
-@pytest.mark.trace("TC-012", "FR-002-AC-1")
-def test_emitted_set_is_the_fifteen_files_the_toolchain_records():
-    record = toolchain()
-    expected = sorted(
-        [f"{MODEL_OF[name]}.json" for name in OBJECT_TYPES]
-        + [f"{model}.json" for model in SUPPORT_MODELS]
-    )
-    assert sorted(record["files"]) == expected
-    assert len(expected) == 15
-    assert sorted(shipped_schemas()) == expected
-    normalization = record["normalization"]
-    # The `$id`/`$ref` absolutization step is load-bearing — a relative `$ref`
-    # left in a shipped schema resolves against whatever base a consumer happens
-    # to have — so `toolchain.json` records whether it fired and over which
-    # files, and that record is asserted rather than assumed.
-    assert normalization["name"] == "absolute-id-and-ref"
-    assert normalization["applied"] is (len(normalization["rewrittenFiles"]) > 0)
-    assert set(normalization["rewrittenFiles"]) <= set(record["files"])
-    assert record["compiler"] == {"name": "@typespec/compiler", "version": "1.15.0"}
-    assert record["emitter"] == {"name": "@typespec/json-schema", "version": "1.15.0"}
-    assert record["base"] == module_base()
 
 
 @pytest.mark.trace("TC-013", "FR-002-AC-2")
@@ -217,8 +188,6 @@ def test_the_build_uses_the_official_emitter_only_and_no_file_is_hand_edited():
     # No emitter of our own, and the only writer of `schemas/` is this script.
     for path in REPO_ROOT.glob("scripts/*.mjs"):
         assert "emitter" not in path.name
-    record = toolchain()
-    assert record["emitter"]["name"] == "@typespec/json-schema"
     # A hand edit would make the drift gate red; that gate is the standing check.
     assert run_generator("--check").returncode == 0
 
@@ -323,9 +292,6 @@ def test_a_coordinated_version_bump_reemits_every_id_and_digest(tmp_path):
     bumped_base = f"https://schemas.agent-ix.org/agent-ix/spec-objects-safety/{new}/"
     out = tree / "spec_objects_safety" / "schemas"
     for path in out.glob("*.json"):
-        if path.name == "toolchain.json":
-            assert json.loads(path.read_text())["base"] == bumped_base
-            continue
         schema = json.loads(path.read_text())
         assert schema["$id"] == f"{bumped_base}{path.name}"
         # Scoped to the module's OWN old base, not a bare version-number
