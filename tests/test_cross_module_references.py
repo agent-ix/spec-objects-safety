@@ -116,7 +116,7 @@ def test_every_verb_this_module_uses_exists_in_the_iso_vocabulary():
 
 @pytest.mark.trace("TC-064", "FR-006-CON-1")
 def test_no_safety_only_synonym_is_minted():
-    """The finding the module was founded on, kept true at 0.3.0.
+    """The finding the module was founded on, kept true.
 
     The ticket that created this module assumed `causes` and `contributes_to`
     would be added to the shared vocabulary. Applying that vocabulary's own

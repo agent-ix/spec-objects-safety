@@ -19,8 +19,6 @@ relationships:
     type: covers
   - target: "ix://agent-ix/spec-objects-safety/FR-006"
     type: covers
-  - target: "ix://agent-ix/spec-objects-safety/NFR-001"
-    type: covers
   - target: "ix://agent-ix/spec-objects-safety/IT-001"
     type: covers
 ---
@@ -28,16 +26,11 @@ relationships:
 
 ## Overview
 
-The verification contract for the module: the 0.2.0 object-type declaration
+The verification contract for the module: the object-type declaration
 (FR-001) and the issue #2 semantic-module migration (US-001, FR-002..FR-006,
-NFR-001, IT-001). Coverage is complete when every acceptance criterion, named
+IT-001). Coverage is complete when every acceptance criterion, named
 constraint, and NFR metric maps to at least one test case backed by a real
 `@pytest.mark.trace` tag.
-
-Two rows carry an explicit expected failure rather than a pass, each naming the
-engine defect that owns it (TC-032, TC-067). Neither is skipped: both run, both
-assert what the engine does today, and both name the issue that will let them
-assert what the requirement says.
 
 ## Test Matrix Rules
 
@@ -73,12 +66,6 @@ assert what the requirement says.
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
 
-### Non-Functional Requirement Coverage
-
-| Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
-|---|---|---|---|
-| NFR-001 | Test (locator baseline diff, 0.2.0 skeleton validation, traceability comparison, lint allow-list widening) | TC-065..TC-069 | ✅ AC-3 is an expected failure on quire-rs#391 |
-
 ### Integration Test Coverage
 
 | Integration Test | Success Criteria | Test Cases | Coverage Status |
@@ -108,10 +95,7 @@ assert what the requirement says.
 | TC-023 | No `.npmrc`, no `file:`/`link:` dependency in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
 | TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
-| TC-028 | Every 0.2.0 locator is unchanged against the checked-in baseline | Unit | P0 | FR-003-AC-3 | ✅ |
-| TC-029 | Every locator added after 0.2.0 is `required: false` | Unit | P1 | FR-003-AC-3, FR-003-CON-2 | ✅ |
 | TC-030 | Quire's registry loader lists both archetypes and `validate_document` reports no `semantic.*` load failure on any skeleton | Integration | P0 | FR-003-AC-4 | ✅ |
-| TC-031 | The `traceability` model is fact-for-fact the 0.2.0 model | Unit | P0 | FR-003-AC-5 | ✅ |
 | TC-032 | An unknown `semantic` key, a non-`<org>/<repo>` `package`, an unregistered `targets` value are each refused by the loader against a loading control | Unit | P0 | FR-003-AC-6 | ✅ |
 | TC-035 | `Hazard.json` and `FailureMode.json` differ in a required key, a forbidden key or an item rule; neither is `type: object` only | Unit | P0 | FR-004-AC-1 | ✅ |
 | TC-036 | Hazard: an identity record validates; the identity flag removed fails; no `fields` fails | Integration | P0 | FR-004-AC-2 | ✅ |
@@ -144,11 +128,6 @@ assert what the requirement says.
 | TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |
 | TC-063 | Every `allowed_links` and `traceability` verb exists in the iso edge vocabulary | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-064 | No safety-only synonym is minted for a verb or a type another module declares | Unit | P1 | FR-006-CON-1 | ✅ |
-| TC-065 | Zero 0.2.0 locators changed against the baseline | Unit | P0 | NFR-001-AC-1 | ✅ |
-| TC-066 | Every checked-in 0.2.0 skeleton validates under 0.3.0 with zero errors | Integration | P0 | NFR-001-AC-2 | ✅ |
-| TC-067 | A legacy prose `## Properties` block warns rather than errors under `legacy_forms: warning` | Integration | P1 | NFR-001-AC-3 | ✅ the warning is emitted; the "not an error" half is an expected failure on quire-rs#391 |
-| TC-068 | The `traceability` model is unchanged from 0.2.0 | Unit | P0 | NFR-001-AC-4 | ✅ |
-| TC-069 | The widened lint allow-lists still admit every value they admitted at 0.2.0 | Unit | P1 | NFR-001-AC-5 | ✅ |
 | TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 
@@ -186,25 +165,22 @@ tagged test, with three recorded exceptions:
    declares `mitigates: [threat, risk, vulnerability]`, and the
    `spec-artifacts-iso` `FR`/`NFR` archetypes declare no `mitigates` at all. So
    `unmitigated-hazard` cannot yet tell a mitigated hazard from an unmitigated
-   one, and no row here can honestly claim it does. TC-010, TC-031 and TC-068
-   assert the model as *data* and say nothing about whether the check fires;
-   they are not the missing evidence, and are not presented as it.
+   one, and no row here can honestly claim it does. TC-010
+   asserts the model as *data* and says nothing about whether the check fires;
+   it is not the missing evidence, and is not presented as it.
    `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
    neighbours. This module does not change the relation, the verb or the
-   direction unilaterally, because a neighbour reads them (NFR-001-AC-4).
+   direction unilaterally, because a neighbour reads them.
 2. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
    FR-001's own body decided against declaring a role
    (*"the `safety-relevant` capability tag this module first reached for turned
-   out to be unnecessary"*), and neither the 0.2.0 tests nor TC-002 check for
+   out to be unnecessary"*), and neither the tests nor TC-002 check for
    one. The criterion and the requirement that owns it disagree; the row stays
    `🚧` and `agent-ix/spec-objects-safety#3` carries the correction, because
    FR-001 belongs to the ticket that authored it rather than to this one.
 3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.
-4. **NFR-001-AC-3** (TC-067) — the legacy-form warning is emitted; the half that
-   requires it not to be accompanied by an error is an expected failure while
-   `agent-ix/quire-rs#391` is open.
 
 Two evidence-plan artifacts are absent and are carried by the plan rather than
 by this matrix: no `SuiteRegistry` document declares a producer for the `Unit`,
@@ -213,4 +189,4 @@ by this matrix: no `SuiteRegistry` document declares a producer for the `Unit`,
 human procedure: the four constraints that read `Inspection` at the start of the
 review round are each backed by an automated test, and their Verification cells
 now say `Test`. TC-059 is the one row that stays `Static` — it inspects the
-branch diff — and it too runs as a test.
+tracked file list — and it too runs as a test.

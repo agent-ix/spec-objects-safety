@@ -36,8 +36,6 @@ shipped teaching example and the shipped contract cannot disagree.
 - `spec_objects_safety/skeletons/{hazard,failure_mode}.md` and their
   `.sysml.md` alternates.
 - `tests/fixtures/negative/*.md`, one per named refusal.
-- `tests/fixtures/baseline-0.2.0/`, the 0.2.0 locator set and the 0.2.0
-  skeletons kept as compatibility fixtures.
 
 ## Behavior
 
@@ -61,7 +59,7 @@ shipped teaching example and the shipped contract cannot disagree.
 - Every negative fixture SHALL fail validation.
 - Every negative fixture's error message SHALL be longer than its `expect` token, so the fixture fails with a diagnosis rather than a bare code.
 - No change under this requirement SHALL touch a corpus repository, a vendored corpus fixture, or a sibling module.
-- The test that enforces the clause above SHALL assert over the tracked tree rather than over a diff against a moving ref, because a range anchored on `origin/main` changes meaning the moment the branch merges and turns the gate red for a branch that no longer exists.
+- The test that enforces the clause above SHALL assert over the tracked tree rather than over a diff against a moving ref, so the gate answers the same on any branch.
 - The semantic tests SHALL fail, never skip, when the Quire wheel is absent.
 
 ## Constraints

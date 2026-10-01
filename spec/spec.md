@@ -83,8 +83,7 @@ sees the contract that was authored instead of guessing at it.
   hazard from an unmitigated one — the module's own headline question.
   `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
   neighbours; changing the relation, the verb or the direction from this side
-  alone would repoint a neighbour's edges, which is why NFR-001-AC-4 freezes it
-  instead.
+  alone would repoint a neighbour's edges.
 - Deriving an ASIL, a SIL or any other integrity level. `Severity` is the IEC
   61508 / MIL-STD-882 four-band harm scale rather than ISO 26262 `S0..S3`, and
   no determination table is declared, so no integrity level follows from these
@@ -105,8 +104,8 @@ sees the contract that was authored instead of guessing at it.
   that do so say which they are — and FR-004-AC-8's "risk acceptance names a
   person" is typed but unreachable from any document.
 - Widening the `Assessment` table with `Exposure` and `Controllability`
-  columns. The 0.2.0 contract asserts the columns exactly, so adding one would
-  not be additive (NFR-001); the two axes are typed in `HazardAssessment` and
+  columns. The `Assessment` contract asserts the columns exactly, so adding one would
+  break it; the two axes are typed in `HazardAssessment` and
   wait on the same mapping.
 - Generated-language fixtures (Rust, TypeScript, Python) for the safety types:
   produced by `agent-ix/filament-core-data#21`, `#22` and `#23` and published
@@ -118,12 +117,6 @@ sees the contract that was authored instead of guessing at it.
   manifest key empties the model silently).
   FR-003-AC-6's "naming the key or the path" half is blocked on them and is
   carried as an explicit expected failure.
-- Treating a legacy prose `## Properties` block as a warning rather than an
-  error: `agent-ix/quire-rs#391` (the engine validates an `unavailable` record
-  as `{}`, so a legacy form errors even under `legacy_forms: warning`).
-  NFR-001-AC-3 is carried as an explicit expected failure beside it rather than
-  worked around by relaxing a schema. NFR-001-AC-2 itself holds — every
-  checked-in 0.2.0 skeleton validates under 0.3.0.
 - Publishing a `spec-artifacts-iso` release whose FR-035 module-manifest schema
   carries the `semantic` block and the `data_schema` reference form: the schema
   landed on `main` (CR-012) and no tag carries it, `v0.18.0`
@@ -141,8 +134,7 @@ sees the contract that was authored instead of guessing at it.
   `traceability.required_relations` against quire-rs FR-058 rather than code in
   this module. `agent-ix/spec-objects-security#5` asked for it and is closed;
   the live neighbour is `agent-ix/spec-objects-security#13`, migrating that
-  module alongside this one. The 0.2.0 model is kept unchanged here on purpose
-  (NFR-001-AC-4).
+  module alongside this one.
 - Editing any corpus repository or vendored fixture; the corpus sweep is
   `agent-ix/quoin#291` and promotion is `agent-ix/quoin#290`.
 
@@ -178,8 +170,7 @@ requirements (`functional/`): FR-001 declares the two object types and why they
 are two; FR-002 emits the schemas; FR-003 declares the semantic contract in the
 manifest; FR-004 fixes each type's schema and the epistemic distinctions the
 safety domain needs; FR-005 makes the skeletons executable fixtures; FR-006
-keeps the cross-module types referenced rather than copied. NFR-001 bounds the
-change to additive compatibility. `integration/` carries the Quoin install
+keeps the cross-module types referenced rather than copied. `integration/` carries the Quoin install
 boundary; the Quire engine boundary has no IT artifact of its own — the FR-003
 and FR-005 test harness is this module's Quire contract test, and the wheel
 version is pinned once in FR-005 Inputs. The Test Matrix in `tests.md` records

@@ -24,7 +24,7 @@ from tests.conftest import (
 
 QUOIN_MISSING = (
     "the `quoin` CLI is not on PATH. The semantic-module contract needs a Quoin "
-    "built from main; this row fails rather than skips, "
+    "with the module installer; this row fails rather than skips, "
     "because a skipped row is not coverage."
 )
 

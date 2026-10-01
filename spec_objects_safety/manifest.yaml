@@ -49,9 +49,9 @@ artifact_types: []
 # buckets the ecosystem authors in; a repository working to a specific standard
 # maps its own scale onto them rather than inventing a column.
 #
-# WIDENED AT 0.3.0 with `unknown`, `not_assessed` and `not_applicable`, the
+# WIDENED with `unknown`, `not_assessed` and `not_applicable`, the
 # three `EpistemicState` members the emitted schemas admit on every scored axis
-# (FR-004). At 0.2.0 the only way past this advisory was to write a scale
+# (FR-004). Before the widening the only way past this advisory was to write a scale
 # value, so an author who had not scored an axis was nudged towards
 # `negligible` or `none` — the exact collapse this module exists to prevent.
 # Widening an advisory allow-list to admit "nobody has looked" is not a
@@ -155,8 +155,8 @@ object_types:
           from: section_body
           after_heading: Mitigation
           required: false
-        # ADDED AT 0.3.0, `required: false` in both types so every 0.2.0
-        # artifact stays valid (NFR-001). The typed `## Properties` table is
+        # ADDED `required: false` in both types so existing
+        # artifacts stay valid. The typed `## Properties` table is
         # the semantic-module default form and a ```sysml``` fence is the
         # alternate; `## Invariants` carries one ```ocl``` fence per clause.
         # Quire's semantic extractor reads both from the document; these
@@ -210,8 +210,8 @@ object_types:
             - Cause
             - Detection
             min_rows: 1
-        # ADDED AT 0.3.0, `required: false` in both types so every 0.2.0
-        # artifact stays valid (NFR-001). The typed `## Properties` table is
+        # ADDED `required: false` in both types so existing
+        # artifacts stay valid. The typed `## Properties` table is
         # the semantic-module default form and a ```sysml``` fence is the
         # alternate; `## Invariants` carries one ```ocl``` fence per clause.
         # Quire's semantic extractor reads both from the document; these
@@ -226,7 +226,7 @@ object_types:
           after_heading: Invariants
           required: false
 
-# FR-058 (quire-rs v0.31.0): upward-trace completeness. THE POINT OF THIS
+# FR-058 (quire-rs): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.
 #
 # Downward coverage answers "is what we wrote verified". It cannot answer "is

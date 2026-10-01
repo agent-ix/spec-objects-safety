@@ -29,8 +29,8 @@ one.
 |---|---|---|
 | `Severity` | `negligible`, `marginal`, `critical`, `catastrophic` | IEC 61508 / MIL-STD-882 four-band harm severity. **Not** ISO 26262 `S0..S3`, so no ASIL is derivable from these members and none is claimed. |
 | `Likelihood` | `incredible`, `improbable`, `remote`, `occasional`, `probable`, `frequent` | IEC 61508 frequency bands |
-| `Exposure` | `E0`, `E1`, `E2`, `E3`, `E4` | ISO 26262 exposure. Typed only: no authored column carries it at 0.3.0. |
-| `Controllability` | `C0`, `C1`, `C2`, `C3` | ISO 26262 controllability. Typed only: no authored column carries it at 0.3.0. |
+| `Exposure` | `E0`, `E1`, `E2`, `E3`, `E4` | ISO 26262 exposure. Typed only: no authored column carries it. |
+| `Controllability` | `C0`, `C1`, `C2`, `C3` | ISO 26262 controllability. Typed only: no authored column carries it. |
 | `Detection` | `none`, `indirect`, `direct`, `automatic` | FMEA detectability |
 | `LifecycleStatus` | `identified`, `analysed`, `mitigated`, `accepted`, `transferred`, `closed` | Authored disposition |
 | `EpistemicState` | `unknown`, `not_assessed`, `not_applicable` | Not a scale; what an axis says instead of a scale value |
@@ -61,7 +61,7 @@ one.
 - Each of the three advisory lint allow-lists SHALL admit its own scale's members and the three `EpistemicState` members, so the document form can express everything the schema admits and an unscored axis is never nudged towards a scale's safe end.
 - No schema SHALL declare a `default` for any scored axis or for `status`, so an absent value is never filled in as a safe one.
 - An absent `assessment`, `analysis` or `status` SHALL mean "the document does not carry this", which is distinct from every `EpistemicState` member and from every scale value. A consumer counting the unanalysed backlog therefore reads both the absent case and `not_assessed`; this specification claims no equivalence between them.
-- The emitted schemas SHALL type `Exposure` and `Controllability` while no authored form carries them at 0.3.0, because the `Assessment` table's columns are fixed by the 0.2.0 contract and widening them would not be additive; `agent-ix/quoin#342` owns the mapping that makes them authorable.
+- The emitted schemas SHALL type `Exposure` and `Controllability` while no authored form carries them, because the `Assessment` table's columns are fixed by the module's contract and widening them would not be additive; `agent-ix/quoin#342` owns the mapping that makes them authorable.
 - No schema SHALL derive, name or imply an ASIL, a SIL or any other integrity level, because `Severity` is a four-band harm scale rather than ISO 26262 `S0..S3` and no determination table is declared here.
 - If `status` is `accepted`, then the record schema SHALL require `provenance` together with `assessment` on a hazard, or with `analysis` on a failure mode, so an acceptance names both a person and the thing being accepted.
 - Each record and value schema SHALL seal its key set with `unevaluatedProperties` and with `additionalProperties`, because the first is a 2020-12 keyword a consumer on an older dialect ignores, which would admit a forbidden key while `required` and `enum` still fail closed.
