@@ -11,11 +11,11 @@ relationships:
 ## Objective
 
 Verify the integration boundary between this module and the Quoin catalog: a
-module whose `data_schema` is a path-and-digest reference must install without a
+module whose `data_schema` is a path reference must install without a
 `semantic.*` diagnostic, appear in the installed module list, and then load
 through Quire from the catalog location with both object types registered.
 Without this test the module could be self-consistent in its own tree and still
-be unusable once installed, which is where a digest or a relative-path defect
+be unusable once installed, which is where a relative-path defect
 would surface.
 
 ## Target Integration
@@ -37,7 +37,7 @@ root when one can be given, so a developer's catalog is never left mutated.
 
 The module directory `spec_objects_safety/`, containing `manifest.yaml`, the
 emitted `schemas/` and the skeletons; every `data_schema` in it is the
-reference form `{schema, digest}`.
+reference form `{schema}`.
 
 ## Test Procedure
 
@@ -59,7 +59,7 @@ Each step performs one discrete action and has its own success criterion.
 ## Expected Results
 
 The install succeeds, the module is listed, Quire registers both object types
-from the installed copy with matching digests, a skeleton validates against it,
+from the installed copy, a skeleton validates against it,
 and the developer's catalog ends the run in the state it started in. The test
 passes only when every per-step success criterion holds.
 

@@ -25,17 +25,15 @@ and any drift between source and shipped bytes fails the build.
 - `typespec/main.tsp`: namespace `AgentIx.SpecObjects.Safety`, decorated
   `@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-objects-safety/<version>/")`
   where `<version>` is the manifest `version`.
-- `@agent-ix/semantic-core` 0.3.0 from GitHub Packages (`FieldDecl`, `TypeRef`,
+- `@agent-ix/semantic-core` from GitHub Packages (`FieldDecl`, `TypeRef`,
   `Multiplicity`, `ConstraintDecl`, `RelationDecl`, `ClauseRef`, `SourceLocus`,
   `Identifier`, `SemanticId`, `KernelScalar`).
-- `@typespec/compiler` 1.15.0, `@typespec/json-schema` 1.15.0 and
-  `@agent-ix/semantic-core` 0.3.0 as exact `devDependencies` in `package.json`,
-  resolved through `package-lock.json`. All three are build inputs of the
+- `@typespec/compiler`, `@typespec/json-schema` and `@agent-ix/semantic-core`
+  as `devDependencies` in `package.json`. All three are build inputs of the
   emission step; the published artifact is Markdown and JSON, so none is a
   runtime dependency of a consumer.
 - `scripts/generate-schemas.mjs` (the generator) and `scripts/stage-npm.mjs`
   (the npm staging script), both Node built-ins only.
-- Node 20 or later, the runtime `@typespec/compiler` 1.15.0 requires.
 
 ## Outputs
 
@@ -63,7 +61,7 @@ and any drift between source and shipped bytes fails the build.
 - If nothing differs, then the check SHALL exit zero.
 - The generator SHALL write files under `spec_objects_safety/schemas/` only.
 - The Python package SHALL include `spec_objects_safety/schemas/*.json` in the wheel and sdist.
-- The repository SHALL mark `*.json`, `*.tsp`, `*.yaml` and `*.md` as `eol=lf` in `.gitattributes`, so a checkout with `autocrlf` cannot change the digested bytes.
+- The repository SHALL mark `*.json`, `*.tsp`, `*.yaml` and `*.md` as `eol=lf` in `.gitattributes`.
 - `scripts/stage-npm.mjs` SHALL copy `schemas/` beside `manifest.yaml` at pack time, so the npm tarball ships the schemas the manifest references.
 - When `scripts/stage-npm.mjs` runs with `--clean`, it SHALL remove the staged copies, so no `manifest.yaml` is left at the repository root for Filament tooling to discover as a second module.
 

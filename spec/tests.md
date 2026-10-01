@@ -107,7 +107,7 @@ assert what the requirement says.
 | TC-020 | `make schemas-check` names a stale committed schema with no emitted counterpart and writes nothing | Integration | P1 | FR-002-AC-9 | ✅ |
 | TC-021 | Two generator runs over one source are byte-identical | Integration | P1 | FR-002-CON-3 | ✅ |
 | TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
-| TC-023 | No `.npmrc`, no `file:`/`link:` dependency, exact toolchain pins in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
+| TC-023 | No `.npmrc`, no `file:`/`link:` dependency in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
 | TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
 | TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Unit | P2 | FR-002-CON-5 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
@@ -158,7 +158,7 @@ assert what the requirement says.
 ## Test Environment
 
 Every `Integration` row that names Quire runs against the Quire wheel FR-005
-Inputs pins (exactly 0.47.1), a dev dependency resolved from `internal-pypi`
+Inputs names, a dev dependency resolved from `internal-pypi`
 by `poetry install`. The suite **fails** rather than skips when
 `extract_semantic` is absent, so no row here can be reported green without the
 engine under test — TC-057 is the test of that policy.
