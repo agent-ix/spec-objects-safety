@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/FailureMode.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/FailureMode.json",
   "type": "object",
   "properties": {
     "fields": {
@@ -10,22 +10,22 @@
       },
       "minItems": 1,
       "contains": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/IdentityField.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
       }
     },
     "analysis": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/FailureAnalysis.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/FailureAnalysis.json"
     },
     "status": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/LifecycleStatus.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/LifecycleStatus.json"
     },
     "provenance": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Provenance.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Provenance.json"
     },
     "evidence": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EvidenceRef.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
       }
     },
     "relations": {

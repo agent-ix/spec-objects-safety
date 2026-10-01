@@ -1,7 +1,7 @@
 """Record-schema tests (FR 004): what each object type's schema requires,
 forbids and refuses, and the epistemic distinctions the safety domain needs.
 
-**These are schema evidence, not extraction evidence.** Quire 0.46.0 populates a
+**These are schema evidence, not extraction evidence.** Quire populates a
 declaration record's `fields`, `clauses`, `operations` and `relations` only; the
 module-specific keys (`assessment`, `context`, `analysis`, `status`,
 `provenance`, `evidence`) have no published Markdown mapping yet
@@ -37,7 +37,7 @@ def valid(validator, record) -> bool:
     return validator.is_valid(record)
 
 
-# Multiplicity.json (semantic-core 0.3.0) requires `ordered`/`unique`; a
+# Multiplicity.json (semantic-core) requires `ordered`/`unique`; a
 # producer clamps both `false` on a singular multiplicity (`upper` at most
 # one). Every field these two helpers build is a singular kernel scalar, so
 # both are `false`.

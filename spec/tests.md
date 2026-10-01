@@ -67,7 +67,7 @@ assert what the requirement says.
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
 | FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
-| FR-002 | FR-002-AC-1..9, FR-002-CON-1..5 | TC-012..TC-025 | ✅ |
+| FR-002 | FR-002-AC-1..4, FR-002-AC-6..7, FR-002-AC-9, FR-002-CON-1..4 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
@@ -97,19 +97,16 @@ assert what the requirement says.
 | TC-007 | Every `allowed_links` verb exists in the iso edge vocabulary as a forward key or a declared inverse label | Unit | P0 | FR-001-AC-7, FR-001-CON-2 | ✅ |
 | TC-010 | Bidirectional hazard coverage is manifest data: two independently tunable relations, `direction: incoming`, `arises_from` acyclic | Unit | P0 | FR-003-AC-5 | ✅ |
 | TC-011 | Every relation names an object type this module declares and a verb the iso vocabulary carries | Unit | P0 | FR-006-AC-4 | ✅ |
-| TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name, with the version read from the manifest | Unit | P0 | FR-002-AC-2 | ✅ |
-| TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core 0.3.0 | Unit | P0 | FR-002-AC-3 | ✅ |
+| TC-013 | Every shipped schema declares the 2020-12 `$schema` and the `$id` matching its file name | Unit | P0 | FR-002-AC-2 | ✅ |
+| TC-014 | Every `$ref` resolves to a shipped sibling or to semantic-core | Unit | P0 | FR-002-AC-3 | ✅ |
 | TC-015 | `make schemas-check` exits zero on the committed tree and non-zero naming a mutated schema | Integration | P1 | FR-002-AC-4 | ✅ |
-| TC-016 | A `@jsonSchema` base version differing from the manifest version fails the generator naming both | Integration | P1 | FR-002-AC-5 | ✅ |
 | TC-017 | The built wheel contains every emitted schema file | Integration | P1 | FR-002-AC-6 | ✅ |
 | TC-018 | The packed npm tarball carries `manifest.yaml` and a sibling `schemas/<Model>.json`, and `postpack` leaves no staged copy at the repository root | Integration | P1 | FR-002-AC-7 | ✅ |
-| TC-019 | A coordinated version bump re-emits every `$id`/`$ref`; bumping one half of the pair fails the check | Integration | P1 | FR-002-AC-8, FR-002-CON-5 | ✅ |
 | TC-020 | `make schemas-check` names a stale committed schema with no emitted counterpart and writes nothing | Integration | P1 | FR-002-AC-9 | ✅ |
 | TC-021 | Two generator runs over one source are byte-identical | Integration | P1 | FR-002-CON-3 | ✅ |
 | TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
 | TC-023 | No `.npmrc`, no `file:`/`link:` dependency in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
 | TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
-| TC-025 | No test or fixture hard-codes the `$id` version segment; each reads it from the manifest `version` | Unit | P2 | FR-002-CON-5 | ✅ |
 | TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
 | TC-028 | Every 0.2.0 locator is unchanged against the checked-in baseline | Unit | P0 | FR-003-AC-3 | ✅ |
 | TC-029 | Every locator added after 0.2.0 is `required: false` | Unit | P1 | FR-003-AC-3, FR-003-CON-2 | ✅ |

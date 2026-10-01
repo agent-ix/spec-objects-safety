@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Hazard.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Hazard.json",
   "type": "object",
   "properties": {
     "fields": {
@@ -10,25 +10,25 @@
       },
       "minItems": 1,
       "contains": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/IdentityField.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
       }
     },
     "assessment": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardAssessment.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/HazardAssessment.json"
     },
     "context": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/HazardContext.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/HazardContext.json"
     },
     "status": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/LifecycleStatus.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/LifecycleStatus.json"
     },
     "provenance": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Provenance.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Provenance.json"
     },
     "evidence": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/EvidenceRef.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
       }
     },
     "relations": {

@@ -10,13 +10,8 @@ using AgentIx.Semantic.Core;
  * One model per safety object type this module contributes, each validating
  * that type's Quire declaration record (fields, relations, clauses; quire-rs
  * FR-070..FR-072) with type-specific required keys, forbidden keys, and item
- * rules. Every grammar item is a `$ref` to `@agent-ix/semantic-core` 0.3.0 and
+ * rules. Every grammar item is a `$ref` to `@agent-ix/semantic-core` and
  * is never redeclared here; this namespace contributes archetype shapes only.
- *
- * The `$id` base embeds the manifest `version` by intent: one schema URL names
- * exactly one immutable byte sequence, so a downstream fixture reader that
- * pinned a version can never silently read later bytes. A bump edits this base
- * and `manifest.yaml`'s `version` in one commit and re-runs `make schemas`.
  *
  * SAFETY RULE FOR EVERY MODEL BELOW: nothing here computes, infers or defaults
  * a safety judgement. There is no default severity, no default likelihood, no
@@ -24,7 +19,7 @@ using AgentIx.Semantic.Core;
  * explicit `EpistemicState` member, never by omission and never by a scale's
  * safe end.
  */
-@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/")
+@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-objects-safety/")
 namespace AgentIx.SpecObjects.Safety;
 
 // ---------------------------------------------------------------------------

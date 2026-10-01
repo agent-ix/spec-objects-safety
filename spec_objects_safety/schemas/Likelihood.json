@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/0.3.0/Likelihood.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Likelihood.json",
   "type": "string",
   "enum": [
     "incredible",

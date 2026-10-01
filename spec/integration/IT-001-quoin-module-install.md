@@ -27,8 +27,7 @@ path:<module dir>` followed by a Quire registry load over the installed copy.
 
 ## Preconditions
 
-Quoin is installed at a build carrying the semantic-module contract (`3e842ce`
-or later). The Quire wheel exposing `extract_semantic` is present, provisioned
+Quoin is installed at a build carrying the semantic-module contract. The Quire wheel exposing `extract_semantic` is present, provisioned
 by `poetry install`. The test records whatever `spec-objects-safety` entry is
 already installed so it can restore it, and runs against a temporary config
 root when one can be given, so a developer's catalog is never left mutated.
