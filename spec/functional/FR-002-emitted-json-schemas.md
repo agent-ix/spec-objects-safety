@@ -65,7 +65,7 @@ and any drift between source and shipped bytes fails the build.
 | FR-002-CON-1 | The build SHALL use the official `@typespec/json-schema` emitter only; no custom emitter and no hand-edited emitted file. | Architecture | Test |
 | FR-002-CON-2 | The repository SHALL carry no `.npmrc`, no `file:` or `link:` dependency, and no upper version bound on the TypeSpec toolchain . | Packaging | Test |
 | FR-002-CON-3 | Emission SHALL be deterministic: two runs over one source produce byte-identical files. | Integrity | Test |
-| FR-002-CON-4 | `package-lock.json` SHALL resolve every package from a real, CI-reachable registry — `registry.npmjs.org` for the public TypeSpec toolchain packages, GitHub Packages (`npm.pkg.github.com`) for `@agent-ix/semantic-core` — and never from `npm.ix`, the private dev-only mirror that served `@agent-ix/semantic-core` `0.1.0`/`0.2.0` before either was ever published anywhere real. | Packaging | Test |
+| FR-002-CON-4 | `package-lock.json` SHALL resolve every package from a real, CI-reachable registry — `registry.npmjs.org` for the public TypeSpec toolchain packages, GitHub Packages (`npm.pkg.github.com`) for `@agent-ix/semantic-core` — and never from `npm.ix`, the private dev-only mirror. | Packaging | Test |
 
 ## Acceptance Criteria
 

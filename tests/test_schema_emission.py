@@ -1,8 +1,5 @@
 """Emission tests for the schema set (FR 002), its `$id`/`$ref` shape, the drift gate,
-determinism, packaging, and the version-bump procedure.
-
-Every assertion reads the `$id` version segment from `manifest.yaml`
-(FR 002 CON-5); no test hard-codes it.
+determinism, and packaging.
 
 The emitted set is fifteen files: the two object-type records `Hazard` and
 `FailureMode`, and the thirteen support models they compose — the identity
