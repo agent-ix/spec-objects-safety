@@ -20,4 +20,3 @@ okf_version: "0.1"
 * [Task-009](./tasks/Task-009-quoin-install-roundtrip.md) - Quoin install roundtrip against a temporary catalog
 * [Task-010](./tasks/Task-010-cross-module-references.md) - reference the neighbours, redeclare none of them
 * [Task-011](./tasks/Task-011-gate-both-types-end-to-end.md) - both object types end to end, and the epistemic property
-* [Update Log](./log.md) - Chronological log of changes to this bundle.
