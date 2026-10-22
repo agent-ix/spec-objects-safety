@@ -190,3 +190,5 @@ pip install --index-url http://pypi.ix/root/dev/+simple/ spec_objects_safety
 - Clear Makefile and CI workflows matching production standards
 
 ---
+
+<!-- STD-30 language-boundary canary: inert README change. -->
