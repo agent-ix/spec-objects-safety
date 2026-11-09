@@ -94,7 +94,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-022 | The build uses the official emitter only and no emitted file is hand-edited | Integration | P2 | FR-002-CON-1 | ✅ |
 | TC-023 | No `.npmrc`, no `file:`/`link:` dependency in `package.json` | Unit | P2 | FR-002-CON-2 | ✅ |
 | TC-024 | `package-lock.json` resolves every package from a real registry (npmjs or GitHub Packages) and none from `npm.ix` | Unit | P2 | FR-002-CON-4 | ✅ |
-| TC-026 | The `semantic` block equals the nine admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
+| TC-026 | The `semantic` block equals the eight admitted keys and `exports` equals the two types | Unit | P0 | FR-003-AC-1, FR-003-CON-1 | ✅ |
 | TC-030 | Quire's registry loader lists both archetypes and `validate_document` reports no `semantic.*` load failure on any skeleton | Integration | P0 | FR-003-AC-4 | ✅ |
 | TC-032 | An unknown `semantic` key, a non-`<org>/<repo>` `package`, an unregistered `targets` value are each refused by the loader against a loading control | Unit | P0 | FR-003-AC-6 | ✅ |
 | TC-035 | `Hazard.json` and `FailureMode.json` differ in a required key, a forbidden key or an item rule; neither is `type: object` only | Unit | P0 | FR-004-AC-1 | ✅ |

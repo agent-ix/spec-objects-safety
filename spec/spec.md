@@ -90,7 +90,7 @@ sees the contract that was authored instead of guessing at it.
   members and none is claimed.
 - Shipping the semantic-core grammar schemas a consumer would need to resolve
   this module's `$ref`s offline. Quire resolves them from its own embedded copy
-  at the version `semantic.semantic_core` names, and this repository's tests
+  at the version its engine embeds, and this repository's tests
   resolve them from the installed `@agent-ix/semantic-core` package; a consumer
   with neither has an unresolvable `$ref`. Publishing a resolvable grammar
   package is `agent-ix/filament-core-data#11`.

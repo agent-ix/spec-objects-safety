@@ -39,7 +39,7 @@ changing a single 0.2.0 locator or one fact of the traceability model.
 
 ## Subtasks
 
-- [x] **`semantic` block.** Exactly the nine admitted keys, `exports` naming both object types, `imports: {}` with the reason written in the file.
+- [x] **`semantic` block.** Exactly the eight admitted keys, `exports` naming both object types, `imports: {}` with the reason written in the file.
 - [x] **Reference-form `data_schema`.** `{schema, digest}` per type, the digest written by the generator over the shipped bytes; no inline `data_schema` survives.
 - [x] **Version.** `0.3.0`, bumped together with the `@jsonSchema` base in one commit.
 - [x] **Locator preservation.** Every 0.2.0 locator keeps every facet, compared structurally against the Task-007 baseline.
