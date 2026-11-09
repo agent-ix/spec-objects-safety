@@ -49,14 +49,13 @@ function requireNode() {
 }
 
 /**
- * The semantic-core base this module extends: the one version the manifest
- * declares as `semantic.semantic_core`, read without a YAML parser so the file
- * is never reserialized.
+ * The semantic-core base this module extends: the `@agent-ix/semantic-core`
+ * version this repository pins in package.json and compiles against.
  */
 function semanticCoreBase() {
-  const manifest = readFileSync(resolve(packageDir, "manifest.yaml"), "utf8");
-  const declared = manifest.match(/^[ ]{2}semantic_core:[ ]*([^\s#]+)[ ]*$/m)?.[1];
-  if (!declared) fail("manifest.yaml declares no semantic.semantic_core");
+  const pkg = JSON.parse(readFileSync(resolve(repoRoot, "package.json"), "utf8"));
+  const declared = pkg.devDependencies?.["@agent-ix/semantic-core"];
+  if (!declared) fail("package.json pins no @agent-ix/semantic-core");
   return `https://schemas.agent-ix.org/semantic-core/${declared}/`;
 }
 
