@@ -65,7 +65,7 @@ The finding is advisory (`warning`, exit 0) and is tunable on its own key,
 | FR-009-AC-2 | Over a bundle holding a `safety` NFR with no `mitigates` edge, `quire validate --okf` exits 0 and yields exactly one `unjustified-safety-nfr` finding, naming the NFR and the value `safety`. | Test |
 | FR-009-AC-3 | Giving that NFR a `mitigates` edge to a `hazard` removes the finding, as does an edge to a document in another repository. | Test |
 | FR-009-AC-4 | An NFR whose `quality_attribute` is not `safety` and which has no `mitigates` edge yields no `unjustified-safety-nfr` finding. | Test |
-| FR-009-AC-5 | Under `--okf --strict` the finding stays a warning, and a bundle whose only faults are these findings stays valid (`agent-ix/quire-rs` FR-058-AC-18). `--severity trace:unjustified-safety-nfr=error` promotes it and the run exits non-zero. | Test |
+| FR-009-AC-5 | Under `--okf --strict` the finding is a warning and never an error; strict still exits 3 on warnings by design. `--severity trace:unjustified-safety-nfr=error` promotes it and the run exits non-zero. | Test |
 
 ## Dependencies
 

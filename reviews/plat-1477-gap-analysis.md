@@ -37,3 +37,17 @@ One coverage gap: half of FR-009-AC-5 is untested.
   `_findings(strict)[0].startswith("warning:")`. Optionally also assert that
   the strict error count is the same with the rule present and with
   `--severity trace:unjustified-safety-nfr=off`.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | medium | No gate runs the PR's evidence. `[tool.pytest.ini_options] testpaths = ["tests"]`, and the shared `semantic-module-ci.yml` runs a bare `poetry run pytest`, so CI run 43287508095 never collected `tests_integration/`. TC-100..TC-102, which back FR-009-AC-2..AC-5, run only through a manual `make test-integrations`; the green CI covers TC-099, TC-010 and TC-011 only. CI already puts `@agent-ix/quire-cli` on PATH, so the minimal in-PR fix is pyproject-only: `testpaths = ["tests", "tests_integration/test_mitigates_edge.py", "tests_integration/test_reverse_mitigates.py"]`, plus an updated comment above it. Measured locally: a bare `pytest` then collects the 9 engine-backed tests and not the quoin-install roundtrip (TC-070), coverage stays at 100%, and `make test-integrations` still collects all 10. | pyproject.toml:132-138 |
+
+## Dispositions
+
+Round 1, head `a024948`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | TC-102 asserts that the single strict finding starts with `warning:`. A module `grammar_severity: error` mutation now fails TC-102 as well as TC-100. |

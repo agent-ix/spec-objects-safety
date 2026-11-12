@@ -44,3 +44,14 @@ what `to: []` lets through.
 
 - FR-007 tweak ("the two hazard-end relations"): accurate after FR-009.
 - `depends_on` `ix://agent-ix/quire-rs/FR-058`: correct cross-repo dependency.
+
+## Dispositions
+
+Round 1, head `a024948`. `quire validate --scope .` on FR-009 exits 0.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-009-AC-5 is restated as FR-058-AC-18 states it. The Behavior line notes that unrelated strict errors are not this rule's. |
+| FND-002 | fixed | The TC-010 row reads "three independently tunable relations (the hazard and failure-mode relations `incoming`, the NFR relation `outgoing`)". |
+| FND-003 | fixed | The TC-011 row reads "an object type this module declares or an archetype `spec-artifacts-iso` declares". |
+| FND-004 | fixed | FR-009 gains a "What `to: []` lets through" section that names threat, risk, cross-repo and mistyped-id targets as the accepted cost. |

@@ -135,9 +135,3 @@ def test_finding_is_advisory_and_tunable(tmp_path):
     assert promoted.returncode != 0, promoted.stderr
     assert len(_findings(promoted)) == 1, promoted.stderr
     assert not _findings(promoted)[0].startswith("warning:"), promoted.stderr
-    # Promotion alone is what changes the verdict: the same bundle, with the
-    # finding left at its default, is not failed by this relation.
-    assert not any(
-        line.startswith("error:") and line.endswith(f"[{CHECK}]")
-        for line in strict.stderr.splitlines()
-    ), strict.stderr

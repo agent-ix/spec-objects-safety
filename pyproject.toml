@@ -130,12 +130,18 @@ shell = "py-deps use-upstream ${package} || [ $? -eq 1 ] && poetry lock"
 help = "Switch dep to upstream registry"
 
 [tool.pytest.ini_options]
-# `make test` runs the unit suite only. `tests_integration/` drives the real
-# Quoin CLI and a writable module catalog — infrastructure this repository
-# cannot provision — so it is opt-in through `make test-integrations`. Without
-# this, a bare `pytest` collects both and a green `make test` would be reporting
-# over ambient tooling nobody pinned.
-testpaths = ["tests"]
+# `make test` runs the unit suite plus the two integration files that drive only
+# the `quire` CLI over fixtures built in a temporary directory
+# (test_mitigates_edge.py, test_reverse_mitigates.py), so CI exercises the
+# manifest rules against the real engine. The Quoin install roundtrip
+# (test_quoin_install_roundtrip.py) needs a writable module catalog this
+# repository cannot provision, so it stays opt-in through
+# `make test-integrations`, which collects all of `tests_integration/`.
+testpaths = [
+    "tests",
+    "tests_integration/test_mitigates_edge.py",
+    "tests_integration/test_reverse_mitigates.py",
+]
 addopts = "--cov=spec_objects_safety --cov-report=term-missing --cov-fail-under=100 --json-report --json-report-file=report.json"
 
 # ALL WARNINGS MUST BE TREATED AS ERRORS, NO EXCEPTION!

@@ -76,3 +76,18 @@ is recorded under gap analysis (SR-020).
 
 - `to: []` versus a constrained `to`: the trade-off is deliberate and was measured. See SR-019 FND-004 for the spec-side consequence.
 - `disallowed-edge-type` on NFR `mitigates`: real, an iso `allowed_links` gap owned by spec-artifacts-iso, as the ticket's own caveat says.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | The TC-102 assertion added in the fix round, `not any(line.startswith("error:") and line.endswith("[unjustified-safety-nfr]") ...)`, is vacuous. quire never prefixes a diagnostic with `error:`: error lines carry no prefix (measured under `--strict` and under `--severity ...=error`), so the assertion can never fail. The `findings[0].startswith("warning:")` line above it already carries that check. Delete the dead assertion and its comment. | tests_integration/test_reverse_mitigates.py:138-143 |
+
+## Dispositions
+
+Round 1, head `a024948`. Verified in a fresh worktree with an in-project venv. `spec-artifacts-iso` 0.25.0 from internal PyPI (manifest `version: 0.3.0`) registers NFR. `tests/test_manifest.py` gives 10 passed. The two engine-backed integration files give 9 passed. ruff and black are clean. All 8 mutations are rerun against iso 0.25.0 and all are killed; `grammar_severity: error` is now caught by TC-100 and TC-102. With NFR removed from a shadowed iso manifest, TC-100..TC-102 fail on `unknown type 'NFR'` and TC-011 fails on its `NFR in iso_kinds` assertion. Registry sha256 unchanged.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The iso dev dependency is now `^0.25.0` (the lock changes only iso). `_registered()` fails on `unknown type 'NFR'`, and fixture targets are quoted `ix://` ids. |
+| FND-002 | fixed | TC-011 builds `iso_kinds` from the iso manifest's `artifact_types`, asserts that NFR is in it, and checks `from` against `declared \| iso_kinds`. |
