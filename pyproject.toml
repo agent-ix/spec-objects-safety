@@ -37,7 +37,7 @@ pytest-results = { version = "^0.2.0", python = ">=3.12" }
 # TC-011 read `edge_types` from its installed manifest, so a verb this module
 # reaches for that iso has not declared fails here. Its module-manifest schema
 # is not read: that schema belongs to filament-core-service (PLAT-902).
-spec-artifacts-iso = {version = "^0.22.0", source = "internal-pypi"}
+spec-artifacts-iso = {version = "^0.25.0", source = "internal-pypi"}
 # The mitigates-edge integration tests (tests_integration/test_mitigates_edge.py)
 # load the security module so a `control` can mitigate a hazard.
 spec-objects-security = {version = "^0.12.1", source = "internal-pypi"}
@@ -130,12 +130,18 @@ shell = "py-deps use-upstream ${package} || [ $? -eq 1 ] && poetry lock"
 help = "Switch dep to upstream registry"
 
 [tool.pytest.ini_options]
-# `make test` runs the unit suite only. `tests_integration/` drives the real
-# Quoin CLI and a writable module catalog — infrastructure this repository
-# cannot provision — so it is opt-in through `make test-integrations`. Without
-# this, a bare `pytest` collects both and a green `make test` would be reporting
-# over ambient tooling nobody pinned.
-testpaths = ["tests"]
+# `make test` runs the unit suite plus the two integration files that drive only
+# the `quire` CLI over fixtures built in a temporary directory
+# (test_mitigates_edge.py, test_reverse_mitigates.py), so CI exercises the
+# manifest rules against the real engine. The Quoin install roundtrip
+# (test_quoin_install_roundtrip.py) needs a writable module catalog this
+# repository cannot provision, so it stays opt-in through
+# `make test-integrations`, which collects all of `tests_integration/`.
+testpaths = [
+    "tests",
+    "tests_integration/test_mitigates_edge.py",
+    "tests_integration/test_reverse_mitigates.py",
+]
 addopts = "--cov=spec_objects_safety --cov-report=term-missing --cov-fail-under=100 --json-report --json-report-file=report.json"
 
 # ALL WARNINGS MUST BE TREATED AS ERRORS, NO EXCEPTION!

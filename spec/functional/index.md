@@ -15,3 +15,4 @@ description: "Index of artifacts in this directory."
 * [FR-006: Reference architecture, operational, security and assurance types without redeclaring them](./FR-006-cross-module-references.md)
 * [FR-007: A mitigating document can declare a mitigates edge to a hazard or failure_mode](./FR-007-authorable-mitigates-edge.md)
 * [FR-008: The hazard and failure-mode coverage checks report unmitigated objects and stay silent on mitigated ones](./FR-008-mitigation-coverage-findings.md)
+* [FR-009: A safety-classified NFR that mitigates nothing is reported as unjustified scope](./FR-009-safety-nfr-needs-mitigation-target.md)

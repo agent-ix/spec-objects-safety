@@ -206,7 +206,11 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
     model = _manifest()["traceability"]
     by_name = {r["name"]: r for r in model["required_relations"]}
 
-    assert set(by_name) == {"hazard-has-mitigation", "failure-mode-has-mitigation"}
+    assert set(by_name) == {
+        "hazard-has-mitigation",
+        "failure-mode-has-mitigation",
+        "safety-nfr-has-mitigation-target",
+    }
     for name, kind in (
         ("hazard-has-mitigation", "hazard"),
         ("failure-mode-has-mitigation", "failure_mode"),
@@ -217,10 +221,26 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         assert relation["direction"] == "incoming"
 
     checks = {r["check"] for r in by_name.values()}
-    assert checks == {"unmitigated-hazard", "unmitigated-failure-mode"}
+    assert checks == {
+        "unmitigated-hazard",
+        "unmitigated-failure-mode",
+        "unjustified-safety-nfr",
+    }
     assert len(checks) == len(by_name), "each relation is independently tunable"
 
     assert model["acyclic_edges"] == ["arises_from"]
+
+
+@pytest.mark.trace("TC-099", "FR-009-AC-1")
+def test_tc099_safety_nfr_relation_is_declared_with_a_where_selector() -> None:
+    """FR 009 AC-1 (TC 099): the reverse relation is manifest data."""
+    relations = _manifest()["traceability"]["required_relations"]
+    (relation,) = [r for r in relations if r["from"] == "NFR"]
+    assert relation["where"] == {"field": "quality_attribute", "values": ["safety"]}
+    assert relation["edges"] == ["mitigates"]
+    assert relation["to"] == []
+    assert relation["direction"] == "outgoing"
+    assert relation["check"] == "unjustified-safety-nfr"
 
 
 @pytest.mark.trace("TC-011", "FR-001-AC-4")
@@ -242,6 +262,9 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     )
     iso = yaml.safe_load(iso_path.read_text())
     edge_types = iso.get("edge_types") or {}
+    # A relation may also start from a kind spec-artifacts-iso declares (`NFR`).
+    iso_kinds = {a["name"] for a in iso.get("artifact_types") or []}
+    assert "NFR" in iso_kinds, "the iso module declares no NFR archetype"
     # Inverse labels are authorable without being forward keys (quire-rs
     # FR 041 AC 2), so they count as declared too — `mitigates` is one.
     vocabulary = set(edge_types) | {
@@ -249,7 +272,7 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     }
 
     for relation in manifest["traceability"]["required_relations"]:
-        assert relation["from"] in declared, relation["from"]
+        assert relation["from"] in declared | iso_kinds, relation["from"]
         for verb in relation["edges"]:
             assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
     for verb in manifest["traceability"]["acyclic_edges"]:
