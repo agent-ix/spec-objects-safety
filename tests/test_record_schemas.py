@@ -48,7 +48,7 @@ def identity_field(name: str) -> dict:
     return {
         "name": name,
         "type": {
-            "target": "UUID",
+            "target": {"kind": "KernelScalar", "value": "UUID"},
             "multiplicity": {"lower": 1, "upper": 1, **SINGULAR},
         },
         "identity": True,
@@ -59,7 +59,7 @@ def plain_field(name: str) -> dict:
     return {
         "name": name,
         "type": {
-            "target": "String",
+            "target": {"kind": "KernelScalar", "value": "String"},
             "multiplicity": {"lower": 1, "upper": 1, **SINGULAR},
         },
     }

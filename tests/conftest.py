@@ -13,6 +13,7 @@ Two policies are enforced here and nowhere else:
 
 from __future__ import annotations
 
+import functools
 import json
 import pathlib
 import re
@@ -65,17 +66,18 @@ SUPPORT_MODELS = (
     "LifecycleStatus",
 )
 
-KERNEL_SCALARS = {
-    "UUID",
-    "Boolean",
-    "Integer",
-    "Decimal",
-    "String",
-    "Timestamp",
-    "Duration",
-    "Bytes",
-    "JsonObject",
-}
+
+@functools.lru_cache(maxsize=1)
+def kernel_scalars() -> frozenset[str]:
+    """The kernel scalar names, read from the installed semantic-core enum."""
+    path = SEMANTIC_CORE_DIR / "KernelScalar.json"
+    if not path.is_file():
+        pytest.fail(
+            "@agent-ix/semantic-core is not installed, so the kernel scalar "
+            "names cannot be read. Run `make semantic-install`."
+        )
+    return frozenset(json.loads(path.read_text())["enum"])
+
 
 # The ordinal scales, and the epistemic members every one of them also admits.
 SCALES = {
@@ -100,9 +102,11 @@ def load_manifest() -> dict[str, Any]:
 
 
 MODULE_BASE = "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/"
+_SEMANTIC_CORE_VERSION = json.loads((REPO_ROOT / "package.json").read_text())[
+    "devDependencies"
+]["@agent-ix/semantic-core"]
 SEMANTIC_CORE_BASE = (
-    "https://schemas.agent-ix.org/semantic-core/"
-    f"{json.loads((REPO_ROOT / 'package.json').read_text())['devDependencies']['@agent-ix/semantic-core']}/"
+    f"https://schemas.agent-ix.org/semantic-core/{_SEMANTIC_CORE_VERSION}/"
 )
 
 
@@ -213,8 +217,8 @@ def schema_registry():
     if not SEMANTIC_CORE_DIR.is_dir():
         pytest.fail(
             "@agent-ix/semantic-core is not installed, so `$ref`s to the grammar "
-            "cannot resolve. Run `make semantic-install` (FR 002 CON-4: `@agent-ix` "
-            "resolves from GitHub Packages)."
+            "cannot resolve. Run `make semantic-install` (FR 002 CON-4: every "
+            "package resolves from npmjs)."
         )
     resources = []
     for path in shipped_schema_paths():
@@ -242,7 +246,7 @@ def hazard_record() -> dict[str, Any]:
             {
                 "name": "hazard_id",
                 "type": {
-                    "target": "UUID",
+                    "target": {"kind": "KernelScalar", "value": "UUID"},
                     "multiplicity": {
                         "lower": 1,
                         "upper": 1,
@@ -264,7 +268,7 @@ def failure_mode_record() -> dict[str, Any]:
             {
                 "name": "failure_mode_id",
                 "type": {
-                    "target": "UUID",
+                    "target": {"kind": "KernelScalar", "value": "UUID"},
                     "multiplicity": {
                         "lower": 1,
                         "upper": 1,
