@@ -262,6 +262,13 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     )
     iso = yaml.safe_load(iso_path.read_text())
     edge_types = iso.get("edge_types") or {}
+    # A relation may also start from a kind spec-artifacts-iso declares (`NFR`).
+    iso_kinds = {
+        a["name"]
+        for key in ("artifact_types", "archetypes")
+        for a in iso.get(key) or []
+    }
+    assert "NFR" in iso_kinds, "the iso module declares no NFR archetype"
     # Inverse labels are authorable without being forward keys (quire-rs
     # FR 041 AC 2), so they count as declared too — `mitigates` is one.
     vocabulary = set(edge_types) | {
@@ -269,8 +276,7 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     }
 
     for relation in manifest["traceability"]["required_relations"]:
-        # `NFR` is spec-artifacts-iso's archetype, not an object type of this module.
-        assert relation["from"] in declared | {"NFR"}, relation["from"]
+        assert relation["from"] in declared | iso_kinds, relation["from"]
         for verb in relation["edges"]:
             assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
     for verb in manifest["traceability"]["acyclic_edges"]:
