@@ -13,5 +13,4 @@ okf_version: "0.1"
 * [stakeholder](./stakeholder/index.md)
 * [usecase](./usecase/index.md)
 * [functional](./functional/index.md)
-* [non-functional](./non-functional/index.md)
 * [integration](./integration/index.md)

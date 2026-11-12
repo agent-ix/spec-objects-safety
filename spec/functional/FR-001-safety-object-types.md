@@ -47,7 +47,7 @@ thing.
 The causal edge is therefore authored from the hazard only: one edge, one place
 to write it. `failure_mode` declares no outgoing safety verb of its own.
 
-No role is declared, by decision (see `spec/log.md`). `allowed_links` target concrete object types, as
+No role is declared. `allowed_links` target concrete object types, as
 `spec-objects-security`'s `threat` does, so the `safety-relevant` capability tag
 this module first reached for turned out to be unnecessary.
 

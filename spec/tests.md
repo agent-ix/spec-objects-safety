@@ -47,24 +47,26 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Stakeholder Req | Trace to US/FR | Test/Validation | Coverage Status |
 |---|---|---|---|
-| StR-001 | US-001, FR-001..FR-006 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
+| StR-001 | US-001, FR-001..FR-008 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
 
 ### User Story Coverage
 
 | User Story | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| US-001 | US-001-EX-1..3 (illustrative) implemented by FR-002..FR-006 | TC-036, TC-039, TC-061 | ✅ |
+| US-001 | US-001-EX-1..3 (illustrative) implemented by FR-002..FR-008 | TC-036, TC-039, TC-061 | ✅ |
 
 ### Functional Requirement Coverage
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | ✅ |
+| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "declares no role" clause is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..4, FR-002-AC-6..7, FR-002-AC-9, FR-002-CON-1..4 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
+| FR-007 | FR-007-AC-1..4 | none yet | 🚧 no test written yet |
+| FR-008 | FR-008-AC-1..5 | none yet | 🚧 no test written yet |
 
 ### Integration Test Coverage
 
@@ -76,7 +78,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
-| TC-002 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and `allowed_links`, and declares no `roles` | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-002 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and `allowed_links` | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-003 | `hazard` requires Condition plus an Assessment table; `failure_mode` requires Description plus an Analysis table, and the two shapes differ | Unit | P0 | FR-001-AC-2, FR-001-AC-3 | ✅ |
 | TC-004 | Every lexicon entry is exactly `{definition: <text>}`, asserted structurally | Unit | P0 | FR-001-AC-6 | ✅ |
 | TC-005 | Each object type ships a skeleton supplying every heading its contract requires | Unit | P0 | FR-001-AC-4 | ✅ |
@@ -171,7 +173,8 @@ tagged test, with three recorded exceptions:
    FR-007 and FR-008 state the fix and the end-to-end evidence it needs; the rows
    stay open until their tests exist. This module does not change the relation, the verb or the
    direction unilaterally, because a neighbour reads them.
-2. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
+2. **FR-001-AC-1** says the object types "declare no role", but TC-002 asserts only `data_schema` and `allowed_links`; nothing tests the no-role clause.
+3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.
 

@@ -17,6 +17,8 @@ end to end. A check that matches nothing is indistinguishable from a clean
 repository, so a test SHALL show each check firing on one fixture and staying silent on another, with the fixtures authored through the edge of
 [FR-007](./FR-007-authorable-mitigates-edge.md).
 
+The findings are produced by `quire validate --okf` over the fixture bundle with both modules loaded. They are advisory by default (`agent-ix/quire-rs` FR-058-AC-7): reported as warnings, exit 0.
+
 ## Inputs
 
 - A fixture corpus of two `hazard` documents and two `failure_mode` documents, and one `control` document declaring `mitigates` to one hazard and one failure mode.
@@ -41,7 +43,7 @@ repository, so a test SHALL show each check firing on one fixture and staying si
 | FR-008-AC-2 | Over the two-failure-mode fixture, `unmitigated-failure-mode` yields exactly one finding, and it names the failure mode with no incoming `mitigates`. | Test |
 | FR-008-AC-3 | Adding the missing `control` edge to the unmitigated hazard removes its finding and leaves zero `unmitigated-hazard` findings. | Test |
 | FR-008-AC-4 | A fixture where no hazard is mitigated yields one finding per hazard, so the check is not inert under `to: []`. | Test |
-| FR-008-AC-5 | The two checks are tunable independently: setting `trace:unmitigated-hazard` to `error` and leaving `trace:unmitigated-failure-mode` at its default changes only the hazard findings' severity. | Test |
+| FR-008-AC-5 | The two checks are tunable independently: running `quire validate --okf --severity trace:unmitigated-hazard=error` turns only the hazard findings into errors (non-zero exit), while the failure-mode findings stay warnings. | Test |
 
 ## Dependencies
 
