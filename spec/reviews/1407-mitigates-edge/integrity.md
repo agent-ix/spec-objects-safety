@@ -27,3 +27,10 @@ and resolve.
 
 PASS with findings once SR-012 FND-001 (NFR-001 deleted) is applied. Add FR-007
 and FR-008 matrix rows marked open, and fix the exception count.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e06668b adds open FR-007 and FR-008 rows and extends the StR-001 and US-001 traces to FR-008 |
+| FND-002 | fixed | e06668b restores three listed exceptions, matching "three recorded exceptions" |

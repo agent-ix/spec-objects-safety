@@ -48,3 +48,10 @@ FAIL on FND-001. This PR may merge before the quire-cli implementation exists,
 since a spec states the target design, but not before the quire-cli requirement
 is specified and FR-007 names it as an upstream dependency. PLAT-1407 already
 lists quire-rs and quire-cli as repos for this spec ticket.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e06668b adds depends_on edges and Upstream entries for quire-cli FR-014-AC-11 and quire-rs FR-038-AC-11 (open PRs quire-cli#167 and quire-rs#646) |
+| FND-002 | fixed | e06668b states spec-objects-security FR-007 "must land first or together" and adds a depends_on edge to it |

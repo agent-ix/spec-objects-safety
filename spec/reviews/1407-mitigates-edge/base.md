@@ -50,3 +50,15 @@ path.
 FAIL. Not mergeable until FND-001..FND-005 are fixed. FR-001-AC-1's new text,
 FR-006's reworded bullet, FR-007-AC-1/2/4 and FR-008-AC-1..5 were examined and
 are otherwise clean.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e06668b deletes NFR-001, spec/non-functional/index.md and the spec/index.md link |
+| FND-002 | fixed | e06668b deletes FR-007-AC-5, the Constraints table with FR-007-CON-1, and "frozen" from No relaxation |
+| FND-003 | fixed | e06668b deletes spec/log.md and FR-001's pointer to it |
+| FND-004 | fixed | e06668b reverts the TC-002 title, marks FR-001 open, and records the unbacked no-role clause as Coverage Gap 2 |
+| FND-005 | fixed | e06668b narrows FR-007-AC-3 to `quire validate --okf --strict` over a bare-id target, specified upstream in quire-cli FR-014-AC-11 |
+| FND-006 | fixed | e06668b names `quire validate --okf` and the advisory default (quire-rs FR-058-AC-7), and AC-5 uses `--severity trace:unmitigated-hazard=error` |
+| FND-007 | fixed | e06668b changes the manifest comment to "mitigating document's end — a control says what it mitigates" |
