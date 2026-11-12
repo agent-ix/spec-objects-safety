@@ -49,7 +49,8 @@ The finding is advisory (`warning`, exit 0) and is tunable on its own key,
 - Quire SHALL report an NFR whose `quality_attribute` is `safety` and which has no outgoing `mitigates` edge.
 - Quire SHALL report nothing for a `safety` NFR with an outgoing `mitigates` edge, including an edge to a document in another repository.
 - Quire SHALL report nothing for an NFR whose `quality_attribute` is any other value.
-- The finding SHALL be a warning under `--okf` and under `--okf --strict`, and `--severity trace:unjustified-safety-nfr=error` SHALL promote it.
+- The finding SHALL be a warning under `--okf` and under `--okf --strict`.
+- When `--severity trace:unjustified-safety-nfr=error` is given, Quire SHALL promote the finding to an error.
 - The module SHALL NOT narrow the `to: []` of `hazard-has-mitigation` or `failure-mode-has-mitigation`.
 
 ## Acceptance Criteria
