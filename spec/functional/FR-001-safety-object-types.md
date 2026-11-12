@@ -10,8 +10,8 @@ relationships:
 
 ## Description
 
-The module **SHALL** declare two object types, each with a body contract, an
-authoring skeleton, and a role.
+The module **SHALL** declare two object types, each with a body contract and an
+authoring skeleton.
 
 ### Why two types and not one
 
@@ -47,7 +47,7 @@ thing.
 The causal edge is therefore authored from the hazard only: one edge, one place
 to write it. `failure_mode` declares no outgoing safety verb of its own.
 
-No role is declared either. `allowed_links` target concrete object types, as
+No role is declared. `allowed_links` target concrete object types, as
 `spec-objects-security`'s `threat` does, so the `safety-relevant` capability tag
 this module first reached for turned out to be unnecessary.
 
@@ -77,7 +77,7 @@ gap visible — and the gap is the finding.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-001-AC-1 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and at least one role. | Test (TC-002) |
+| FR-001-AC-1 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and an `allowed_links` map, and declares no role. | Test (TC-002) |
 | FR-001-AC-2 | `hazard` requires a `Condition` section body and an `Assessment` table with columns exactly `Severity \| Likelihood \| Rationale`; `Mitigation` is optional. | Test (TC-003) |
 | FR-001-AC-3 | `failure_mode` requires a `Description` section body and an `Analysis` table with columns exactly `Effect \| Cause \| Detection`. | Test (TC-003) |
 | FR-001-AC-4 | Each object type ships an authoring skeleton whose sections supply every heading its contract requires. | Test (TC-005, TC-006) |

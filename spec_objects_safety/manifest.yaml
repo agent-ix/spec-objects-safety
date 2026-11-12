@@ -243,7 +243,7 @@ traceability:
   # and is still evidence of an unaddressed risk.
   #
   # `direction: incoming` because the mitigation is authored from the
-  # requirement's end — an FR says what it mitigates. The hazard does not list
+  # mitigating document's end — a control says what it mitigates. The hazard does not list
   # its own mitigations, which would duplicate the fact and let the two drift.
   - name: hazard-has-mitigation
     from: hazard

@@ -47,24 +47,26 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Stakeholder Req | Trace to US/FR | Test/Validation | Coverage Status |
 |---|---|---|---|
-| StR-001 | US-001, FR-001..FR-006 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
+| StR-001 | US-001, FR-001..FR-008 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
 
 ### User Story Coverage
 
 | User Story | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| US-001 | US-001-EX-1..3 (illustrative) implemented by FR-002..FR-006 | TC-036, TC-039, TC-061 | ✅ |
+| US-001 | US-001-EX-1..3 (illustrative) implemented by FR-002..FR-008 | TC-036, TC-039, TC-061 | ✅ |
 
 ### Functional Requirement Coverage
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
+| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "declares no role" clause is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..4, FR-002-AC-6..7, FR-002-AC-9, FR-002-CON-1..4 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
+| FR-007 | FR-007-AC-1..4 | none yet | 🚧 no test written yet |
+| FR-008 | FR-008-AC-1..5 | none yet | 🚧 no test written yet |
 
 ### Integration Test Coverage
 
@@ -168,16 +170,10 @@ tagged test, with three recorded exceptions:
    one, and no row here can honestly claim it does. TC-010
    asserts the model as *data* and says nothing about whether the check fires;
    it is not the missing evidence, and is not presented as it.
-   `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
-   neighbours. This module does not change the relation, the verb or the
+   FR-007 and FR-008 state the fix and the end-to-end evidence it needs; the rows
+   stay open until their tests exist. This module does not change the relation, the verb or the
    direction unilaterally, because a neighbour reads them.
-2. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
-   FR-001's own body decided against declaring a role
-   (*"the `safety-relevant` capability tag this module first reached for turned
-   out to be unnecessary"*), and neither the tests nor TC-002 check for
-   one. The criterion and the requirement that owns it disagree; the row stays
-   `🚧` and `agent-ix/spec-objects-safety#3` carries the correction, because
-   FR-001 belongs to the ticket that authored it rather than to this one.
+2. **FR-001-AC-1** says the object types "declare no role", but TC-002 asserts only `data_schema` and `allowed_links`; nothing tests the no-role clause.
 3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.

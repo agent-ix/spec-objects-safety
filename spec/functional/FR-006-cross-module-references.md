@@ -37,7 +37,7 @@ type, field or vocabulary that duplicates one of them.
 - The module SHALL NOT declare a `control`, `risk`, `asset`, `threat`, `vulnerability`, `incident` or evidence-record object type.
 - A consumer SHALL reach a control through the incoming `mitigates` edge the manifest `traceability` model already declares.
 - No record schema SHALL list a control on a hazard or a failure mode.
-- The catalog SHALL make that edge authorable. It does not today: `spec-objects-security`'s `control` declares `mitigates: [threat, risk, vulnerability]` and the `spec-artifacts-iso` `FR` and `NFR` archetypes declare no `mitigates` at all, so either end of the edge draws an advisory diagnostic and `unmitigated-hazard` cannot distinguish a mitigated hazard from an unmitigated one. `agent-ix/spec-objects-safety#4` owns the coordinated fix; this module does not change the relation, the verb or the direction unilaterally, because a neighbour reads them.
+- The catalog SHALL make that edge authorable, and [FR-007](./FR-007-authorable-mitigates-edge.md) states how: the `control` end gains `hazard` and `failure_mode` as `mitigates` targets. This module does not change the relation, the verb or the direction.
 - A consumer SHALL reach an evidence record through `EvidenceRef.target`, a `SemanticId`.
 - No schema in this module SHALL copy an evidence record's content.
 - `EvidenceRef.kind` SHALL stay an open string, because the closed evidence-kind vocabulary belongs to `agent-ix/engineering-assurance`.

@@ -28,4 +28,4 @@ makes that question a query instead of a reading exercise.
 | ID | Criteria | Validation |
 |----|----------|------------|
 | StR-001-VC-1 | A hazard and a failure mode each validate against a declared body contract, so an unscored or unstated one is reported rather than accepted. | Test |
-| StR-001-VC-2 | A hazard links to the failure modes that cause it and the requirements that mitigate it, using the ecosystem's declared edge vocabulary rather than a safety-only dialect. | Inspection |
+| StR-001-VC-2 | A hazard links to the failure modes that cause it and the documents (such as a control) that mitigate it, using the ecosystem's declared edge vocabulary rather than a safety-only dialect. | Inspection |
