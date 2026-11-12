@@ -59,7 +59,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |---|---|---|---|
-| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "at least one role" half is unbacked; see Coverage Gaps |
+| FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | ✅ |
 | FR-002 | FR-002-AC-1..4, FR-002-AC-6..7, FR-002-AC-9, FR-002-CON-1..4 | TC-012..TC-025 | ✅ |
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
@@ -76,7 +76,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
-| TC-002 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and `allowed_links` | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-002 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and `allowed_links`, and declares no `roles` | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-003 | `hazard` requires Condition plus an Assessment table; `failure_mode` requires Description plus an Analysis table, and the two shapes differ | Unit | P0 | FR-001-AC-2, FR-001-AC-3 | ✅ |
 | TC-004 | Every lexicon entry is exactly `{definition: <text>}`, asserted structurally | Unit | P0 | FR-001-AC-6 | ✅ |
 | TC-005 | Each object type ships a skeleton supplying every heading its contract requires | Unit | P0 | FR-001-AC-4 | ✅ |
@@ -168,17 +168,10 @@ tagged test, with three recorded exceptions:
    one, and no row here can honestly claim it does. TC-010
    asserts the model as *data* and says nothing about whether the check fires;
    it is not the missing evidence, and is not presented as it.
-   `agent-ix/spec-objects-safety#4` owns the coordinated fix across the two
-   neighbours. This module does not change the relation, the verb or the
+   FR-007 and FR-008 state the fix and the end-to-end evidence it needs; the rows
+   stay open until their tests exist. This module does not change the relation, the verb or the
    direction unilaterally, because a neighbour reads them.
-2. **FR-001-AC-1** reads "each with a `data_schema` and at least one role", but
-   FR-001's own body decided against declaring a role
-   (*"the `safety-relevant` capability tag this module first reached for turned
-   out to be unnecessary"*), and neither the tests nor TC-002 check for
-   one. The criterion and the requirement that owns it disagree; the row stays
-   `🚧` and `agent-ix/spec-objects-safety#3` carries the correction, because
-   FR-001 belongs to the ticket that authored it rather than to this one.
-3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
+2. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.
 
