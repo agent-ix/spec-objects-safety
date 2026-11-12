@@ -74,3 +74,18 @@ red at merge time (FND-002). Two low findings concern test robustness.
 - Fail-not-skip on missing tooling is the repo's own policy, not a defect.
 - No vendoring: fixtures are generated in `tmp_path` from authoritative skeletons.
 - Trace tags: all nine FR-007/FR-008 criteria are bound (`quoin matrix`), and every binding reads correctly against its AC.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | `poetry.lock` resolves `spec-objects-security` 0.1.1, which lacks the #40 widening. With no `SPEC_OBJECTS_SECURITY_MODULE` set, `make test-integrations` fails TC-093 until a security release that includes #40 is published and the lock is bumped. | poetry.lock, pyproject.toml, TC-093 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | aa961f8 reformats the file. `ruff check .` and `black --check .` report nothing in it. The one remaining E501, at tests/conftest.py:105, is on origin/main unchanged, and this PR does not touch that file. |
+| FND-002 | fixed | aa961f8 moves the tests to tests_integration/test_mitigates_edge.py with `pytestmark = pytest.mark.integration`. The unit suite no longer collects them, and spec-objects-security is now a dev dependency from internal-pypi. |
+| FND-003 | fixed | `_module` now reads the env var before calling `find_spec`. |
+| FND-004 | fixed | TC-098 now asserts exactly one hazard finding, not prefixed `warning:` (quire prints errors with no prefix; verified, exit 3), and exactly one failure-mode `warning:`. |

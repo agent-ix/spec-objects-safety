@@ -61,3 +61,11 @@ FND-003).
 - FR-008 tests split the "two hazards + two failure modes + one control" corpus
   into separate fixtures; AC-1 and AC-2 name separate fixtures, so that is in scope.
 - `spec/tests.md` structural-validation column-header errors predate this diff.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | TC-093 now asserts no `[unknown-type]` and no unmitigated-hazard or unmitigated-failure-mode finding. Its paths come from `__file__`, so the stale editable-install import no longer applies. Against security origin/main it now fails both with and without PYTHONPATH=. |
+| FND-002 | fixed | The Coverage Gaps section drops item 1, now counts two exceptions, and says TC-093..TC-098 are covered in tests_integration/. |
+| FND-003 | fixed | TM-001 frontmatter now carries covers edges to FR-007 and FR-008. |
