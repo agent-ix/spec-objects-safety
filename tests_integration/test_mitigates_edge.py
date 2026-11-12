@@ -17,7 +17,11 @@ import subprocess
 
 import pytest
 
-from tests.conftest import PACKAGE_ROOT, SKELETONS_DIR
+REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+PACKAGE_ROOT = REPO_ROOT / "spec_objects_safety"
+SKELETONS_DIR = PACKAGE_ROOT / "skeletons"
+
+pytestmark = pytest.mark.integration
 
 SECURITY_ENV = "SPEC_OBJECTS_SECURITY_MODULE"
 ISO_ENV = "SPEC_ARTIFACTS_ISO_MODULE"
@@ -25,12 +29,12 @@ QUIRE_ENV = "QUIRE_BIN"
 
 
 def _module(package: str, env: str) -> pathlib.Path:
-    spec = importlib.util.find_spec(package)
-    if spec is not None and spec.origin:
-        return pathlib.Path(spec.origin).parent
     value = os.environ.get(env)
     if value:
         return pathlib.Path(value)
+    spec = importlib.util.find_spec(package)
+    if spec is not None and spec.origin:
+        return pathlib.Path(spec.origin).parent
     pytest.fail(f"{package} is not installed and {env} names no checkout")
 
 
@@ -58,9 +62,7 @@ def _bundle(root, hazards, failure_modes, mitigates):
             _skeleton(SKELETONS_DIR, "failure_mode", "FM-001", fid)
         )
     for cid, targets in mitigates.items():
-        edges = "".join(
-            f"  - target: {t}\n    type: mitigates\n" for t in targets
-        )
+        edges = "".join(f"  - target: {t}\n    type: mitigates\n" for t in targets)
         text = _skeleton(security, "control", "CTRL-001", cid)
         text = text.replace(
             "object: control\n---", f"object: control\nrelationships:\n{edges}---", 1
@@ -89,11 +91,7 @@ def _validate(root, *flags):
 
 
 def _findings(result, check):
-    return [
-        line
-        for line in result.stderr.splitlines()
-        if line.endswith(f"[{check}]")
-    ]
+    return [line for line in result.stderr.splitlines() if line.endswith(f"[{check}]")]
 
 
 @pytest.mark.trace("TC-093", "FR-007-AC-1", "FR-007-AC-2")
@@ -102,6 +100,11 @@ def test_control_mitigating_hazard_and_failure_mode_is_accepted(tmp_path):
     result = _validate(tmp_path)
     assert "disallowed-edge-target" not in result.stderr, result.stderr
     assert "DisallowedEdgeType" not in result.stderr, result.stderr
+    # Quire tolerates a type it cannot load, so prove both modules loaded and
+    # that the edge resolved: neither target is reported unmitigated.
+    assert "[unknown-type]" not in result.stderr, result.stderr
+    assert _findings(result, "unmitigated-hazard") == [], result.stderr
+    assert _findings(result, "unmitigated-failure-mode") == [], result.stderr
 
 
 @pytest.mark.trace("TC-094", "FR-007-AC-3")
@@ -110,9 +113,9 @@ def test_strict_validate_fails_on_an_undeclared_mitigates_target(tmp_path):
     result = _validate(tmp_path, "--strict")
     assert result.returncode != 0, result.stderr
     line = next(iter(_findings(result, "dangling-reference")), "")
-    assert "CTRL-001.md" in line and "mitigates" in line and "HAZ-999" in line, (
-        result.stderr
-    )
+    assert (
+        "CTRL-001.md" in line and "mitigates" in line and "HAZ-999" in line
+    ), result.stderr
 
 
 @pytest.mark.trace("TC-095", "FR-007-AC-4")
@@ -152,9 +155,9 @@ def test_the_two_checks_are_tunable_independently(tmp_path):
     _bundle(tmp_path, ["HAZ-001"], ["FM-001"], {})
     result = _validate(tmp_path, "--severity", "trace:unmitigated-hazard=error")
     assert result.returncode != 0, result.stderr
-    assert any(
-        line.startswith("warning:") for line in _findings(result, "unmitigated-failure-mode")
-    ), result.stderr
-    assert not any(
-        line.startswith("warning:") for line in _findings(result, "unmitigated-hazard")
+    hazard = _findings(result, "unmitigated-hazard")
+    assert len(hazard) == 1 and not hazard[0].startswith("warning:"), result.stderr
+    failure_mode = _findings(result, "unmitigated-failure-mode")
+    assert len(failure_mode) == 1 and failure_mode[0].startswith(
+        "warning:"
     ), result.stderr

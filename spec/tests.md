@@ -19,6 +19,10 @@ relationships:
     type: covers
   - target: "ix://agent-ix/spec-objects-safety/FR-006"
     type: covers
+  - target: "ix://agent-ix/spec-objects-safety/FR-007"
+    type: covers
+  - target: "ix://agent-ix/spec-objects-safety/FR-008"
+    type: covers
   - target: "ix://agent-ix/spec-objects-safety/IT-001"
     type: covers
 ---
@@ -164,25 +168,23 @@ mapping that would populate them is `agent-ix/quoin#335`.
 ## Coverage Gaps
 
 Every acceptance criterion, constraint, and metric above has a row backed by a
-tagged test, with three recorded exceptions:
+tagged test, with two recorded exceptions:
 
-1. **The incoming `mitigates` edge these checks require is authorable nowhere.**
-   The manifest's two `required_relations` demand one on every hazard and
-   failure mode — the module's whole reason to exist — and no catalog module
-   can supply one without a diagnostic: `spec-objects-security`'s `control`
-   declares `mitigates: [threat, risk, vulnerability]`, and the
-   `spec-artifacts-iso` `FR`/`NFR` archetypes declare no `mitigates` at all. So
-   `unmitigated-hazard` cannot yet tell a mitigated hazard from an unmitigated
-   one, and no row here can honestly claim it does. TC-010
-   asserts the model as *data* and says nothing about whether the check fires;
-   it is not the missing evidence, and is not presented as it.
-   FR-007 and FR-008 state the fix and the end-to-end evidence it needs; the rows
-   stay open until their tests exist. This module does not change the relation, the verb or the
-   direction unilaterally, because a neighbour reads them.
-2. **FR-001-AC-1** says the object types "declare no role", but TC-002 asserts only `data_schema` and `allowed_links`; nothing tests the no-role clause.
-3. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
+1. **FR-001-AC-1** says the object types "declare no role", but TC-002 asserts only `data_schema` and `allowed_links`; nothing tests the no-role clause.
+2. **FR-003-AC-6** (TC-032) — the refusal is verified; the half that requires
    the refusal to *name* the offending key or path is an expected failure while
    `agent-ix/quire-rs#221` and `agent-ix/quire-rs#394` are open.
+
+The incoming `mitigates` edge is no longer a gap: it is authored from the control end.
+`spec-objects-security`'s `control` admits `hazard` and `failure_mode` as
+`mitigates` targets (its FR-007), so the two `required_relations` can be
+satisfied without a diagnostic. TC-093..TC-098 (`tests_integration/`) show
+the edge accepted, the dangling target failing under `--okf --strict`, and
+`unmitigated-hazard` and `unmitigated-failure-mode` firing on one fixture and
+staying silent on another. They need the `quire` CLI, so `make test-integrations`
+runs them, and they land after `agent-ix/spec-objects-security` FR-007 and
+the strict dangling-reference exit of `agent-ix/quire-cli` FR-014-AC-11. TC-010
+still asserts the model as *data* only.
 
 Two evidence-plan artifacts are absent and are carried by the plan rather than
 by this matrix: no `SuiteRegistry` document declares a producer for the `Unit`,

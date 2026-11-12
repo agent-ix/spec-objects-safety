@@ -1166,6 +1166,23 @@ url = "https://us-west1-python.pkg.dev/agent-ix/internal-pypi/simple"
 reference = "internal-pypi"
 
 [[package]]
+name = "spec-objects-security"
+version = "0.1.1"
+description = "Filament Module: tier-2 security and identity ObjectTypes (threat, control, risk, asset, policy, auth_flow, role, scope, jwt_claim, secret)"
+optional = false
+python-versions = ">=3.13,<3.14"
+groups = ["dev"]
+files = [
+    {file = "spec_objects_security-0.1.1-py3-none-any.whl", hash = "sha256:fd081b92fb08ee736bca7aad1f4d34a0b3204234a1ab90bf6e6f6bc39ed14f38"},
+    {file = "spec_objects_security-0.1.1.tar.gz", hash = "sha256:0c23ca54886b2e588f5b405eba03e78e9f4ab5d23575eaa8e201a4863600cfef"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://us-west1-python.pkg.dev/agent-ix/internal-pypi/simple"
+reference = "internal-pypi"
+
+[[package]]
 name = "tomlkit"
 version = "0.15.1"
 description = "Style preserving TOML library"
@@ -1180,4 +1197,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "02c3a28222204f2743c2fea2496892116381c5cbe5ab10926dce69e4b874d9a2"
+content-hash = "fd0a7a74387e7c0d847548165fe5697604388e23136b14842bd4ae5d3399458d"
