@@ -65,8 +65,8 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
-| FR-007 | FR-007-AC-1..4 | none yet | 🚧 no test written yet |
-| FR-008 | FR-008-AC-1..5 | none yet | 🚧 no test written yet |
+| FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
+| FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
 
 ### Integration Test Coverage
 
@@ -130,6 +130,12 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |
 | TC-063 | Every `allowed_links` and `traceability` verb exists in the iso edge vocabulary | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-064 | No safety-only synonym is minted for a verb or a type another module declares | Unit | P1 | FR-006-CON-1 | ✅ |
+| TC-093 | A fixture `control` mitigating a fixture `hazard` and a `failure_mode` yields no `disallowed-edge-target` | Integration | P0 | FR-007-AC-1, FR-007-AC-2 | ✅ |
+| TC-094 | `quire validate --okf --strict` over a `control` mitigating an undeclared bare id exits non-zero and names the control path, `mitigates` and the id | Integration | P0 | FR-007-AC-3 | ✅ |
+| TC-095 | A `control` mitigating an `asset` is still reported `disallowed-edge-target` naming `asset` | Integration | P0 | FR-007-AC-4 | ✅ |
+| TC-096 | `unmitigated-hazard` fires once for the unmitigated hazard, clears when the edge is added, and fires per hazard when none is mitigated | Integration | P0 | FR-008-AC-1, FR-008-AC-3, FR-008-AC-4 | ✅ |
+| TC-097 | `unmitigated-failure-mode` fires once for the unmitigated failure mode | Integration | P0 | FR-008-AC-2 | ✅ |
+| TC-098 | `--severity trace:unmitigated-hazard=error` fails the run while failure-mode findings stay warnings | Integration | P0 | FR-008-AC-5 | ✅ |
 | TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 
