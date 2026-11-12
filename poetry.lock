@@ -938,17 +938,17 @@ files = [
 
 [[package]]
 name = "quire"
-version = "0.50.0"
+version = "0.58.0"
 description = "Python bindings for quire-rs: parse, corpus load, and whole-spec queries (FR-023)."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "quire-0.50.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:19fc945a86870f151a6a87dce69d25845e250ed91e66cfec06e4c159f44ffe3a"},
-    {file = "quire-0.50.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:74413c84ea63cb37e78301de6c3e7d3fd1768259f877ef074cfd717551d70c83"},
-    {file = "quire-0.50.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5d4cda974a1b241d592068fdb48aeea2103aaa63357c89105b7b6fad3331efa3"},
-    {file = "quire-0.50.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d4bb6ea5a8ae42c67a2eb93766f2544d2ad674120e91d51ccdbfac56354e236f"},
-    {file = "quire-0.50.0-cp39-abi3-win_amd64.whl", hash = "sha256:384c44ece0c40ae6876e7f2ef8cab6d7ddb5a19e33d0f9126bfeef8c6731935b"},
+    {file = "quire-0.58.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:f5fbb30f06e318df2d16dec15e19025e304e933a51f1910f64b554a0cde567ef"},
+    {file = "quire-0.58.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:d813529a4710fd810fdbca07ae1bb25f0605f7f08cc594c8824174f97d590c82"},
+    {file = "quire-0.58.0-cp39-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:b5427e3e8cd86a09fb3efd65911e6468f761274310bced19dc77ccad88f65aa8"},
+    {file = "quire-0.58.0-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:11576973110bea98cf127a8a8a218ad2e4aaccb07f773e954ffe451492650945"},
+    {file = "quire-0.58.0-cp39-abi3-win_amd64.whl", hash = "sha256:61aab5f85d7e4edd3c47027cd0e8e54ec250dade890c96cda6929080474723e2"},
 ]
 
 [package.source]
@@ -1197,4 +1197,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "880342d22b1a15de858674f368ad173e7dafc4aae0f7529fc3a3c8dc10cfb542"
+content-hash = "30262cfcc816824e355453696b87435ee8057c987d980ce9a3e4ad45bee969d8"
