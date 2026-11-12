@@ -81,6 +81,43 @@ red at merge time (FND-002). Two low findings concern test robustness.
 | --- | --- | --- | --- |
 | FND-005 | low | `poetry.lock` resolves `spec-objects-security` 0.1.1, which lacks the #40 widening. With no `SPEC_OBJECTS_SECURITY_MODULE` set, `make test-integrations` fails TC-093 until a security release that includes #40 is published and the lock is bumped. | poetry.lock, pyproject.toml, TC-093 |
 
+## New findings (disposition pass 2)
+
+Scope of this pass: `git diff origin/main...6198eae`, adding c905fee
+(spec-objects-security ^0.12.1), 9e72ea7 (quire ^0.58.0) and 6198eae
+(semantic-core 0.4.4, tagged `KernelScalar` targets, `kernel_scalars()` read
+from the installed package, npmjs-only lockfile test, FR-002/TC-024 text).
+
+Run evidence, against the installed packages with `SPEC_OBJECTS_SECURITY_MODULE`,
+`SPEC_ARTIFACTS_ISO_MODULE` and `QUIRE_BIN` unset: `_module` resolved
+`spec_objects_security` 0.12.1 and `spec_artifacts_iso` from site-packages, and
+the CLI was the ambient `quire 0.42.0 (engine 0.58.0)`. The six mitigates tests
+passed. `make lint` passed (ruff, black, and `schemas-check`: 15 schemas match),
+and `make test` gave 56 passed at 100% coverage. Both ran in a scratch worktree
+of 6198eae, with semantic-core 0.4.4 bytes from filament-core-data `ce72bc51`
+(byte-identical to the 0.4.4 release commit 5a665fc5) and the @typespec 1.15.0
+toolchain from that checkout's node_modules. No registry command was run.
+
+Mutation check against the real engine: dropping the `mitigates` edges, or
+changing the verb to `protects`, kills TC-093..TC-097. Retyping the hazard and
+failure-mode fixtures as `asset` kills TC-093, TC-096, TC-097 and TC-098.
+Narrowing the security manifest to `[threat, risk, vulnerability]` kills TC-093.
+Ignoring `--strict` and `--severity` kills TC-094 and TC-098.
+
+semantic-core 0.4.4: the change matches spec-objects-security#42. `FieldDecl`
+targets use the `KernelScalar` arm of `TypeRefTarget`, `{kind, value}`.
+`RelationDecl.target` stays a plain `SemanticId`, so `ix://...`, as in the
+0.4.4 schema. The regenerated schemas change only the `$ref` base from 0.3.2 to
+0.4.4. `poetry.lock` changes only the `quire` and `spec-objects-security`
+entries and the content hash. `package-lock.json` changes only semantic-core.
+The lockfile test is not vacuous: it covers 75 `resolved` entries, and the
+GitHub Packages URL on `main` would fail it. No `GitHub Packages` or
+`npm.pkg.github` text remains outside `reviews/`.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | low | Now that `spec-objects-security` ^0.12.1 is a declared dev dependency, the `SPEC_OBJECTS_SECURITY_MODULE` and `SPEC_ARTIFACTS_ISO_MODULE` overrides add no value. `_module` still reads them before the installed package, so a stale variable left in a shell silently points the FR-007/FR-008 evidence at an unreleased checkout and the run still reports green. The module docstring still describes that route. Delete both overrides and read the installed packages only. | tests_integration/test_mitigates_edge.py:1-8, tests_integration/test_mitigates_edge.py:26-37 |
+
 ## Dispositions
 
 | FND | outcome | reason |
@@ -89,3 +126,5 @@ red at merge time (FND-002). Two low findings concern test robustness.
 | FND-002 | fixed | aa961f8 moves the tests to tests_integration/test_mitigates_edge.py with `pytestmark = pytest.mark.integration`. The unit suite no longer collects them, and spec-objects-security is now a dev dependency from internal-pypi. |
 | FND-003 | fixed | `_module` now reads the env var before calling `find_spec`. |
 | FND-004 | fixed | TC-098 now asserts exactly one hazard finding, not prefixed `warning:` (quire prints errors with no prefix; verified, exit 3), and exactly one failure-mode `warning:`. |
+| FND-005 | fixed | c905fee declares `spec-objects-security = {version = "^0.12.1", source = "internal-pypi"}`, and poetry.lock now resolves 0.12.1. Its manifest lists `mitigates: [threat, risk, vulnerability, hazard, failure_mode]`. The six tests pass with no override set. |
+| FND-006 | still-open | Found in disposition pass 2. No fix has landed yet: the env-var overrides are still read before the installed package. |

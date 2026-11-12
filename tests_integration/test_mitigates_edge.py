@@ -3,7 +3,7 @@
 The fixtures are built from this module's own skeletons plus the
 `spec-objects-security` control skeleton, and validated by the `quire` CLI with
 both modules (and the iso edge vocabulary) loaded. The other modules come from
-an installed package or from the checkout named by an environment variable;
+the installed `spec-objects-security` and `spec-artifacts-iso` packages;
 nothing is copied into this repository.
 """
 
@@ -23,19 +23,14 @@ SKELETONS_DIR = PACKAGE_ROOT / "skeletons"
 
 pytestmark = pytest.mark.integration
 
-SECURITY_ENV = "SPEC_OBJECTS_SECURITY_MODULE"
-ISO_ENV = "SPEC_ARTIFACTS_ISO_MODULE"
 QUIRE_ENV = "QUIRE_BIN"
 
 
-def _module(package: str, env: str) -> pathlib.Path:
-    value = os.environ.get(env)
-    if value:
-        return pathlib.Path(value)
+def _module(package: str) -> pathlib.Path:
     spec = importlib.util.find_spec(package)
-    if spec is not None and spec.origin:
-        return pathlib.Path(spec.origin).parent
-    pytest.fail(f"{package} is not installed and {env} names no checkout")
+    if spec is None or not spec.origin:
+        pytest.fail(f"{package} is not installed")
+    return pathlib.Path(spec.origin).parent
 
 
 def _quire() -> str:
@@ -52,7 +47,7 @@ def _skeleton(directory: pathlib.Path, name: str, old: str, new: str) -> str:
 
 def _bundle(root, hazards, failure_modes, mitigates):
     """Write a bundle: `mitigates` maps a control id to the target ids it names."""
-    security = _module("spec_objects_security", SECURITY_ENV) / "skeletons"
+    security = _module("spec_objects_security") / "skeletons"
     for hid in hazards:
         (root / f"{hid}.md").write_text(
             _skeleton(SKELETONS_DIR, "hazard", "HAZ-001", hid)
@@ -78,9 +73,9 @@ def _validate(root, *flags):
             "--okf",
             *flags,
             "--module",
-            str(_module("spec_artifacts_iso", ISO_ENV)),
+            str(_module("spec_artifacts_iso")),
             "--module",
-            str(_module("spec_objects_security", SECURITY_ENV)),
+            str(_module("spec_objects_security")),
             "--module",
             str(PACKAGE_ROOT),
             str(root),
@@ -98,6 +93,7 @@ def _findings(result, check):
 def test_control_mitigating_hazard_and_failure_mode_is_accepted(tmp_path):
     _bundle(tmp_path, ["HAZ-001"], ["FM-001"], {"CTRL-001": ["HAZ-001", "FM-001"]})
     result = _validate(tmp_path)
+    assert result.returncode == 0, result.stderr
     assert "disallowed-edge-target" not in result.stderr, result.stderr
     assert "DisallowedEdgeType" not in result.stderr, result.stderr
     # Quire tolerates a type it cannot load, so prove both modules loaded and
@@ -120,7 +116,7 @@ def test_strict_validate_fails_on_an_undeclared_mitigates_target(tmp_path):
 
 @pytest.mark.trace("TC-095", "FR-007-AC-4")
 def test_mitigates_to_another_type_is_still_disallowed(tmp_path):
-    security = _module("spec_objects_security", SECURITY_ENV) / "skeletons"
+    security = _module("spec_objects_security") / "skeletons"
     _bundle(tmp_path, ["HAZ-001"], [], {"CTRL-001": ["ASSET-001"]})
     (tmp_path / "ASSET-001.md").write_text((security / "asset.md").read_text())
     result = _validate(tmp_path)

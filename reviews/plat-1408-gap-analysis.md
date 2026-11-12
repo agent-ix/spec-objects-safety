@@ -62,6 +62,37 @@ FND-003).
   into separate fixtures; AC-1 and AC-2 name separate fixtures, so that is in scope.
 - `spec/tests.md` structural-validation column-header errors predate this diff.
 
+## New findings (disposition pass 2)
+
+Scope of this pass: head 6198eae. The tests now run through the installed
+`spec-objects-security` 0.12.1 (released FR-007, read from tag v0.12.1:
+`control.allowed_links.mitigates` lists exactly threat, risk, vulnerability,
+hazard and failure_mode). `quoin matrix`: FR-007-AC-1..4, FR-008-AC-1..5 and
+FR-002-CON-4 are all `tagged`, with binders in
+`tests_integration/test_mitigates_edge.py` and `tests/test_schema_emission.py`.
+Run census: the six tests pass with no override set, `make test` passes (56
+tests), and `make test-integrations` gives 6 passed and 1 failed. The failure is
+TC-070, `test_quoin_install_roundtrip`, which this PR does not cause: it fails
+identically on a detached `origin/main` (7e26017) worktree, at SC-01. quoin
+0.30.x lists its ten pinned default modules, `spec-objects-safety` v0.8.0
+among them, even under an empty `IX_CONFIG_ROOT`. `~/.ix/filament/registry.json`
+had sha256 93841a76… before and after every run.
+
+Discrimination (mutants run against the real engine): every FR-007/FR-008 test
+is killed by at least one relevant mutant. Removing the edges kills
+TC-093..TC-097; retyping the targets kills TC-093; narrowing the security
+manifest kills TC-093; dropping the flags kills TC-094 and TC-098. One
+inflation path remains (FND-004).
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | TC-093 (FR-007-AC-1/2) still asserts only that some strings are absent from stderr, never `result.returncode == 0`. If `quire validate` stops before it validates anything (a module load error, a rejected flag, a crash), stderr carries none of the strings the test checks for and the test passes. Reproduced: with the safety `--module` path unloadable, quire exits 3 with only `validating --module '...': No such file or directory` on stderr, and TC-093 passed while the five other tests failed. Run on its own, TC-093 is then green evidence for FR-007 from a run that validated nothing. | tests_integration/test_mitigates_edge.py:98-108 |
+
+## Finding detail (disposition pass 2)
+
+- FND-004: add `assert result.returncode == 0, result.stderr`. The baseline
+  fixture exits 0 today, with warnings only.
+
 ## Dispositions
 
 | FND | outcome | reason |
@@ -69,3 +100,4 @@ FND-003).
 | FND-001 | fixed | TC-093 now asserts no `[unknown-type]` and no unmitigated-hazard or unmitigated-failure-mode finding. Its paths come from `__file__`, so the stale editable-install import no longer applies. Against security origin/main it now fails both with and without PYTHONPATH=. |
 | FND-002 | fixed | The Coverage Gaps section drops item 1, now counts two exceptions, and says TC-093..TC-098 are covered in tests_integration/. |
 | FND-003 | fixed | TM-001 frontmatter now carries covers edges to FR-007 and FR-008. |
+| FND-004 | still-open | Found in disposition pass 2. No fix has landed yet: TC-093 still does not assert `returncode == 0`. |
