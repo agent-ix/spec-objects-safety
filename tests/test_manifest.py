@@ -263,11 +263,7 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     iso = yaml.safe_load(iso_path.read_text())
     edge_types = iso.get("edge_types") or {}
     # A relation may also start from a kind spec-artifacts-iso declares (`NFR`).
-    iso_kinds = {
-        a["name"]
-        for key in ("artifact_types", "archetypes")
-        for a in iso.get(key) or []
-    }
+    iso_kinds = {a["name"] for a in iso.get("artifact_types") or []}
     assert "NFR" in iso_kinds, "the iso module declares no NFR archetype"
     # Inverse labels are authorable without being forward keys (quire-rs
     # FR 041 AC 2), so they count as declared too — `mitigates` is one.
