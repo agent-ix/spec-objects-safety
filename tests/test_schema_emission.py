@@ -191,24 +191,17 @@ def test_no_npmrc_no_local_dependency_and_exact_toolchain_pins():
 
 @pytest.mark.trace("TC-024", "FR-002-CON-4")
 def test_the_lockfile_resolves_public_packages_from_npmjs():
-    """`@agent-ix/semantic-core` is published to a real, CI-reachable registry
-    (GitHub Packages), never the private `npm.ix` dev-only mirror. Every package
-    in the lockfile SHALL now resolve from a real registry and none from
-    `npm.ix`."""
+    """Every package, `@agent-ix/semantic-core` included, is published to npmjs;
+    the lockfile resolves from there and never from the private `npm.ix` mirror."""
     lock = json.loads((REPO_ROOT / "package-lock.json").read_text())
     for path, entry in lock["packages"].items():
         resolved = entry.get("resolved")
         if not resolved:
             continue
         assert "npm.ix" not in resolved, f"{path} -> {resolved}"
-        if path.endswith("@agent-ix/semantic-core"):
-            assert resolved.startswith(
-                "https://npm.pkg.github.com/"
-            ), f"{path} -> {resolved}"
-        else:
-            assert resolved.startswith(
-                "https://registry.npmjs.org/"
-            ), f"{path} -> {resolved}"
+        assert resolved.startswith(
+            "https://registry.npmjs.org/"
+        ), f"{path} -> {resolved}"
 
 
 @pytest.mark.trace("TC-018", "FR-002-AC-7")

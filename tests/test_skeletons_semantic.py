@@ -14,12 +14,12 @@ import subprocess
 import pytest
 
 from tests.conftest import (
-    KERNEL_SCALARS,
     NEGATIVE_DIR,
     PACKAGE_ROOT,
     REPO_ROOT,
     SKELETONS_DIR,
     frontmatter,
+    kernel_scalars,
     locators,
     object_type,
     object_types,
@@ -133,9 +133,10 @@ def test_under_the_bundle_index_every_skeleton_extracts_clean(
             ), (path.name, span)
         for decl in record.get("fields") or []:
             target = decl["type"]["target"]
-            if target in KERNEL_SCALARS:
+            if target["kind"] == "KernelScalar":
+                assert target["value"] in kernel_scalars(), (path.name, target)
                 continue
-            assert target.startswith("ix://agent-ix/spec-objects-safety/"), (
+            assert target["value"].startswith("ix://agent-ix/spec-objects-safety/"), (
                 path.name,
                 target,
             )
@@ -229,7 +230,7 @@ def test_skeleton_titles_are_distinct_identifiers_and_object_equals_type():
         front = frontmatter(path.read_text())
         title = front["title"]
         assert IDENTIFIER.match(title), (path.name, title)
-        assert title not in KERNEL_SCALARS, (path.name, title)
+        assert title not in kernel_scalars(), (path.name, title)
         assert front["object"] == front["type"], path.name
         stem = path.stem.removesuffix(".sysml")
         owner = titles.setdefault(title, stem)
