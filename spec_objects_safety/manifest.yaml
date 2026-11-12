@@ -261,6 +261,21 @@ traceability:
     to: []
     direction: incoming
     check: unmitigated-failure-mode
+  # The reverse reading (PLAT-1477): a safety-classified requirement answers a
+  # hazard or failure mode, else it is unjustified scope. The classification is
+  # the `quality_attribute` frontmatter field spec-artifacts-iso declares on
+  # `NFR`; `where` (quire-rs FR-058) narrows the obligation to NFRs holding
+  # `safety`, so a performance NFR is never reported. The NFR authors the edge,
+  # so `direction: outgoing`. `to: []` on purpose: the hazard an NFR answers is
+  # usually declared in another repository, and a dangling edge cannot satisfy
+  # a constrained `to` (FR-058).
+  - name: safety-nfr-has-mitigation-target
+    from: NFR
+    where: {field: quality_attribute, values: [safety]}
+    edges: [mitigates]
+    to: []
+    direction: outgoing
+    check: unjustified-safety-nfr
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:

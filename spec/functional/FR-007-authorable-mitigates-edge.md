@@ -38,7 +38,7 @@ module's relations accept whatever document declares the edge, because
 
 Widening the target set of `control.mitigates` adds two targets. It removes no
 constraint, changes no verb and changes no direction, so this module's
-`traceability` block is untouched and its `compatibility_posture: additive`
+`traceability` block (the two hazard-end relations) is untouched and its `compatibility_posture: additive`
 holds. The `to: []` of both relations is not narrowed.
 
 ## Inputs
