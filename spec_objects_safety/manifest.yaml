@@ -638,6 +638,28 @@ traceability:
     to: []
     direction: outgoing
     check: unjustified-safety-nfr
+  # The chain hazard -> situation -> harm, one relation per hop (the engine
+  # tests one edge hop). `arises_from` is authored on the later link, so
+  # the hazard sees its situations as incoming edges. A situation that leads
+  # nowhere is reported as well.
+  - name: hazard-has-situation
+    from: hazard
+    edges: [arises_from]
+    to: [hazardous_situation]
+    direction: incoming
+    check: hazard-without-situation
+  - name: situation-has-hazard
+    from: hazardous_situation
+    edges: [arises_from]
+    to: [hazard]
+    direction: outgoing
+    check: situation-without-hazard
+  - name: situation-has-harm
+    from: hazardous_situation
+    edges: [arises_from]
+    to: [harm]
+    direction: incoming
+    check: situation-without-harm
   # An estimate judges one hazardous situation, and says which with an
   # `estimates` edge it authors itself. Presence is tested, not count, so
   # several estimates of one situation, or one estimate of several, are fine.
@@ -659,6 +681,16 @@ traceability:
     to: [control]
     direction: outgoing
     check: post-control-without-control
+  # A post-control estimate has a residual-risk record. Presence is tested, so
+  # a record whose decision is still `undecided` satisfies it; the decision
+  # and its decider are enforced by the schema and the discrepancy report.
+  - name: post-control-estimate-has-decision
+    from: risk_estimate
+    where: {field: phase, values: [post_control]}
+    edges: [estimate]
+    to: [residual_risk]
+    direction: incoming
+    check: post-control-estimate-without-decision
   # A decision record names what it decides about. Presence is tested, never
   # the far end's content: that the estimate is post-control, or that a policy
   # holds the estimate's levels, is not a relation (quire-rs PLAT-1677).

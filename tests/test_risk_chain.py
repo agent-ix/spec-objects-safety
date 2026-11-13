@@ -174,11 +174,18 @@ def test_each_chain_edge_is_allowed_to_exactly_its_target_type():
     assert "hazardous_situation" not in links["hazard"].get("arises_from", [])
 
 
-@pytest.mark.trace("FR-202-AC-6", "FR-205-AC-6")
-def test_no_completeness_relation_is_declared_over_situation_or_control():
+@pytest.mark.trace("FR-205-AC-6")
+def test_no_completeness_relation_is_declared_over_control_without_a_scope():
     relations = load_manifest()["traceability"]["required_relations"]
-    assert not [r for r in relations if r["from"] in ("hazardous_situation", "control")]
-    assert not [r for r in relations if r["check"] == "situation-without-hazard"]
+    assert not [r for r in relations if r["from"] == "control" and "when_any" not in r]
+
+
+@pytest.mark.trace("FR-202-AC-6", "FR-301-AC-10")
+def test_each_completeness_check_is_declared_by_exactly_one_relation():
+    relations = load_manifest()["traceability"]["required_relations"]
+    checks = [r["check"] for r in relations]
+    assert len(checks) == len(set(checks))
+    assert "situation-without-hazard" in checks
 
 
 @pytest.mark.trace("FR-202-AC-9")
