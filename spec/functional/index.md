@@ -23,3 +23,8 @@ description: "Index of artifacts in this directory."
 * [FR-105: The tooling reports where a recorded decision disagrees with the policy](./FR-105-decision-policy-discrepancy-report.md)
 * [FR-106: A benefit-risk record links the risks, states the benefit and names the decider](./FR-106-benefit-risk-record.md)
 * [FR-107: An overall residual-risk evaluation for the product is decided by a named person](./FR-107-overall-residual-risk-evaluation.md)
+* [FR-301: Every hazard reaches a harm through a hazardous situation, declared as manifest data](./FR-301-hazard-reaches-harm-through-situation.md)
+* [FR-302: Every risk control is implemented by a requirement and has a verification, declared as manifest data](./FR-302-risk-control-implemented-and-verified.md)
+* [FR-303: Every post-control estimate has a residual-risk record, and the decision and decider are enforced by the schema and the discrepancy report](./FR-303-residual-risk-decided-by-named-person.md)
+* [FR-304: The causal chain from failure mode to harm is checked for cycles through the arises_from verb](./FR-304-chain-edges-cannot-cycle.md)
+* [FR-305: A quoin risk summary report reads the whole chain and states what each person entered](./FR-305-risk-summary-report.md)
