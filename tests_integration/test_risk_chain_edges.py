@@ -22,6 +22,7 @@ import shutil
 import subprocess
 
 import pytest
+import yaml
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PACKAGE_ROOT = REPO_ROOT / "spec_objects_safety"
@@ -827,6 +828,39 @@ def implemented_and_verified(root, cid="CTRL-001", *, implemented=True, verified
 CONTROL_CHECKS = ("control-without-requirement", "control-without-verification")
 
 
+def _control_relations() -> dict:
+    manifest = yaml.safe_load((PACKAGE_ROOT / "manifest.yaml").read_text())
+    return {
+        r["name"]: r
+        for r in manifest["traceability"]["required_relations"]
+        if r.get("from") == "control"
+    }
+
+
+SCOPE = [
+    {"verb": "mitigates", "direction": "outgoing", "other": ["hazard", "failure_mode"]},
+    {"verb": "assumes", "direction": "incoming", "other": ["risk_estimate"]},
+]
+
+
+@pytest.mark.trace("FR-302-AC-1")
+def test_the_control_relations_declare_the_specified_shape_and_scope():
+    relations = _control_relations()
+    assert set(relations) == {"control-has-requirement", "control-has-verification"}
+    requirement_rel = relations["control-has-requirement"]
+    verification_rel = relations["control-has-verification"]
+    assert requirement_rel["edges"] == ["satisfies"]
+    assert requirement_rel["to"] == ["FR", "NFR"]
+    assert requirement_rel["direction"] == "incoming"
+    assert requirement_rel["check"] == "control-without-requirement"
+    assert verification_rel["edges"] == ["verifies"]
+    assert verification_rel["to"] == []
+    assert verification_rel["direction"] == "incoming"
+    assert verification_rel["check"] == "control-without-verification"
+    assert requirement_rel["when_any"] == SCOPE
+    assert verification_rel["when_any"] == SCOPE
+
+
 @pytest.mark.trace("FR-302-AC-1", "FR-302-AC-2")
 def test_an_implemented_and_verified_risk_control_yields_no_finding(tmp_path):
     hazard(tmp_path)
@@ -834,6 +868,27 @@ def test_an_implemented_and_verified_risk_control_yields_no_finding(tmp_path):
     implemented_and_verified(tmp_path)
     result = validate(tmp_path)
     assert result.returncode == 0, result.stderr
+    for check in CONTROL_CHECKS:
+        assert findings(result, check) == [], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-1")
+def test_a_control_mitigating_only_a_failure_mode_is_in_scope(tmp_path):
+    _write(tmp_path, "failure_mode", SKELETONS_DIR, "FM-001", "FM-001")
+    risk_control(tmp_path, "CTRL-001", f"{LOCAL}/FM-001")
+    result = validate(tmp_path)
+    for check in CONTROL_CHECKS:
+        lines = findings(result, check)
+        assert len(lines) == 1 and "CTRL-001" in lines[0], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-2")
+def test_a_verifies_edge_from_a_non_test_document_counts_as_verification(tmp_path):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    requirement(tmp_path, "NFR-901", "nfr", "verifies", f"{LOCAL}/CTRL-001")
+    result = validate(tmp_path)
     for check in CONTROL_CHECKS:
         assert findings(result, check) == [], result.stderr
 
@@ -886,7 +941,27 @@ def test_a_verification_recording_a_failing_result_still_satisfies_the_relation(
     requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
     requirement(tmp_path, "TC-901", "tc", "verifies", f"{LOCAL}/CTRL-001")
     path = tmp_path / "TC-901.md"
-    path.write_text(path.read_text() + "\nResult: failed.\n")
+    path.write_text(
+        path.read_text().replace("type: TC\n", "type: TC\nstatus: failed\n", 1)
+    )
+    assert "status: failed" in path.read_text().split("---")[1]
     result = validate(tmp_path)
     for check in CONTROL_CHECKS:
         assert findings(result, check) == [], result.stderr
+    # No module key records or reads the result.
+    manifest = yaml.safe_load((PACKAGE_ROOT / "manifest.yaml").read_text())
+    names = set()
+
+    def walk(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                names.add(key)
+                if key in ("field", "fields") and isinstance(value, (str, list)):
+                    names.update([value] if isinstance(value, str) else value)
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(manifest)
+    assert not names & {"status", "result", "passed", "verified", "effective"}

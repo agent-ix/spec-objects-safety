@@ -13,6 +13,8 @@ relationships:
     type: "depends_on"
   - target: "ix://agent-ix/spec-objects-safety/FR-302"
     type: "depends_on"
+  - target: "ix://agent-ix/quire-rs/FR-058"
+    type: "depends_on"
 ---
 # FR-205: A risk control links to the requirement that implements it and the verification that shows it is effective
 
@@ -57,10 +59,9 @@ The rules that report a control with no requirement or no verification
 (`control-without-requirement`, `control-without-verification`) are declared
 once, in PLAT-1524 (FR-302). This requirement does not declare them. They apply
 only to controls used as risk controls, meaning controls that mitigate a hazard
-or that a post-control estimate assumes. Selecting documents by an incoming
-edge needs a selector in `agent-ix/quire-rs` that does not exist today; the
-`where` selector of its FR-058 filters only on a field of the document itself.
-The rules depend on that selector and SHALL NOT be declared unscoped, because an
+or that a post-control estimate assumes. The `where` selector of `agent-ix/quire-rs` FR-058 filters only on a field of
+the document itself, so the rules use its edge-conditioned `when_any` scope
+(FR-302), which FR-058 provides. The rules SHALL NOT be declared unscoped, because an
 unscoped rule would report every unrelated security control.
 
 ## Inputs
@@ -77,7 +78,7 @@ unscoped rule would report every unrelated security control.
 - Quire SHALL resolve a `verifies` edge from an `IT` or `TC` to a `control` as an incoming edge on the control.
 - A retained-evidence record SHALL verify a control through an authored `verifies` edge to it, as a test does (FR-302).
 - The module SHALL define no `effective`, `verified` or `passed` key on any type it declares.
-- The module SHALL declare no completeness relation over `control` until the quire-rs incoming-edge selector exists.
+- The module SHALL declare no completeness relation over `control` without the FR-302 `when_any` scope.
 - Quire SHALL make `quire validate --okf --strict` exit non-zero for an edge to an undeclared local id, as FR-007 specifies; a target under a foreign authority is skipped.
 
 ## Acceptance Criteria
@@ -94,4 +95,4 @@ unscoped rule would report every unrelated security control.
 ## Dependencies
 
 - **Upstream**: [FR-007](./FR-007-authorable-mitigates-edge.md), [FR-204](./FR-204-post-control-risk-estimate.md); `agent-ix/spec-objects-security` FR-007; `agent-ix/engineering-assurance` (retained-evidence records); FR-302
-- **Downstream**: PLAT-1524 FR-302 (completeness rules); the quire-rs incoming-edge selector, which has no ticket yet
+- **Downstream**: PLAT-1524 FR-302 (completeness rules); `agent-ix/quire-rs` FR-058 (the `when_any` scope)

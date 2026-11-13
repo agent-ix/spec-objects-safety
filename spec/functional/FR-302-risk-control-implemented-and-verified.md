@@ -44,7 +44,7 @@ control, FR-007), **or** an incoming `assumes` edge from a `risk_estimate`
 
 The `where` selector (FR-058) filters on a top-level frontmatter field of the
 `from` document and cannot express this. The edge-conditioned selector is the
-optional relation key `when_any` (quire-rs FR-058, ticket **PLAT-1674**): a list
+optional relation key `when_any` (`agent-ix/quire-rs` FR-058): a list
 of conditions, each `{verb, direction, other: [kinds]}`, where the `from`
 document is in scope if any one condition holds. The scope here is therefore:
 
@@ -80,9 +80,9 @@ scope. Declared unscoped they would report every unrelated security control.
 | FR-302-AC-5 | A control assumed by a `post_control` estimate that mitigates no hazard is reported when it lacks either link. | Test |
 | FR-302-AC-6 | A control that mitigates no hazard or failure mode and is assumed by no estimate yields neither finding. | Test |
 | FR-302-AC-7 | A verification whose evidence records a failing result still satisfies the relation, and no module key records the result. | Test |
-| FR-302-AC-8 | The scope is stated as the `when_any` shape above and links quire-rs ticket PLAT-1674 as its provider. | Inspection |
+| FR-302-AC-8 | The scope is stated as the `when_any` shape above and cites `agent-ix/quire-rs` FR-058 as its provider. | Inspection |
 
 ## Dependencies
 
-- **Upstream**: [FR-205](./FR-205-control-requirement-and-verification-links.md), [FR-204](./FR-204-post-control-risk-estimate.md), [FR-301](./FR-301-hazard-reaches-harm-through-situation.md); `agent-ix/quire-rs` FR-058 and PLAT-1674 (edge-conditioned scope selector)
+- **Upstream**: [FR-205](./FR-205-control-requirement-and-verification-links.md), [FR-204](./FR-204-post-control-risk-estimate.md), [FR-301](./FR-301-hazard-reaches-harm-through-situation.md); `agent-ix/quire-rs` FR-058 (edge-conditioned `when_any` scope)
 - **Downstream**: [FR-305](./FR-305-risk-summary-report.md)
