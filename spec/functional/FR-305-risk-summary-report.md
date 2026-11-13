@@ -22,7 +22,7 @@ relationships:
 
 ## Description
 
-Tracked by Linear PLAT-1524; implemented under the quoin ticket PLAT-1576. The
+Tracked by Linear PLAT-1524; implemented under the quoin ticket PLAT-1576, which aligned the entry keys and the finding shape with the quoin specification. The
 quoin CLI **SHALL** provide a read-only command `quoin risk-summary <scope>
 [--format markdown|json]` that reports the whole chain: hazard, hazardous
 situation, harm, estimates, controls with their requirement and verification,
@@ -44,11 +44,11 @@ policy's own label for that estimate's entered levels (FR-102), or `null`:
 | `hazard` | the hazard id, or `null` for a situation with no hazard |
 | `situation` | the situation id, or `null` for a hazard with no situation |
 | `harms` | ids of harms that arise from the situation |
-| `pre_control` | each pre-control estimate: id, `severity`, `probability` as entered, and `policy_region` |
-| `controls` | each assumed control: id, `requirements` (ids), `verifications` (ids) |
-| `post_control` | each post-control estimate: id, `severity`, `probability` as entered, and `policy_region` |
-| `residual_risks` | each record: id, `decision`, `decided_by` as entered |
-| `findings` | the completeness finding tokens of FR-301 to FR-303 and FR-105 that name this row |
+| `pre_control` | each pre-control estimate: `estimate` (the id), `severity`, `probability` as entered, and `policy_region` |
+| `controls` | each assumed control: `control` (the id), `requirements` (ids), `verifications` (ids) |
+| `post_control` | each post-control estimate: `estimate` (the id), `severity`, `probability` as entered, and `policy_region` |
+| `residual_risks` | each record: `residual_risk` (the id), `decision`, `decided_by` as entered |
+| `findings` | finding objects with exactly the keys `finding` (the token) and `names` (the ids the token names, `[]` when none), for the completeness tokens of FR-301 to FR-303, FR-204 (`post-control-without-control`) and FR-105 that name this row |
 
 There is one row per hazard and situation pairing. A hazard with no situation
 has one row with `situation: null`. A situation with no `arises_from` edge to a
@@ -86,12 +86,13 @@ rendering and may be regenerated at will.
 | FR-305-AC-2 | A hazard with no situation yields a row with `situation: null` and `hazard-without-situation` in `findings`. | Test |
 | FR-305-AC-3 | A fixture with `probability: not_assessed` shows `not_assessed` in its estimate entry with that entry's `policy_region: null`, while another estimate in the same row keeps its own label. | Test |
 | FR-305-AC-4 | A fixture residual risk with `decision: undecided` shows `undecided`, and no row shows `accepted` that a person did not write. | Test |
-| FR-305-AC-5 | No row key and no top-level key is numeric, a rank, or a verdict: the JSON keys of every row, and of every estimate entry, equal the sets in the contract exactly. | Test |
+| FR-305-AC-5 | No row key and no top-level key is numeric, a rank, or a verdict: the JSON keys of every row equal the row table exactly, of every estimate entry equal `estimate`, `severity`, `probability`, `policy_region`, of every control entry `control`, `requirements`, `verifications`, of every residual-risk entry `residual_risk`, `decision`, `decided_by`, and of every finding `finding`, `names`. | Test |
 | FR-305-AC-6 | Running the command leaves every fixture file byte-identical. | Test |
 | FR-305-AC-7 | Two runs over the same fixtures give identical output in both formats, ordered by hazard id then situation id. | Test |
 | FR-305-AC-8 | A control without a verification appears in its row with `control-without-verification` in `findings`; adding the verification removes it. | Test |
 | FR-305-AC-9 | A situation with no `arises_from` edge to a hazard yields a row with `hazard: null` and `situation-without-hazard` in `findings`. | Test |
 | FR-305-AC-10 | Two estimates on one situation both appear in the row, and no key marks either as in force. | Test |
+| FR-305-AC-11 | A post-control estimate with no `assumes` edge yields `post-control-without-control` naming the estimate in the `findings` of its situation's rows; adding the edge removes it. | Test |
 
 ## Dependencies
 
