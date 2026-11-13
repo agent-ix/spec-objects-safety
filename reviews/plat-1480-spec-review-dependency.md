@@ -48,3 +48,9 @@ Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-
 | FND-002 | fixed | PLAT-1675 exists, in team PLAT and in Backlog. Its title is 'spec-artifacts-iso: add conflicts_with and resolved_by edge verbs', and it blocks PLAT-1480. Its body adds exactly the two verbs with the same no-synonym reasoning, and FR-402 and FR-402-AC-5 cite it. |
 | FND-003 | fixed | The `accepted_by` edge is dropped. The person is the `decided_by` field, and FR-402-AC-4 asserts that no person property other than `decided_by` and no person object type exist. |
 | FND-004 | fixed | FR-404 now states what `to: []` costs. |
+
+Round 2, head `7476e06`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | `tension-is-not-open` is now `where status=[open]` with an outgoing `edges: [resolved_by]`. The new FR-403 Behavior line and FR-403-AC-5 reject a `resolved_by` entry on an open record, so an open tension is reported or fails validation whatever other modules author. The new FR-404-AC-2 tests that an incoming `conflicts_with` edge, or a dangling one, does not clear the finding. Only real FR-058 semantics are used (outgoing edge plus `where`), with no unsatisfiable-obligation trick. |

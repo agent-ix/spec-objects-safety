@@ -49,3 +49,10 @@ Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-
 | FND-002 | fixed | `accepter`, `acceptedAt`, `Provenance` and the `accepted_by` edge are gone. `decided_by` is the only record of the person, and FR-401 forbids a date or a second copy of identity. |
 | FND-003 | fixed | FR-403 reuses FR-103's `decided_by` contract (required when accepted, rejected otherwise, no date). The role/team/tool clause is new finding FND-005. |
 | FND-004 | fixed | `resolved_by` is no longer added to `acyclic_edges`, and its cycle AC is removed. |
+
+Round 2, head `7476e06`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | The role/team/tool rejection line and the old FR-403-AC-5 are removed. `decided_by` is non-empty only, which matches merged FR-103 on main. |
+| FND-006 | fixed | FR-003 (Outputs, Behavior) and IT-001 (Purpose, SC-04, Expected Results) now say 'every declared object type'. |

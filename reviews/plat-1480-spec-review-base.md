@@ -54,3 +54,9 @@ Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-
 | FND-005 | fixed | The source-grep metric is removed from NFR-401. |
 | FND-006 | fixed | FR-402 now says the allowed links are exactly `conflicts_with` and `resolved_by`, with `references` excluded, and AC-2 matches. |
 | FND-007 | fixed | The FR-404 index entry now carries the full title. The other index entries have new staleness (FND-008). |
+
+Round 2, head `7476e06`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | fixed | `spec/index.md` now lists `non-functional` once, and the FR-402 and FR-405 index entries match their document titles. |
