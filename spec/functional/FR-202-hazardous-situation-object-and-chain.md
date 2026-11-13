@@ -74,6 +74,7 @@ This requirement defines the types and the edges only.
 - The manifest SHALL allow `arises_from` from `hazardous_situation` to `hazard` and from `harm` to `hazardous_situation`.
 - Quire SHALL report `disallowed-edge-target` naming the target type when either `arises_from` edge targets any other type.
 - Quire SHALL resolve the inverse of each chain edge on its target, with the target declaring nothing.
+- The module SHALL treat a situation as arising from one or more hazards; the check that reports a situation with none is `situation-without-hazard`, declared only in PLAT-1524 FR-301.
 - The `hazardous_situation` schema SHALL forbid the keys `severity`, `probability`, `score` and `acceptance`.
 - The module SHALL keep `hazard.context.situation` accepted and its schema unchanged.
 - Quire SHALL make `quire validate --okf --strict` exit non-zero for an edge whose target is an undeclared local id, as FR-007 specifies.
