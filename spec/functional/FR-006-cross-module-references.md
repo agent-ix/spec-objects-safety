@@ -33,7 +33,8 @@ type, field or vocabulary that duplicates one of them.
 
 ## Behavior
 
-- The module SHALL declare exactly two object types, `hazard` and `failure_mode`.
+- The module SHALL enumerate its declared object types in the manifest.
+- No declared object type SHALL be a type another module owns.
 - The module SHALL NOT declare a `control`, `risk`, `asset`, `threat`, `vulnerability`, `incident` or evidence-record object type.
 - A consumer SHALL reach a control through the incoming `mitigates` edge the manifest `traceability` model already declares.
 - No record schema SHALL list a control on a hazard or a failure mode.
@@ -59,7 +60,7 @@ type, field or vocabulary that duplicates one of them.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-006-AC-1 | The manifest declares exactly `hazard` and `failure_mode`. | Test |
+| FR-006-AC-1 | The manifest declares `hazard` and `failure_mode` among its enumerated object types, and no object type named by `spec-objects-security`, `spec-objects-architecture` or `spec-objects-operational`. | Test |
 | FR-006-AC-2 | No shipped schema declares a `controls` or `mitigations` key, and the only cross-module reference shape is a `SemanticId`. | Test |
 | FR-006-AC-3 | `semantic.imports` is `{}`, and the manifest states the three open migration issues that keep it empty. | Test |
 | FR-006-AC-4 | Every `allowed_links` verb and every `traceability` verb exists in the `spec-artifacts-iso` edge vocabulary as a forward key or a declared inverse label. | Test |

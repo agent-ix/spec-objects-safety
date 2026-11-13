@@ -13,7 +13,7 @@ relationships:
 Verify the integration boundary between this module and the Quoin catalog: a
 module whose `data_schema` is a path reference must install without a
 `semantic.*` diagnostic, appear in the installed module list, and then load
-through Quire from the catalog location with both object types registered.
+through Quire from the catalog location with every declared object type registered.
 Without this test the module could be self-consistent in its own tree and still
 be unusable once installed, which is where a relative-path defect
 would surface.
@@ -49,7 +49,7 @@ Each step performs one discrete action and has its own success criterion.
 3. Run `quoin module` and read the installed list.
    - IT-001-SC-03: `spec-objects-safety` appears in the list.
 4. Load the installed module directory through Quire's registry loader.
-   - IT-001-SC-04: both `hazard` and `failure_mode` are registered.
+   - IT-001-SC-04: every declared object type, including `hazard` and `failure_mode`, is registered.
 5. Validate a shipped skeleton against the installed copy.
    - IT-001-SC-05: validation reports no `semantic.*` load failure, so the referenced schema resolved from the installed location.
 6. Restore the catalog to the state recorded in step 1.
@@ -57,7 +57,7 @@ Each step performs one discrete action and has its own success criterion.
 
 ## Expected Results
 
-The install succeeds, the module is listed, Quire registers both object types
+The install succeeds, the module is listed, Quire registers every declared object type
 from the installed copy, a skeleton validates against it,
 and the developer's catalog ends the run in the state it started in. The test
 passes only when every per-step success criterion holds.

@@ -10,7 +10,7 @@ relationships:
 
 ## Description
 
-The module **SHALL** declare two object types, each with a body contract and an
+The module **SHALL** declare its object types, enumerated in the manifest (originally `hazard` and `failure_mode`), each with a body contract and an
 authoring skeleton.
 
 ### Why two types and not one
@@ -77,7 +77,7 @@ gap visible — and the gap is the finding.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-001-AC-1 | The manifest declares exactly `hazard` and `failure_mode`, each with a `data_schema` and an `allowed_links` map, and declares no role. | Test (TC-002) |
+| FR-001-AC-1 | The manifest declares `hazard` and `failure_mode` among its enumerated object types, and every declared type has a `data_schema` and an `allowed_links` map, and declares no role. | Test (TC-002) |
 | FR-001-AC-2 | `hazard` requires a `Condition` section body and an `Assessment` table with columns exactly `Severity \| Likelihood \| Rationale`; `Mitigation` is optional. | Test (TC-003) |
 | FR-001-AC-3 | `failure_mode` requires a `Description` section body and an `Analysis` table with columns exactly `Effect \| Cause \| Detection`. | Test (TC-003) |
 | FR-001-AC-4 | Each object type ships an authoring skeleton whose sections supply every heading its contract requires. | Test (TC-005, TC-006) |

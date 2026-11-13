@@ -34,15 +34,15 @@ declaration record against them, while every existing extraction locator keeps i
 ## Outputs
 
 - `manifest.yaml` with a `version`, a `semantic` block, and reference-form
-  `data_schema` on both object types.
+  `data_schema` on every declared object type.
 
 ## Behavior
 
 - The manifest `semantic` block SHALL carry exactly these keys and values: `contract_version: 1.0.0`, `package: agent-ix/spec-objects-safety`, `exports` listing every object type that ships a schema, `imports: {}`, `targets: [json-schema, markdown]`, `mappings: [typed-table, sysml-fence, ocl-clause]`, `compatibility_posture: additive`, `legacy_forms: warning`.
-- `semantic.exports` SHALL name both object types: `hazard` and `failure_mode`.
+- `semantic.exports` SHALL name every declared object type, including `hazard` and `failure_mode`.
 - Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json }`.
 - No exported object type SHALL carry an inline `data_schema`.
-- The manifest SHALL load through Quire's registry loader with no load failure for either object type.
+- The manifest SHALL load through Quire's registry loader with no load failure for any declared object type.
 - The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic.
 - When the install has completed, `quoin module` SHALL list `spec-objects-safety`.
 - If Quoin or Quire rejects the manifest, then this module SHALL correct its own manifest or schemas rather than relax the contract keys or the `$id` rules to make a consumer accept them.
@@ -57,8 +57,8 @@ declaration record against them, while every existing extraction locator keeps i
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-003-AC-1 | The loaded `semantic` block equals the eight admitted keys with the values above, and `exports` equals the two object-type names. | Test |
-| FR-003-AC-4 | `quire.Registry.load_from` lists both archetypes and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
+| FR-003-AC-1 | The loaded `semantic` block equals the eight admitted keys with the values above, and `exports` equals the manifest's declared object-type names. | Test |
+| FR-003-AC-4 | `quire.Registry.load_from` lists every declared archetype and `validate_document` on each skeleton reports no `semantic.*` load failure. | Test |
 | FR-003-AC-6 | A manifest copy whose `semantic` block gains a key `foo`, carries a `package` that is not `<org>/<repo>`, or carries an unregistered `targets` value is refused by Quire's loader; an unmutated control loads in each case. | Test |
 
 ## Dependencies
