@@ -40,3 +40,24 @@ Seven low findings, all fixed by rewording. None changes meaning.
 | FND-005 | low | The NFR-100 Statement (`[ears:non-singular]`) has three SHALLs (deterministic, unmodified, bounded), and its Measurement table already lists three metrics. Split it into three statements, or into three NFRs. | spec/non-functional/NFR-100-advisory-deterministic-risk-findings.md:14 |
 | FND-006 | low | The FR-105 Behavior lines 30-32 (`[quality:ambiguous-term]` "acceptable") use "acceptable region" and "outside the acceptable region" with no defined source. Once FR-101 defines the region flag (base FND-001), name it in these lines. | spec/functional/FR-105-decision-policy-discrepancy-report.md:30-32 |
 | FND-007 | low | The FR-104 Behavior statements use "No tool SHALL ..." as the subject. EARS needs a named system subject (for example "The module's tooling SHALL NOT ..."). | spec/functional/FR-104-no-computed-verdicts.md:23-26 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | low | The fix round added a compound statement to FR-101 Behavior (`[ears:non-singular]`): "The schema SHALL declare no default for `outside_acceptable`; an entry without it SHALL fail validation naming the region." Split it in two. | spec/functional/FR-101-acceptability-policy.md:48 |
+| FND-009 | low | The fix round added a compound statement to FR-103 Behavior (`[ears:non-singular]`): "The `estimate` reference SHALL resolve to a `risk_estimate` whose `phase` is `post_control`; a reference to any other type or phase SHALL fail validation naming the reference." Split it in two. | spec/functional/FR-103-residual-risk-record.md:53 |
+
+## Dispositions
+
+Round 1, head `3612073`. `quire validate` at this head reports only the two new warnings above for these files.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The FR-101 skeleton statement is split into two. |
+| FND-002 | fixed | FR-102 Behavior now has six single-SHALL statements. |
+| FND-003 | fixed | FR-103's decided-case statement is split into rationale and `decided_by` statements, and the role clause is removed. |
+| FND-004 | fixed | The FR-107 decided and undecided cases are separate statements. |
+| FND-005 | fixed | NFR-100's Statement is now three single-SHALL statements. |
+| FND-006 | fixed | FR-105 now reads `outside_acceptable: true/false`, and the ambiguous-term warnings are gone. |
+| FND-007 | fixed | Every FR-104 Behavior statement now names "The module's tooling" or "The module's report output" as its subject. |

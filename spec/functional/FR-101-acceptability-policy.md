@@ -45,7 +45,8 @@ policy only names the levels they are matched against.
 
 - The `acceptability_policy` type SHALL require a severity level list, a probability level list, a region list, and a cell table.
 - Each entry in the region list SHALL require a name and an `outside_acceptable` flag of `true` or `false`.
-- The schema SHALL declare no default for `outside_acceptable`; an entry without it SHALL fail validation naming the region.
+- The schema SHALL declare no default for `outside_acceptable`.
+- If a region entry omits `outside_acceptable`, then validation SHALL fail naming the region.
 - The cell table SHALL carry one row per severity and probability pairing, each naming exactly one region from the region list.
 - If a policy omits a pairing, repeats a pairing, or names a region absent from the region list, then validation SHALL fail naming that pairing.
 - If a policy repeats a level name within a list, then validation SHALL fail naming the level.

@@ -50,7 +50,8 @@ whose `status` is `accepted` does not make any residual risk accepted.
 ## Behavior
 
 - The type SHALL require an `estimate` reference, a `policy` reference, a `decision` of `undecided`, `accepted` or `not_accepted`, and a rationale.
-- The `estimate` reference SHALL resolve to a `risk_estimate` whose `phase` is `post_control`; a reference to any other type or phase SHALL fail validation naming the reference.
+- The `estimate` reference SHALL resolve to a `risk_estimate` whose `phase` is `post_control`.
+- If the `estimate` reference resolves to any other type or phase, then validation SHALL fail naming the reference.
 - The schema SHALL NOT carry severity or probability on the record.
 - If `decision` is `accepted` or `not_accepted`, then the schema SHALL require a non-empty rationale.
 - If `decision` is `accepted` or `not_accepted`, then the schema SHALL require a non-empty `decided_by`.

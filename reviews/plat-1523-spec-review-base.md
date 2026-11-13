@@ -84,3 +84,24 @@ is a hash antipattern and must be removed.
    keep only what an AC can test.
 3. Deferring the `depends_on` edges to PLAT-1409 objects is fine while #34 is
    unmerged. FND-007 records the duplication that the later edge must resolve.
+
+## Dispositions
+
+Round 1, head `3612073`. Each fix was checked against the spec text at that head.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-101 now requires an `outside_acceptable` flag on every region, with no default, and defines "acceptable region" by it. FR-101-AC-7 and FR-101-AC-8 test it, and FR-105 reads the flag. |
+| FND-002 | fixed | NFR-100's Verification now compares outputs and fixture files byte for byte. No hash remains. |
+| FND-003 | fixed | Per the coordinator's ruling, the role/team/tool rejection and the non-person list are removed. FR-103 now requires only a non-empty `decided_by`. |
+| FND-004 | fixed | FR-105 adds `benefit-risk-not-accepted` plus FR-105-AC-9, and FR-105-AC-11 covers a mix of accepted and not-accepted covering records. |
+| FND-005 | fixed | FR-105 adds `decision-without-region` for a decided risk with no resolved region, tested by FR-105-AC-10. |
+| FND-006 | fixed | FR-107 defines the product as the validated bundle and `product` as a non-empty string. FR-107-AC-3 and FR-107-AC-8 test this. |
+| FND-007 | fixed | FR-103 now references a `post_control` `risk_estimate` (FR-204) and declares no severity or probability of its own. FR-103-AC-4 and FR-103-AC-6 test this, and FR-101 names the `Likelihood` scale. |
+| FND-008 | fixed | FR-104's subject is now "the module's tooling", and FR-104-AC-3 is an observable schema/package inspection. |
+| FND-009 | fixed | FR-103 adds a "One acceptance record" section that says a hazard `status` is not a residual-risk acceptance. FR-103-AC-7 tests it. |
+| FND-010 | fixed | FR-106 Behavior separates the unresolved-reference and wrong-type cases, and FR-106-AC-6 tests a `hazard` reference. |
+| FND-011 | fixed | FR-107-AC-7 covers a considered `undecided` risk. |
+| FND-012 | fixed | FR-102 names the `level-not-assessed` finding for all three EpistemicState members, tested by FR-102-AC-3 and FR-102-AC-4. |
+
+Not a finding: FR-103 declares `depends_on` FR-204, which exists only on the PLAT-1409 branch (#34). `quire validate` does not flag it. It resolves once #34 lands, so land #34 first or together with this PR.

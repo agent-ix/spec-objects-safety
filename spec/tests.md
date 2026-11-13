@@ -53,7 +53,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 | Stakeholder Req | Trace to US/FR | Test/Validation | Coverage Status |
 |---|---|---|---|
-| StR-001 | US-001, FR-001..FR-009, FR-101..FR-107 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
+| StR-001 | US-001, FR-001..FR-009 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
 
 ### User Story Coverage
 
@@ -74,14 +74,6 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
 | FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
 | FR-009 | FR-009-AC-1..5 | TC-099..TC-102 | ✅ |
-| FR-101 | FR-101-AC-1..8 | none yet | 🚧 specified, no tests tagged |
-| FR-102 | FR-102-AC-1..5 | none yet | 🚧 specified, no tests tagged |
-| FR-103 | FR-103-AC-1..7 | none yet | 🚧 specified, no tests tagged |
-| FR-104 | FR-104-AC-1..4 | none yet | 🚧 specified, no tests tagged |
-| FR-105 | FR-105-AC-1..11 | none yet | 🚧 specified, no tests tagged |
-| FR-106 | FR-106-AC-1..6 | none yet | 🚧 specified, no tests tagged |
-| FR-107 | FR-107-AC-1..8 | none yet | 🚧 specified, no tests tagged |
-| NFR-100 | NFR-100 measurement table | none yet | 🚧 specified, no tests tagged |
 
 ### Integration Test Coverage
 
