@@ -661,6 +661,30 @@ traceability:
     to: [harm]
     direction: incoming
     check: situation-without-harm
+  # A control used as a risk control (it mitigates a hazard or failure mode, or
+  # a risk estimate assumes it) needs an implementing requirement and a
+  # verification. `when_any` (quire-rs FR-058) scopes both to those controls, so
+  # an unrelated security control is never reported. Presence of the edge is
+  # tested; whether the verification passed is read from the matrix and the
+  # evidence by a person.
+  - name: control-has-requirement
+    from: control
+    when_any:
+    - {verb: mitigates, direction: outgoing, other: [hazard, failure_mode]}
+    - {verb: assumes, direction: incoming, other: [risk_estimate]}
+    edges: [satisfies]
+    to: [FR, NFR]
+    direction: incoming
+    check: control-without-requirement
+  - name: control-has-verification
+    from: control
+    when_any:
+    - {verb: mitigates, direction: outgoing, other: [hazard, failure_mode]}
+    - {verb: assumes, direction: incoming, other: [risk_estimate]}
+    edges: [verifies]
+    to: []
+    direction: incoming
+    check: control-without-verification
   # An estimate judges one hazardous situation, and says which with an
   # `estimates` edge it authors itself. Presence is tested, not count, so
   # several estimates of one situation, or one estimate of several, are fine.

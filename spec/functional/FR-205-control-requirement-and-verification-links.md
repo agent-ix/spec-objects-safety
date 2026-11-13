@@ -89,7 +89,7 @@ unscoped rule would report every unrelated security control.
 | FR-205-AC-3 | For a fixture `FR` that `satisfies` a control that neither `mitigates` a `hazard` or `failure_mode` nor is `assumes`-d by a `risk_estimate` (outside the FR-302 scope), `quire validate --okf` raises no missing-`verifies` diagnostic for the control. | Test |
 | FR-205-AC-4 | A `satisfies` edge to an undeclared local id makes `quire validate --okf --strict` exit non-zero with stderr naming the source path, `satisfies` and the id. | Test |
 | FR-205-AC-5 | The manifest and emitted schemas contain no `effective`, `verified` or `passed` key. | Inspection |
-| FR-205-AC-6 | The manifest declares no `required_relations` entry whose `from` is `control`. | Inspection |
+| FR-205-AC-6 | The manifest declares no `required_relations` entry whose `from` is `control` and which carries no `when_any` scope. | Inspection |
 
 ## Dependencies
 

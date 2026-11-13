@@ -805,3 +805,72 @@ def test_an_acyclic_chain_yields_no_cycle_finding(tmp_path):
     situation(tmp_path, "SIT-001", "HAZ-001")
     harm(tmp_path, "HARM-001", "SIT-001")
     assert findings(validate(tmp_path), "cyclic-arises_from") == []
+
+
+# ── FR-302: control completeness, scoped by `when_any` (quire-rs FR-058) ─────
+
+
+def risk_control(root, cid="CTRL-001", *mitigates):
+    text = (_module("spec_objects_security") / "skeletons" / "control.md").read_text()
+    text = text.replace("CTRL-001", cid)
+    pairs = [("mitigates", t) for t in mitigates]
+    (root / f"{cid}.md").write_text(_with_edges(text, pairs))
+
+
+def implemented_and_verified(root, cid="CTRL-001", *, implemented=True, verified=True):
+    if implemented:
+        requirement(root, "FR-901", "fr", "satisfies", f"{LOCAL}/{cid}")
+    if verified:
+        requirement(root, "IT-901", "it", "verifies", f"{LOCAL}/{cid}")
+
+
+CONTROL_CHECKS = ("control-without-requirement", "control-without-verification")
+
+
+@pytest.mark.trace("FR-302-AC-1", "FR-302-AC-2")
+def test_an_implemented_and_verified_risk_control_yields_no_finding(tmp_path):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    implemented_and_verified(tmp_path)
+    result = validate(tmp_path)
+    assert result.returncode == 0, result.stderr
+    for check in CONTROL_CHECKS:
+        assert findings(result, check) == [], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-3")
+def test_each_missing_link_is_reported_once_by_its_own_check(tmp_path):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    implemented_and_verified(tmp_path, implemented=False)
+    result = validate(tmp_path)
+    assert len(findings(result, "control-without-requirement")) == 1, result.stderr
+    assert findings(result, "control-without-verification") == [], result.stderr
+    other = tmp_path / "other"
+    other.mkdir()
+    hazard(other)
+    risk_control(other, "CTRL-001", "HAZ-001")
+    implemented_and_verified(other, verified=False)
+    result = validate(other)
+    assert findings(result, "control-without-requirement") == [], result.stderr
+    assert len(findings(result, "control-without-verification")) == 1, result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-5")
+def test_a_control_assumed_by_an_estimate_is_reported_without_mitigating(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    control(tmp_path)
+    estimate(tmp_path, "EST-001", estimates=["SIT-001"], assumes=["CTRL-001"])
+    result = validate(tmp_path)
+    for check in CONTROL_CHECKS:
+        lines = findings(result, check)
+        assert len(lines) == 1 and "CTRL-001" in lines[0], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-6")
+def test_an_unrelated_security_control_is_not_reported(tmp_path):
+    control(tmp_path)
+    result = validate(tmp_path)
+    for check in CONTROL_CHECKS:
+        assert findings(result, check) == [], result.stderr
