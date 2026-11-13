@@ -8,7 +8,7 @@ because: "phase is required and has no default"
 ---
 # [negative-008] EstimateWithoutPhase
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

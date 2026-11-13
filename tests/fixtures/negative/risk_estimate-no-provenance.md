@@ -9,7 +9,7 @@ because: "an estimate names who asserted it"
 ---
 # [negative-013] EstimateWithoutProvenance
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

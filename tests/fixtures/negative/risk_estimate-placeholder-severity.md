@@ -9,7 +9,7 @@ because: "an unfilled placeholder is not a level"
 ---
 # [negative-010] EstimateWithPlaceholderSeverity
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

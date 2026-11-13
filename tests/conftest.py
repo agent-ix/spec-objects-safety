@@ -52,17 +52,30 @@ OBJECT_TYPES = (
     "harm",
     "hazardous_situation",
     "risk_estimate",
+    "acceptability_policy",
+    "residual_risk",
+    "benefit_risk",
+    "overall_residual_risk_evaluation",
 )
 
 # Verbs the manifest uses that `spec-artifacts-iso` has not declared yet. Each
-# is a vocabulary change that belongs to that module (PLAT-1676). Expiry: when
+# is a vocabulary change that belongs to that module (PLAT-1676, whose scope
+# includes `estimate`). Expiry: when
 # PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
 # vocabulary tests cover the verbs again.
-PENDING_ISO_VERBS = frozenset({"estimates", "assumes"})
+PENDING_ISO_VERBS = frozenset({"estimates", "assumes", "estimate"})
 
 # Skeletons that carry unfilled placeholders and fail validation as shipped, by
 # design: a person must enter the values.
-UNFILLED_SKELETONS = frozenset({"risk_estimate"})
+UNFILLED_SKELETONS = frozenset(
+    {
+        "risk_estimate",
+        "acceptability_policy",
+        "residual_risk",
+        "benefit_risk",
+        "overall_residual_risk_evaluation",
+    }
+)
 
 MODEL_OF = {
     "hazard": "Hazard",
@@ -70,27 +83,11 @@ MODEL_OF = {
     "harm": "Harm",
     "hazardous_situation": "HazardousSituation",
     "risk_estimate": "RiskEstimate",
+    "acceptability_policy": "AcceptabilityPolicy",
+    "residual_risk": "ResidualRisk",
+    "benefit_risk": "BenefitRisk",
+    "overall_residual_risk_evaluation": "OverallResidualRiskEvaluation",
 }
-
-SUPPORT_MODELS = (
-    "IdentityField",
-    "HazardAssessment",
-    "HazardContext",
-    "FailureAnalysis",
-    "Provenance",
-    "EvidenceRef",
-    "Severity",
-    "Likelihood",
-    "Exposure",
-    "Controllability",
-    "Detection",
-    "EpistemicState",
-    "LifecycleStatus",
-    "EstimatePhase",
-    "EstimateLevelText",
-    "EstimateLevel",
-    "EstimateJudgement",
-)
 
 
 @functools.lru_cache(maxsize=1)

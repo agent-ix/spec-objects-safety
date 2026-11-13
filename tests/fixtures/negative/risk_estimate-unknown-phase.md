@@ -10,7 +10,7 @@ because: "phase is pre_control or post_control"
 ---
 # [negative-009] EstimateWithUnknownPhase
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

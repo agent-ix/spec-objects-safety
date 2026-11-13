@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecisionState.json",
+  "type": "string",
+  "enum": [
+    "undecided",
+    "accepted",
+    "not_accepted"
+  ],
+  "description": "The three decisions a person can record. There is no default."
+}

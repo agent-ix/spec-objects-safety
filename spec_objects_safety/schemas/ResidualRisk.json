@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/ResidualRisk.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
+      }
+    },
+    "determination": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Determination.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/RelationDecl.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A residual-risk record. The post-control severity and probability live only\non the referenced `risk_estimate`; the record carries the decision. The\n`estimate` reference and the policy reference are edges authored in the\ndocument's relationships, not members here.",
+  "additionalProperties": false
+}

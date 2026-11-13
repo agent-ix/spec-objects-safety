@@ -41,6 +41,6 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "A risk estimate object. The judgement sits under `estimate`, whole or\nrefused, the same shape `Hazard.assessment` has; it is optional on the record\nbecause Quire populates a declaration record's `fields`, `clauses`,\n`operations` and `relations` only, so the document-level requirement is the\nmanifest's table and frontmatter locators until the Markdown mapping for\nmodule-specific keys lands.\n\n`phase` is also a top-level frontmatter key of the document, so required\nrelations can select on it. The edges `estimates` (to the situation) and\n`assumes` (to controls) are authored in the document's relationships, not in\nthis record.",
+  "description": "A risk estimate object. The judgement sits under `estimate`, whole or\nrefused, the same shape `Hazard.assessment` has; it is optional on the record\nbecause the document supplies the judgement through the manifest's table and\nfrontmatter locators.\n\nThe document's estimate table is under `## Judgement`, never `## Estimate`:\nthe `record-sections` mapping would read a table under `## Estimate` into this\nrecord's `estimate` key, which needs the `phase` and `provenance` that the\ntable does not carry.\n\n`phase` is also a top-level frontmatter key of the document, so required\nrelations can select on it. The edges `estimates` (to the situation) and\n`assumes` (to controls) are authored in the document's relationships, not in\nthis record.",
   "additionalProperties": false
 }

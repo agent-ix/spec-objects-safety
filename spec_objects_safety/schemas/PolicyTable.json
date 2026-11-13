@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyTable.json",
+  "type": "object",
+  "properties": {
+    "severities": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "probabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyRegion.json"
+      },
+      "minItems": 1
+    },
+    "cells": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyCell.json"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "severities",
+    "probabilities",
+    "regions",
+    "cells"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The policy table: the severity levels, the probability levels, the regions\nand the region of each pairing. A level name is listed once per list.\nWhether every pairing has exactly one cell naming a listed region is a\ncross-row rule a JSON Schema cannot state; it is checked over the document\nby the engine's table assertions once they can (see the manifest).",
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyRegion.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+    },
+    "outside_acceptable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name",
+    "outside_acceptable"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "One region of the policy. `outside_acceptable` is set by the project's\npeople and has no default: a region that omits it is refused.",
+  "additionalProperties": false
+}

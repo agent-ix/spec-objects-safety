@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
 version: 0.3.0
-description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate) — IEC 61508 / ISO 26262 / FMEA lineage'
+description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation) — IEC 61508 / ISO 26262 / FMEA lineage'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
   # this contract version refuses the module explicitly instead of loading it as
@@ -14,6 +14,10 @@ semantic:
   - harm
   - hazardous_situation
   - risk_estimate
+  - acceptability_policy
+  - residual_risk
+  - benefit_risk
+  - overall_residual_risk_evaluation
   # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
   # references controls (`agent-ix/spec-objects-security` `control`), risks
   # (`risk`), the interfaces and components a failure mode sits in
@@ -29,7 +33,7 @@ semantic:
   # obligation to fill it.
   imports: {}
   targets: [json-schema, markdown]
-  mappings: [typed-table, sysml-fence, ocl-clause]
+  mappings: [typed-table, sysml-fence, ocl-clause, record-sections]
   compatibility_posture: additive
   legacy_forms: warning
 # Order 55, following the family sequence (operational 53, security 54).
@@ -325,7 +329,7 @@ object_types:
             choices: [pre_control, post_control]
         estimate:
           from: table_row
-          under_section: Estimate
+          under_section: Judgement
           required: true
           assert:
             columns:
@@ -351,6 +355,229 @@ object_types:
             column_patterns:
               Asserted by: '^[^<>\s][^<>]*$'
               Asserted at: '^\d{4}-\d{2}-\d{2}(T[0-9:.]+(Z|[+-][0-9:]+))?$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── acceptability_policy ─────────────────────────────────────────────────
+#
+# The project's own table of severity levels, probability levels and regions,
+# and the region each pairing belongs to. It is data a person writes: this
+# module ships no policy, no default level, no default region and no default
+# `outside_acceptable` flag, and the skeleton fails validation until a person
+# fills every cell and every flag. "The acceptable region" is exactly the
+# regions flagged `false`; any number of regions may be flagged `true`.
+#
+# What the engine's table assertions check here: every table is present with
+# its exact columns, no cell is an unfilled placeholder, and every
+# `outside_acceptable` is `true` or `false`. A rule across rows (every
+# severity and probability pairing has exactly one cell, a cell names a listed
+# region, a level is not repeated) is a cross-table rule the assertions cannot
+# state; the emitted schema carries the part a schema can (`uniqueItems` on the
+# level lists) and the rest waits on an engine assertion.
+- name: acceptability_policy
+  data_schema:
+    schema: schemas/AcceptabilityPolicy.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        severity_levels:
+          from: table_row
+          under_section: Severity levels
+          required: true
+          assert:
+            columns:
+            - Severity level
+            min_rows: 1
+            column_patterns:
+              Severity level: '^[^<>\s][^<>]*$'
+        probability_levels:
+          from: table_row
+          under_section: Probability levels
+          required: true
+          assert:
+            columns:
+            - Probability level
+            min_rows: 1
+            column_patterns:
+              Probability level: '^[^<>\s][^<>]*$'
+        regions:
+          from: table_row
+          under_section: Regions
+          required: true
+          assert:
+            columns:
+            - Region
+            - Outside acceptable
+            min_rows: 1
+            column_choices:
+              Outside acceptable: ['true', 'false']
+            column_patterns:
+              Region: '^[^<>\s][^<>]*$'
+        cells:
+          from: table_row
+          under_section: Cells
+          required: true
+          assert:
+            columns:
+            - Severity
+            - Probability
+            - Region
+            min_rows: 1
+            column_patterns:
+              Severity: '^[^<>\s][^<>]*$'
+              Probability: '^[^<>\s][^<>]*$'
+              Region: '^[^<>\s][^<>]*$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── residual_risk ────────────────────────────────────────────────────────
+#
+# One record per risk holding the decision about what remains after controls.
+# The post-control severity and probability live only on the `risk_estimate`
+# the record's `estimate` edge names, so two records cannot disagree about one
+# judgement. A hazard's own `status` is not an acceptance and is never read as
+# one. Who decided is a named person; when comes from version control.
+#
+# The `## Determination` section is read twice. The table assertions below
+# refuse an unknown decision and an unfilled placeholder. The `record-sections`
+# mapping reads the same row into the record's `determination` key, which the
+# emitted schema validates: a decided record needs a named `decided_by` and a
+# non-blank rationale, and an `undecided` one refuses `decided_by`. The engine
+# omits an empty cell, so `rationale`, required by the schema, must be filled in
+# a document even while undecided. The decision rule sits on one object rather
+# than a union of undecided and decided objects because the mapping cannot read
+# a union key (quire-rs PLAT-1677).
+- name: residual_risk
+  allowed_links:
+    estimate: [risk_estimate]
+    references: [acceptability_policy]
+  data_schema:
+    schema: schemas/ResidualRisk.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        determination:
+          from: table_row
+          under_section: Determination
+          required: true
+          assert:
+            columns:
+            - Decision
+            - Rationale
+            - Decided by
+            min_rows: 1
+            max_rows: 1
+            column_choices:
+              Decision: ['undecided', 'accepted', 'not_accepted']
+            column_patterns:
+              Rationale: '^[^<>\s][^<>]*$'
+              Decided by: '^[^<>]*$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── benefit_risk ─────────────────────────────────────────────────────────
+#
+# Where a residual risk falls outside the acceptable region the project can
+# accept it only by weighing a benefit against it. The record names the
+# residual risks it covers with `references` edges, states the benefit in the
+# author's words, and carries the decision and the named decider.
+- name: benefit_risk
+  allowed_links:
+    references: [residual_risk]
+  data_schema:
+    schema: schemas/BenefitRisk.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        determination:
+          from: table_row
+          under_section: Determination
+          required: true
+          assert:
+            columns:
+            - Benefit
+            - Decision
+            - Rationale
+            - Decided by
+            min_rows: 1
+            max_rows: 1
+            column_choices:
+              Decision: ['undecided', 'accepted', 'not_accepted']
+            column_patterns:
+              Rationale: '^[^<>\s][^<>]*$'
+              Decided by: '^[^<>]*$'
+              Benefit: '^[^<>\s][^<>]*$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── overall_residual_risk_evaluation ─────────────────────────────────────
+#
+# One recorded judgement of whether the residual risk of a product, taken
+# together, is acceptable. The evaluation names what the person considered with
+# `references` edges to residual risks and benefit-risk records; no tool
+# aggregates them into the decision.
+- name: overall_residual_risk_evaluation
+  allowed_links:
+    references: [residual_risk, benefit_risk]
+  data_schema:
+    schema: schemas/OverallResidualRiskEvaluation.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        determination:
+          from: table_row
+          under_section: Determination
+          required: true
+          assert:
+            columns:
+            - Product
+            - Decision
+            - Rationale
+            - Decided by
+            min_rows: 1
+            max_rows: 1
+            column_choices:
+              Decision: ['undecided', 'accepted', 'not_accepted']
+            column_patterns:
+              Rationale: '^[^<>\s][^<>]*$'
+              Decided by: '^[^<>]*$'
+              Product: '^[^<>\s][^<>]*$'
         properties:
           from: section_body
           after_heading: Properties
@@ -432,6 +659,33 @@ traceability:
     to: [control]
     direction: outgoing
     check: post-control-without-control
+  # A decision record names what it decides about. Presence is tested, never
+  # the far end's content: that the estimate is post-control, or that a policy
+  # holds the estimate's levels, is not a relation (quire-rs PLAT-1677).
+  - name: residual-risk-has-estimate
+    from: residual_risk
+    edges: [estimate]
+    to: [risk_estimate]
+    direction: outgoing
+    check: residual-risk-without-estimate
+  - name: residual-risk-has-policy
+    from: residual_risk
+    edges: [references]
+    to: [acceptability_policy]
+    direction: outgoing
+    check: residual-risk-without-policy
+  - name: benefit-risk-covers-risk
+    from: benefit_risk
+    edges: [references]
+    to: [residual_risk]
+    direction: outgoing
+    check: benefit-risk-without-risk
+  - name: evaluation-considers-record
+    from: overall_residual_risk_evaluation
+    edges: [references]
+    to: [residual_risk, benefit_risk]
+    direction: outgoing
+    check: evaluation-without-considered-record
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:
@@ -446,6 +700,7 @@ lexicon:
   harm: {definition: "physical injury, damage to health, or damage to property or environment"}
   hazardous situation: {definition: "a case in which a hazard state coincides with something that can be hurt"}
   probability: {definition: "the chance that a hazardous situation leads to the harm; not the frequency with which the hazard state is reached"}
+  residual risk: {definition: "the risk that remains after controls, as judged and decided by a named person"}
   failure mode: {definition: "the manner in which a component fails to perform its intended function"}
   severity: {definition: "how bad the harm is if the hazard is realised"}
   likelihood: {definition: "how often the hazard state is expected to be reached"}

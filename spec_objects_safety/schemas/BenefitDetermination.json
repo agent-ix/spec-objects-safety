@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/BenefitDetermination.json",
+  "type": "object",
+  "properties": {
+    "benefit": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/StatedText.json"
+    },
+    "decision": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecisionState.json"
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    }
+  },
+  "required": [
+    "benefit",
+    "decision",
+    "rationale"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The weighing of a benefit against the residual risks a record covers.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "accepted",
+              "not_accepted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "decided_by"
+        ],
+        "properties": {
+          "rationale": {
+            "minLength": 1,
+            "pattern": "^[^<>\\s][^<>]*$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "undecided"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "decided_by"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

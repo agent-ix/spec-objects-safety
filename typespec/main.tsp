@@ -439,10 +439,13 @@ model EstimateJudgement {
 /**
  * A risk estimate object. The judgement sits under `estimate`, whole or
  * refused, the same shape `Hazard.assessment` has; it is optional on the record
- * because Quire populates a declaration record's `fields`, `clauses`,
- * `operations` and `relations` only, so the document-level requirement is the
- * manifest's table and frontmatter locators until the Markdown mapping for
- * module-specific keys lands.
+ * because the document supplies the judgement through the manifest's table and
+ * frontmatter locators.
+ *
+ * The document's estimate table is under `## Judgement`, never `## Estimate`:
+ * the `record-sections` mapping would read a table under `## Estimate` into this
+ * record's `estimate` key, which needs the `phase` and `provenance` that the
+ * table does not carry.
  *
  * `phase` is also a top-level frontmatter key of the document, so required
  * relations can select on it. The edges `estimates` (to the situation) and
@@ -456,6 +459,226 @@ model RiskEstimate {
   fields: FieldDecl[];
 
   estimate?: EstimateJudgement;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+// ---------------------------------------------------------------------------
+// Acceptability policy, residual-risk decisions, benefit-risk and the overall
+// evaluation (FR-101, FR-103, FR-104, FR-106, FR-107).
+//
+// Every value here is written by a person. The seal on each model forbids a
+// score, a region on a decision record, a ratio, a total and a date, and no
+// member has a default, so no tool derives, stores or defaults a score, a
+// region or an acceptance.
+// ---------------------------------------------------------------------------
+
+/**
+ * A level or region name a project chooses: text that is not blank and not an
+ * unfilled `<placeholder>`.
+ */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar PolicyName extends string;
+
+/**
+ * Text a person wrote (a rationale, a benefit, a product): not blank and not an
+ * unfilled `<placeholder>`.
+ */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar StatedText extends string;
+
+/** A named person who decided: not blank and not an unfilled `<placeholder>`. */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar PersonName extends string;
+
+/**
+ * One region of the policy. `outside_acceptable` is set by the project's
+ * people and has no default: a region that omits it is refused.
+ */
+@extension("additionalProperties", false)
+model PolicyRegion {
+  name: PolicyName;
+  outside_acceptable: boolean;
+  ...Record<never>;
+}
+
+/** The region the policy assigns to one severity and probability pairing. */
+@extension("additionalProperties", false)
+model PolicyCell {
+  severity: PolicyName;
+  probability: PolicyName;
+  region: PolicyName;
+  ...Record<never>;
+}
+
+/**
+ * The policy table: the severity levels, the probability levels, the regions
+ * and the region of each pairing. A level name is listed once per list.
+ * Whether every pairing has exactly one cell naming a listed region is a
+ * cross-row rule a JSON Schema cannot state; it is checked over the document
+ * by the engine's table assertions once they can (see the manifest).
+ */
+@extension("additionalProperties", false)
+model PolicyTable {
+  @minItems(1)
+  @uniqueItems
+  severities: PolicyName[];
+
+  @minItems(1)
+  @uniqueItems
+  probabilities: PolicyName[];
+
+  @minItems(1)
+  regions: PolicyRegion[];
+
+  @minItems(1)
+  cells: PolicyCell[];
+
+  ...Record<never>;
+}
+
+/**
+ * An acceptability policy object. The table sits under `policy`, whole or
+ * refused, optional on the record for the reason `RiskEstimate.estimate` is.
+ */
+@extension("additionalProperties", false)
+model AcceptabilityPolicy {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  policy?: PolicyTable;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/**
+ * The three decisions a person can record. There is no default.
+ */
+enum DecisionState {
+  undecided,
+  accepted,
+  not_accepted,
+}
+
+/**
+ * The decision rules shared by the decision objects below, as JSON Schema 2020-12
+ * conditionals on the one plain object a document section reads:
+ *
+ *   * `accepted` or `not_accepted` requires a named `decided_by` and a non-blank
+ *     `rationale`;
+ *   * `undecided` refuses `decided_by`.
+ *
+ * `rationale` is a required string on every decision; whether it may be empty
+ * depends on the decision. A union of an undecided and a decided object states
+ * the same rule more directly, but a document section cannot read a union key
+ * (quire-rs PLAT-1677), so the rule sits on one object.
+ */
+const decisionRules = #[
+  #{
+    `if`: #{ properties: #{ decision: #{ `enum`: #["accepted", "not_accepted"] } } },
+    `then`: #{
+      required: #["decided_by"],
+      properties: #{ rationale: #{ minLength: 1, pattern: "^[^<>\\s][^<>]*$" } },
+    },
+  },
+  #{
+    `if`: #{ properties: #{ decision: #{ `const`: "undecided" } } },
+    `then`: #{ not: #{ required: #["decided_by"] } },
+  },
+];
+
+/**
+ * The decision on a residual risk. Read from the document's `## Determination`
+ * section, one table row. An empty `Decided by` cell leaves `decided_by` absent.
+ */
+@extension("additionalProperties", false)
+@extension("allOf", decisionRules)
+model Determination {
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
+  ...Record<never>;
+}
+
+/**
+ * A residual-risk record. The post-control severity and probability live only
+ * on the referenced `risk_estimate`; the record carries the decision. The
+ * `estimate` reference and the policy reference are edges authored in the
+ * document's relationships, not members here.
+ */
+@extension("additionalProperties", false)
+model ResidualRisk {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: Determination;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/** The weighing of a benefit against the residual risks a record covers. */
+@extension("additionalProperties", false)
+@extension("allOf", decisionRules)
+model BenefitDetermination {
+  benefit: StatedText;
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
+  ...Record<never>;
+}
+
+/**
+ * A benefit-risk record. The residual risks it covers are `references` edges
+ * to `residual_risk` documents, authored in the document's relationships.
+ */
+@extension("additionalProperties", false)
+model BenefitRisk {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: BenefitDetermination;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/** The decision on the residual risk of the product taken together. */
+@extension("additionalProperties", false)
+@extension("allOf", decisionRules)
+model EvaluationDetermination {
+  product: StatedText;
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
+  ...Record<never>;
+}
+
+/**
+ * The overall residual-risk evaluation of one product. The residual risks and
+ * benefit-risk records it considers are `references` edges authored in the
+ * document's relationships; the tooling does not aggregate them into the
+ * decision.
+ */
+@extension("additionalProperties", false)
+model OverallResidualRiskEvaluation {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: EvaluationDetermination;
   evidence?: EvidenceRef[];
   relations?: RelationDecl[];
   clauses?: ClauseRef[];
