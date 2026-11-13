@@ -78,3 +78,9 @@ Round 1, head `0da287c`. Committed in `reviews/` as SR-041; the review comment o
 | FND-003 | fixed | FR-303 requires `phase` as a top-level frontmatter key of `risk_estimate`, in a Behavior bullet, and FR-303-AC-5 tests it. |
 | FND-004 | fixed | FR-305 names the host, `quoin risk-summary <scope> [--format markdown\|json]` under PLAT-1576, and gives a JSON output contract with an exact key set. |
 | FND-005 | fixed | FR-303 no longer restates FR-103/FR-105 criteria; the attribution AC was removed from FR-305. |
+
+Round 2, head `f5f81e9` (rebased on `origin/main`). `quire validate --scope . "spec/**/*.md"` reports no error or warning on FR-301..305 or NFR-300.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | `policy_region` is now a key of each `pre_control`/`post_control` entry, not of the row. FR-305-AC-3 checks one entry's `null` region beside another entry's label, and FR-305-AC-5 checks the exact key set of every estimate entry. |
