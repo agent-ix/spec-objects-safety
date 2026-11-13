@@ -28,3 +28,8 @@ description: "Index of artifacts in this directory."
 * [FR-303: Every post-control estimate has a residual-risk record, and the decision and decider are enforced by the schema and the discrepancy report](./FR-303-residual-risk-decided-by-named-person.md)
 * [FR-304: The causal chain from failure mode to harm is checked for cycles through the arises_from verb](./FR-304-chain-edges-cannot-cycle.md)
 * [FR-305: A quoin risk summary report reads the whole chain and states what each person entered](./FR-305-risk-summary-report.md)
+* [FR-401: The module declares tension as an object type for conflicting requirements](./FR-401-tension-object-type.md)
+* [FR-402: A tension names the clauses in conflict and what closed it through authorable edges](./FR-402-tension-edges.md)
+* [FR-403: Validation rejects a tension whose state lacks what that state requires](./FR-403-tension-state-validation.md)
+* [FR-404: Completeness rule as manifest data: no tension is open at release; accepted tensions name a person](./FR-404-tension-completeness-rule.md)
+* [FR-405: Planning workflows may emit tensions; the design-gate loop consumes them as optional input](./FR-405-tension-intake.md)
