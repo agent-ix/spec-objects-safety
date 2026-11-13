@@ -3,7 +3,7 @@ id: US-401
 title: "Record conflicting requirements instead of silently picking a reading"
 type: US
 relationships:
-  - target: "ix://agent-ix/spec-objects-safety/StR-001"
+  - target: "ix://agent-ix/spec-objects-safety/StR-401"
     type: "traces_to"
 ---
 # US-401: Record conflicting requirements instead of silently picking a reading
@@ -35,5 +35,5 @@ These examples are illustrative only, not test cases.
   completeness check reports it.
 - The team adds a design element that satisfies both. The author links it from the tension,
   marks it `resolved-by-design`, and the report is clean.
-- A named safety lead decides to live with the conflict. The author records the tension as
-  `accepted-by-person` naming that lead. Naming nobody is rejected.
+- A named person decides to live with the conflict. The author records the tension as
+  `accepted-by-person` with that person in `decided_by`. Naming nobody is rejected.

@@ -33,7 +33,8 @@ type, field or vocabulary that duplicates one of them.
 
 ## Behavior
 
-- The module SHALL enumerate its declared object types in the manifest, and none of them SHALL be a type another module owns.
+- The module SHALL enumerate its declared object types in the manifest.
+- No declared object type SHALL be a type another module owns.
 - The module SHALL NOT declare a `control`, `risk`, `asset`, `threat`, `vulnerability`, `incident` or evidence-record object type.
 - A consumer SHALL reach a control through the incoming `mitigates` edge the manifest `traceability` model already declares.
 - No record schema SHALL list a control on a hazard or a failure mode.

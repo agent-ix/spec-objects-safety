@@ -7,19 +7,21 @@ relationships:
     type: "implements"
   - target: "ix://agent-ix/spec-objects-safety/FR-401"
     type: "depends_on"
-  - target: "ix://agent-ix/spec-objects-safety/FR-402"
+  - target: "ix://agent-ix/spec-objects-safety/FR-103"
     type: "depends_on"
 ---
 # FR-403: Validation rejects a tension whose state lacks what that state requires
 
 ## Description
 
-The `tension` schema SHALL reject a record that claims a status without the evidence that makes
-it true. In particular an accepted tension without a named accepter never validates. Source: PLAT-1480.
+Tracked by Linear PLAT-1480. The `tension` schema SHALL reject a record that claims a person's
+acceptance without that person's name. It reuses the person-acceptance contract of FR-103: a
+named `decided_by`, with who and when taken from version-control history, and no second copy of
+either. In particular an accepted tension without a named person never validates.
 
 ## Inputs
 
-- A `tension` record: its `status`, its `accepter`, its `relations` and its `Provenance`.
+- A `tension` record: its `status` and its `decided_by`.
 
 ## Outputs
 
@@ -27,37 +29,33 @@ it true. In particular an accepted tension without a named accepter never valida
 
 ## Behavior
 
-- If `status` is `accepted-by-person`, then the record schema SHALL require an `accepter`
-  carrying a non-empty `name` and an `acceptedAt` date, and a `relations` entry whose verb
-  is `accepted_by`.
-- The schema SHALL require `accepter.name` to be a person's name.
-- The schema SHALL reject `unknown`, `not_assessed` and `not_applicable` as `accepter.name`.
-- The module SHALL NOT derive `accepter` or `accepted-by-person` from other records. A person
-  writes the name.
-- If `status` is `resolved-by-design`, then the record schema SHALL require a `relations`
-  entry whose verb is `resolved_by`.
-- If `status` is `open`, then the record schema SHALL reject an `accepter`, so a half-finished
-  acceptance is not left looking like an open conflict.
-- The schema SHALL reject an `accepter` on a record whose `status` is `resolved-by-design`.
+- If `status` is `accepted-by-person`, then the schema SHALL require a non-empty `decided_by`.
+- If `status` is `open` or `resolved-by-design`, then the schema SHALL reject `decided_by`.
+- The schema SHALL apply to `decided_by` the same rejection of role, team and tool names that
+  FR-103 applies.
+- The schema SHALL NOT declare an acceptance date or a default for `status` or `decided_by`.
+- The module SHALL NOT derive `decided_by` or `accepted-by-person` from other records.
+- Agreement between `status: resolved-by-design` and a `resolved_by` edge is checked by the
+  manifest relations of FR-404, not by this schema.
 
 ## Constraints
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-403-CON-1 | Acceptance is a human act: nothing in this module SHALL set `accepter` or `status: accepted-by-person` on any record. | Safety | Inspection |
+| FR-403-CON-1 | Acceptance is a human act: nothing in this module sets `decided_by` or `status: accepted-by-person` on any record. | Safety | Inspection |
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-403-AC-1 | A record with `status: accepted-by-person` and no `accepter` is rejected, naming `accepter`. | Test |
-| FR-403-AC-2 | A record with `status: accepted-by-person` and an `accepter` whose `name` is empty is rejected. | Test |
-| FR-403-AC-3 | A record with `status: accepted-by-person`, a named `accepter`, an `acceptedAt` and an `accepted_by` relation validates. | Test |
-| FR-403-AC-4 | A record with `status: resolved-by-design` and no `resolved_by` relation is rejected; with the relation it validates. | Test |
-| FR-403-AC-5 | A record with `status: open` and an `accepter` is rejected. | Test |
-| FR-403-AC-6 | An `accepter` whose `name` is `unknown`, `not_assessed` or `not_applicable` is rejected. | Test |
+| FR-403-AC-1 | A record with `status: accepted-by-person` and no `decided_by` fails validation, naming `decided_by`. | Test |
+| FR-403-AC-2 | A record with `status: accepted-by-person` and an empty `decided_by` fails validation. | Test |
+| FR-403-AC-3 | A record with `status: accepted-by-person` and a named person in `decided_by` validates. | Test |
+| FR-403-AC-4 | A record with `status: open` or `status: resolved-by-design` and a `decided_by` fails validation. | Test |
+| FR-403-AC-5 | A record whose `decided_by` is a role, team or tool name is rejected as it is for FR-103. | Test |
+| FR-403-AC-6 | The emitted `Tension.json` has no acceptance-date property and no default for `status` or `decided_by`. | Inspection |
 
 ## Dependencies
 
-- **Upstream**: [FR-401](./FR-401-tension-object-type.md), [FR-402](./FR-402-tension-edges.md), [FR-004](./FR-004-type-distinct-safety-schemas.md)
+- **Upstream**: [FR-401](./FR-401-tension-object-type.md), [FR-103](./FR-103-residual-risk-record.md)
 - **Downstream**: [FR-404](./FR-404-tension-completeness-rule.md)

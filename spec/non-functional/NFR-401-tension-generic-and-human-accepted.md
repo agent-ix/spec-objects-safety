@@ -11,27 +11,26 @@ relationships:
 
 ## Statement
 
-The `tension` type SHALL use generic terms only and SHALL take every acceptance from a person's
-written name. Source: PLAT-1480.
+The `tension` schema, skeleton and manifest entry SHALL use generic terms only.
+
+The module SHALL take every `tension` acceptance from a person's written name and from nothing it computes.
 
 ## Rationale
 
 The module ships publicly, so it cannot quote a paywalled standard. A conflict accepted by a
-rule or a default would be a risk nobody owns.
+rule or a default would be a risk nobody owns. Source: PLAT-1480.
 
 ## Measurement and Evaluation
 
 | Metric | Target | Threshold | Method |
 |--------|--------|-----------|--------|
-| Schema defaults for `accepter` or `status` | 0 | 0 | Test |
+| Schema defaults for `decided_by` or `status` | 0 | 0 | Test |
 | Paywalled-standard names or quotations in the `tension` schema, skeleton and manifest entry | 0 | 0 | Inspection |
-| Source files that branch on the name `tension` | 0 | 0 | Test |
 
 ## Verification
 
-A test reads the emitted `Tension.json` and asserts it declares no default for `accepter` or
-`status`, and a scan of the package source asserts nothing branches on the name `tension`. An
-inspection of the schema, skeleton and manifest entry confirms no paywalled text.
+A test reads the emitted `Tension.json` and asserts it declares no default for `decided_by` or
+`status`. An inspection of the schema, skeleton and manifest entry confirms no paywalled text.
 
 ## Dependencies
 

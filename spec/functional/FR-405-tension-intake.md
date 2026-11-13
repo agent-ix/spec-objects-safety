@@ -1,6 +1,6 @@
 ---
 id: FR-405
-title: "Planning workflows may emit tensions; the design-gate loop consumes them as optional input"
+title: "The tension record is optional input that a planning workflow can emit and a design gate can read"
 type: FR
 relationships:
   - target: "ix://agent-ix/spec-objects-safety/US-401"
@@ -8,33 +8,30 @@ relationships:
   - target: "ix://agent-ix/spec-objects-safety/FR-404"
     type: "depends_on"
 ---
-# FR-405: Planning workflows may emit tensions; the design-gate loop consumes them as optional input
+# FR-405: The tension record is optional input that a planning workflow can emit and a design gate can read
 
 ## Description
 
-A planning workflow that notices conflicting clauses MAY emit `tension` records, and the
-design-gate loop MAY read them. Neither side depends on the other existing. Source: PLAT-1480.
+Tracked by Linear PLAT-1480. This module offers the `tension` record as an output contract for
+planning workflows to emit and for a design-gate loop to read as optional input. The workflows
+and the loop are owned by other modules; this FR binds only what this module's record and rules
+do with whatever they produce.
 
 ## Inputs
 
-- `tension` records in the corpus.
+- `tension` records in the corpus, from any author.
 
 ## Outputs
 
-- No output of its own: this FR constrains the contract between producer and consumer.
+- No output of its own.
 
 ## Behavior
 
-- A planning workflow MAY emit a `tension` with `status: open` and its `conflicts_with` edges.
-- A workflow SHALL NOT emit `resolved-by-design` or `accepted-by-person`: resolution links a
-  design element a person or the design loop supplies, and acceptance is a person's act (FR-403).
-- The design-gate loop SHALL accept a corpus with no `tension` records as complete input;
-  tensions are optional input and their absence is not a finding.
-- When tensions are present, the design-gate loop SHALL read their status and edges and
-  SHALL report every `open` tension to the person running the gate.
-- The design-gate loop SHALL NOT mark a tension resolved or accepted on a person's behalf.
-- The module SHALL declare only the record and the rule; the workflow modules own the
-  definitions that emit and consume tensions.
+- The module SHALL treat a corpus with no `tension` record as complete input and raise no tension
+  finding of any kind.
+- The module SHALL validate an emitted `tension` with `status: open` and two `conflicts_with`
+  entries, and report it under `trace:open-tension`.
+- The module SHALL declare no workflow definition and no gate behaviour.
 
 ## Constraints
 
@@ -47,10 +44,9 @@ design-gate loop MAY read them. Neither side depends on the other existing. Sour
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-405-AC-1 | A corpus with no `tension` records raises no tension finding of any kind. | Test |
-| FR-405-AC-2 | The `tension` schema rejects an `accepted-by-person` record with no accepter name, so an emitted acceptance without a person fails validation. | Test |
-| FR-405-AC-3 | An emitted `tension` with `status: open` and two `conflicts_with` edges validates and is reported by FR-404-AC-1. | Test |
+| FR-405-AC-2 | An emitted `tension` with `status: open` and two `conflicts_with` entries validates and is reported by FR-404-AC-1. | Test |
 
 ## Dependencies
 
 - **Upstream**: [FR-404](./FR-404-tension-completeness-rule.md)
-- **Downstream**: the design-gate loop and planning workflows, owned elsewhere.
+- **Downstream**: planning workflows and the design-gate loop, owned by other modules.
