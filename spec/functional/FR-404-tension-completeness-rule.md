@@ -34,12 +34,12 @@ Nothing here needs a new engine mechanism.
   `where: {field: status, values: [resolved-by-design]}`, `edges: [resolved_by]`, `to: []`,
   `direction: outgoing` and `check: resolved-tension-without-link`.
 - The manifest SHALL add a relation `tension-is-not-open` with `from: tension`,
-  `where: {field: status, values: [open]}`, `edges: [conflicts_with]`, `to: []`,
-  `direction: incoming` and `check: open-tension`.
-- Because a tension authors `conflicts_with` outward only (FR-402), nothing points at a tension
-  with it, so `tension-is-not-open` cannot be satisfied: every tension with `status: open` is
-  reported, whether or not it also carries a `resolved_by` edge. The relation reads the `status`
-  field alone, and an edge cannot close an open tension.
+  `where: {field: status, values: [open]}`, `edges: [resolved_by]`, `to: []`,
+  `direction: outgoing` and `check: open-tension`.
+- An open tension is reported because it has no `resolved_by` edge, and the record schema
+  rejects a `resolved_by` entry on an open tension (FR-403), so an open tension cannot clear the
+  relation by gaining an edge without also changing `status`. An incoming edge of any verb, from
+  another tension or any document, does not satisfy an outgoing relation and so does not clear it.
 - A tension closes by changing `status`: to `resolved-by-design` with a `resolved_by` edge, or to
   `accepted-by-person` with a named `decided_by` (FR-403), which the schema enforces and no
   relation needs.
@@ -64,7 +64,7 @@ Nothing here needs a new engine mechanism.
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-404-AC-1 | A corpus containing a `tension` with `status: open` is reported under `trace:open-tension`, naming that tension, and fails when the key is mapped to `error`. | Test |
-| FR-404-AC-2 | A `tension` with `status: open` that also carries a `resolved_by` edge is still reported under `trace:open-tension`. | Test |
+| FR-404-AC-2 | A `tension` with `status: open` that is the target of an incoming `conflicts_with` edge, or of an edge from a dangling or other document, is still reported under `trace:open-tension`. | Test |
 | FR-404-AC-3 | Setting `status: resolved-by-design` with a `resolved_by` edge to a design element clears the finding; the corpus passes. | Test |
 | FR-404-AC-4 | A `tension` with `status: resolved-by-design` and no `resolved_by` edge is reported under `trace:resolved-tension-without-link`. | Test |
 | FR-404-AC-5 | A `tension` with `status: accepted-by-person` and a named `decided_by` passes both relations; the same record with no `decided_by` still fails schema validation (FR-403-AC-1). | Test |

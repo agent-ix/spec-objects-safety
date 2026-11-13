@@ -34,3 +34,23 @@ person's (FR-403-CON-1, FR-405, NFR-401). The findings below must be fixed befor
 | FND-005 | low | NFR-401's metric 'Source files that branch on the name `tension`: 0 (Test)' is a grep over this package's source, not a behaviour test. The real guarantee, that the engine has no tension-specific code, is FR-404-CON-1 against quire-rs. This package's emitter has to name `Tension.json` anyway. By the value test, drop the metric and its scan. | spec/non-functional/NFR-401-tension-generic-and-human-accepted.md:28 |
 | FND-006 | low | FR-402-AC-2 treats `references` as an allowed verb from a tension ('a verb outside the three declared and `references` is reported'). FR-402's Behavior and Outputs declare only `conflicts_with`, `resolved_by` and `accepted_by`. State whether `allowed_links` for `tension` carries `references`. | spec/functional/FR-402-tension-edges.md:55 |
 | FND-007 | low | spec/functional/index.md lists FR-404 as 'Completeness rule as manifest data', which truncates the document title ('...: no tension is open at release; accepted tensions name a person'). | functional/index.md:22 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | low | The indexes are stale after the rebase. spec/index.md lists `non-functional` twice: main already had it, and the PR appends it again. In spec/functional/index.md, the FR-402 entry still reads 'what closed it' (the title is now 'what resolved it'), and the FR-405 entry carries the old title ('Planning workflows may emit tensions; ...'). | spec/index.md:16,18; spec/functional/index.md:27,30 |
+
+## Dispositions
+
+Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-1480 as SR-030; it is committed as SR-051.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-404 now selects on `status`. Relation `tension-is-not-open` (`where: {field: status, values: [open]}`) reports every open tension whatever edges it carries, and FR-404-AC-2 tests the open-plus-`resolved_by` case. How the relation is built is a new finding (SR-053 FND-005). |
+| FND-002 | fixed | The two-edge minimum is now a schema rule, and FR-402-AC-1 tests it as a schema failure. |
+| FND-003 | fixed | The untestable 'a person's name' statement is removed and acceptance uses `decided_by`. The replacement FR-403-AC-5 brings its own defect (SR-052 FND-005). |
+| FND-004 | fixed | FR-405 now binds only this module's record and rules. It contains no SHALL on the workflows or the design-gate loop, and its ACs no longer restate FR-403. |
+| FND-005 | fixed | The source-grep metric is removed from NFR-401. |
+| FND-006 | fixed | FR-402 now says the allowed links are exactly `conflicts_with` and `resolved_by`, with `references` excluded, and AC-2 matches. |
+| FND-007 | fixed | The FR-404 index entry now carries the full title. The other index entries have new staleness (FND-008). |

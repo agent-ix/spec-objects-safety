@@ -15,4 +15,3 @@ okf_version: "0.1"
 * [functional](./functional/index.md)
 * [non-functional](./non-functional/index.md)
 * [integration](./integration/index.md)
-* [non-functional](./non-functional/index.md)

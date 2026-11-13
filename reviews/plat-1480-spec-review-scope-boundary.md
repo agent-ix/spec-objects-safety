@@ -28,3 +28,11 @@ person's (FR-403-CON-1, FR-405, NFR-401). The findings below must be fixed befor
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | The repo choice rests on a false premise. The PR says spec-artifacts-iso and spec-artifacts-process 'declare no completeness rules of that kind', but iso's manifest already has a `traceability` block (`vocabulary_coverage`), and FR-058 relations are per-module manifest data that any module may declare. A tension is a generic conflict between requirements (NFR-401 itself requires generic terms; the US-401 example is latency against an audit write). This module is 'safety ObjectTypes — IEC 61508 / ISO 26262 / FMEA lineage', and US-401 traces to StR-001 'Safety analysis is recorded as validated, linkable objects', which a non-safety conflict does not satisfy. spec-artifacts-iso owns the FR/NFR/StR artifacts a tension names and the edge vocabulary this PR must change anyway, so it is the better owner. spec-artifacts-process, beside ADR and Finding, is second choice. If the lead keeps spec-objects-safety for Risk Model reasons, add a stakeholder need that covers general requirement conflicts instead of tracing to StR-001. | spec/functional/FR-401-tension-object-type.md:15-18 |
+
+## Dispositions
+
+Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-1480 as SR-033; it is committed as SR-054.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The fallback was taken: the type stays in spec-objects-safety for Risk Model reasons, a new StR-401 covers general requirement conflicts, and US-401 and FR-401 trace to it instead of StR-001. |

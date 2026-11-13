@@ -29,3 +29,12 @@ person's (FR-403-CON-1, FR-405, NFR-401). The findings below must be fixed befor
 | --- | --- | --- | --- |
 | FND-001 | low | The NFR-401 statement has two SHALLs: generic terms only, and every acceptance taken from a person's written name (quire `ears:non-singular`). Split it into two statements. | spec/non-functional/NFR-401-tension-generic-and-human-accepted.md:14-15 |
 | FND-002 | low | 'When tensions are present, the design-gate loop SHALL read their status and edges and SHALL report every `open` tension...' has two SHALLs, and quire reports `ears:unclassifiable` and `ears:missing-subject` on its continuation line. Split it, or remove it with SR-051 FND-004. | spec/functional/FR-405-tension-intake.md:33-34 |
+
+## Dispositions
+
+Round 1, head `01453e1` (rebased on main). This review was first posted on PLAT-1480 as SR-034; it is committed as SR-055.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | NFR-401 is split into two single-SHALL statements, and quire reports no EARS warning on it. |
+| FND-002 | fixed | The compound design-gate statement is removed from FR-405, and quire reports no EARS warning on FR-405. |

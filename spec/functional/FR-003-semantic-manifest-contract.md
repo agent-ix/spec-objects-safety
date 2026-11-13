@@ -34,7 +34,7 @@ declaration record against them, while every existing extraction locator keeps i
 ## Outputs
 
 - `manifest.yaml` with a `version`, a `semantic` block, and reference-form
-  `data_schema` on both object types.
+  `data_schema` on every declared object type.
 
 ## Behavior
 
@@ -42,7 +42,7 @@ declaration record against them, while every existing extraction locator keeps i
 - `semantic.exports` SHALL name every declared object type, including `hazard` and `failure_mode`.
 - Every exported object type's `data_schema` SHALL be `{ schema: schemas/<Model>.json }`.
 - No exported object type SHALL carry an inline `data_schema`.
-- The manifest SHALL load through Quire's registry loader with no load failure for either object type.
+- The manifest SHALL load through Quire's registry loader with no load failure for any declared object type.
 - The manifest SHALL install through `quoin module install path:<module dir>` with no `semantic.*` error diagnostic.
 - When the install has completed, `quoin module` SHALL list `spec-objects-safety`.
 - If Quoin or Quire rejects the manifest, then this module SHALL correct its own manifest or schemas rather than relax the contract keys or the `$id` rules to make a consumer accept them.
