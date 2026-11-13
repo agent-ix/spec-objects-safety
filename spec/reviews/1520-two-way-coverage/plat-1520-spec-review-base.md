@@ -1,0 +1,81 @@
+---
+id: SR-021
+title: "Spec review (base) of PLAT-1520 FR-009 amendment (spec-objects-safety#35)"
+type: SpecReview
+analysis: base
+scope: "agent-ix/spec-objects-safety; spec/functional/FR-009-safety-nfr-needs-mitigation-target.md (git diff origin/main...HEAD), read against spec/tests.md and quire-rs FR-058/FR-084/FR-085 (agent-ix/quire-rs#664)"
+review_set: subset
+relationships:
+  - target: "ix://agent-ix/spec-objects-safety/FR-009"
+    type: "references"
+---
+# Spec review (base) of PLAT-1520 FR-009 amendment (spec-objects-safety#35)
+
+## Summary
+
+Ticket: PLAT-1520. The PR changes `to` in FR-009 from `[]` to
+`[hazard, failure_mode]`. It relies on quire-rs FR-085 to resolve edges across
+repositories and names FR-084 as the reverse coverage view. Read against
+quire-rs#664 (FR-058, FR-084, FR-085 on `plat-1520-spec`), quire-cli
+`plat-1520-spec` (FR-030, FR-004), this repo's `spec/tests.md`, the manifest,
+and the FR-009 tests. Ticket text was treated as data.
+
+`quire validate --scope . spec/functional/FR-009-...md` passes (quire 0.44.0,
+engine 0.59.1). The hash/digest/pin check is clean: the PR deletes the old
+`quire 0.58.0` version claim from the prose and adds no pin or tracking record.
+No paywalled standard text is reproduced. The kind-mismatch and dangling
+semantics match FR-085 Resolution and Kind of a resolved target. The FR-058
+note added in #664 agrees. The reverse view matches FR-084-AC-3.
+
+## Verdict
+
+Changes requested. The constrained `to` is consistent with FR-085 at the engine
+level. However, FR-009 promises that a hazard in a loaded sibling repository
+satisfies the obligation, and no specified `quire validate` path can load a
+second repository. Outputs and Behavior bullet 2 still describe the old
+`to: []` rule. `failure_mode` is not exercised. `spec/tests.md` and the
+existing tests contradict the amended ACs, and no ticket owns updating them.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | high | The cross-repository arm of FR-009-AC-3 ("an edge to a `hazard` in another repository loaded into the corpus" removes the finding) has no reachable interface. The finding is a `quire validate` finding (AC-2), and no spec lets `validate` load a second corpus member: quire-cli FR-030 adds `--repo <ORG/REPO>=<DIR>` to `quire relations` only, and quire-cli FR-004 is unchanged. Once the manifest constrains `to`, every `safety` NFR whose hazard lives in another repository (the Description calls this "often") gets a warning on every validate run, with no way to clear it except turning the rule off. This is the cost the deleted "What `to: []` lets through" section avoided. Name the validate surface that builds a multi-member corpus, or specify it in quire-cli and quire-rs in this ticket. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:29-35,71 |
+| FND-002 | medium | Outputs (a finding "for each `safety` NFR with no outgoing `mitigates` edge") and Behavior bullet 2 ("which has no outgoing `mitigates` edge") still state the `to: []` rule. Under the amended `to`, an NFR whose only `mitigates` edge goes to a `threat`, or to an unloaded repository, is also reported (bullet 4, AC-3). The two statements contradict bullet 4. Restate both as "no outgoing `mitigates` edge to a resolved `hazard` or `failure_mode`". | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:52,57 |
+| FND-003 | medium | `to` names `failure_mode`, but no criterion shows that a `mitigates` edge to a `failure_mode` satisfies the obligation. AC-3 covers `hazard` only, so a manifest with `to: [hazard]` passes every AC except the literal AC-1 check. Add the `failure_mode` case to AC-3. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:71 |
+| FND-004 | medium | `spec/tests.md` contradicts the amended criteria. TC-099 still reads `to: []`, and TC-101 still reads "or to a document in another repository, yields no finding". Both are marked ✅. The tests they name assert the old behaviour: `tests/test_manifest.py:243` asserts `relation["to"] == []`, and `tests_integration/test_reverse_mitigates.py:115` expects no finding for `ix://agent-ix/other-repo/HAZ-900` in a single-repo run. AC-3 now says that case leaves the finding. | spec/tests.md:146,148 |
+| FND-005 | medium | No ticket owns the change in this repo. The implementation tickets PLAT-1554 and PLAT-1556 list only quire-rs and quire-cli. The `to:` SHALL, the manifest comment at `spec_objects_safety/manifest.yaml:265-271`, and TC-099/TC-101 therefore have no owner. Add this repo to an implementation ticket, or file one blocked by PLAT-1556. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:56 |
+| FND-006 | low | The dependency edges point the wrong way. Dependencies lists quire-rs FR-084 as Upstream, but FR-084 reads FR-009's declaration, and FR-009 itself says so at line 37. FR-084 is downstream. The body depends on FR-085, but the frontmatter `relationships` gains no `depends_on` for it and still lists only FR-058. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:11-12,37,77 |
+
+## New findings (disposition pass 1)
+
+Found while checking fix commit `a435585` against regressions.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | The fix turns the old negative "SHALL NOT narrow the `to: []` of `hazard-has-mitigation` or `failure-mode-has-mitigation`" into the positive "SHALL keep `to: []` on `hazard-has-mitigation` or `failure-mode-has-mitigation`", and FR-009-AC-10 says "... or ... still declare `to: []`". In the positive form, `or` is satisfied when only one of the two relations keeps `to: []`, so narrowing the other passes both the statement and the criterion. Use `and` in both. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:73,88 |
+| FND-008 | medium | The new Description paragraph says "Without `--repo`, validate sees one repository and an edge into another repository is dangling." quire-rs FR-085-AC-10 keeps the FR-026 lexical `ix://` resolution for a one-member corpus with no identity: the trailing id is resolved within the one repository. A local document with the same id therefore resolves the cross-repository edge. Line 39 already states the qualified rule ("dangling in a corpus whose members declare identities"). Qualify this sentence the same way, or say that a same-id local document resolves the edge. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:46-49 |
+| FND-009 | medium | `spec/tests.md` now fails `quire validate` on six new rows. TC-099, TC-101 and TC-103..TC-106 have an empty `Status` cell, which does not match `^(✅/❌/🚧/⛔)`. On `origin/main` the file fails only on the existing `Coverage Status` column headers. Give these rows a valid status, for example `🚧`. | spec/tests.md:146,148,150-153 |
+| FND-010 | low | TC-106 lists FR-009-AC-10, but its text (a `hazard` in a repository not named by `--repo`) does not exercise AC-10. AC-10 checks that the manifest keeps `to: []` on the hazard-end relations, which is a unit check, so AC-10 has no test case that actually covers it. | spec/tests.md:153 |
+
+## Dispositions
+
+Round 1, fix commit `a435585`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Description now routes the cross-repository case through `quire validate --okf --repo ORG/REPO=DIR` (quire-cli FR-030), and FR-009-AC-7 tests it. Verified on quire-cli `plat-1520-spec` 3746178: FR-030 declares `quire validate --okf --repo <ORG/REPO>=<DIR>...` and FR-030-AC-20. |
+| FND-002 | fixed | Outputs and Behavior bullet 2 now read "no outgoing `mitigates` edge to a resolved `hazard` or `failure_mode`". |
+| FND-003 | fixed | FR-009-AC-6 adds the `failure_mode` case, mapped to TC-103. |
+| FND-004 | fixed | TC-099 now reads `to: [hazard, failure_mode]`, and TC-101 is limited to a same-repository hazard. Both lost their ✅. Updating the test code is an acceptance criterion of PLAT-1673. |
+| FND-005 | fixed | PLAT-1673 (Backlog, blocked by PLAT-1520 and PLAT-1556) owns the manifest and test changes in spec-objects-safety and spec-objects-security. |
+| FND-006 | fixed | FR-084 moved to Downstream. Frontmatter gains `depends_on` FR-085 and quire-cli FR-030. |
+
+Round 2, fix commit `d3e2758`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | The Behavior statement now reads "on both `hazard-has-mitigation` and `failure-mode-has-mitigation`", and FR-009-AC-10 now reads "... and ... both still declare `to: []`". |
+| FND-008 | fixed | The rule is now qualified: without `--repo`, `ix://` links resolve by trailing id (quire-rs FR-085-AC-10), so the edge resolves only if a local document has the same id and is dangling otherwise. |
+| FND-009 | fixed | TC-099, TC-101 and TC-103..TC-107 carry `🚧`. `quire validate` on `spec/tests.md` reports the same 3 column-header errors as `origin/main` and nothing else; both exit 3. |
+| FND-010 | fixed | TC-106 maps only FR-009-AC-9. The new unit row TC-107 maps FR-009-AC-10. |
