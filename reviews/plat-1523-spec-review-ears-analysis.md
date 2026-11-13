@@ -61,3 +61,5 @@ Round 1, head `3612073`. `quire validate` at this head reports only the two new 
 | FND-005 | fixed | NFR-100's Statement is now three single-SHALL statements. |
 | FND-006 | fixed | FR-105 now reads `outside_acceptable: true/false`, and the ambiguous-term warnings are gone. |
 | FND-007 | fixed | Every FR-104 Behavior statement now names "The module's tooling" or "The module's report output" as its subject. |
+| FND-008 | fixed | Round 2, head `c83872d`: FR-101 Behavior is split into a no-default statement and an if-then failure statement. |
+| FND-009 | fixed | Round 2, head `c83872d`: FR-103 Behavior is split into a resolve statement and an if-then failure statement. `quire validate` now reports no EARS warnings. |

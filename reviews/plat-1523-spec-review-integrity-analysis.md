@@ -55,3 +55,4 @@ Round 1, head `3612073`.
 | FND-001 | fixed | FR-102 now declares `depends_on` FR-103. FR-103's Downstream lists FR-102, and FR-101's Downstream lists FR-103. |
 | FND-002 | fixed | NFR-100 now constrains FR-102, FR-105 and FR-107, and its Dependencies list all three. |
 | FND-003 | rejected | The finding itself was wrong. The test matrix is computed (`quoin matrix` lists the new criteria as untagged with no hand-written rows), so hand-written rows in `spec/tests.md` are not needed. The rows added for it are raised as FND-004. |
+| FND-004 | fixed | Round 2, head `c83872d`: `spec/tests.md` is byte-identical to `origin/main`. The eight hand-written rows are gone and the StR-001 cell is reverted. |
