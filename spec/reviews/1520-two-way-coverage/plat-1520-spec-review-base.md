@@ -70,3 +70,12 @@ Round 1, fix commit `a435585`.
 | FND-004 | fixed | TC-099 now reads `to: [hazard, failure_mode]`, and TC-101 is limited to a same-repository hazard. Both lost their ✅. Updating the test code is an acceptance criterion of PLAT-1673. |
 | FND-005 | fixed | PLAT-1673 (Backlog, blocked by PLAT-1520 and PLAT-1556) owns the manifest and test changes in spec-objects-safety and spec-objects-security. |
 | FND-006 | fixed | FR-084 moved to Downstream. Frontmatter gains `depends_on` FR-085 and quire-cli FR-030. |
+
+Round 2, fix commit `d3e2758`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | The Behavior statement now reads "on both `hazard-has-mitigation` and `failure-mode-has-mitigation`", and FR-009-AC-10 now reads "... and ... both still declare `to: []`". |
+| FND-008 | fixed | The rule is now qualified: without `--repo`, `ix://` links resolve by trailing id (quire-rs FR-085-AC-10), so the edge resolves only if a local document has the same id and is dangling otherwise. |
+| FND-009 | fixed | TC-099, TC-101 and TC-103..TC-107 carry `🚧`. `quire validate` on `spec/tests.md` reports the same 3 column-header errors as `origin/main` and nothing else; both exit 3. |
+| FND-010 | fixed | TC-106 maps only FR-009-AC-9. The new unit row TC-107 maps FR-009-AC-10. |
