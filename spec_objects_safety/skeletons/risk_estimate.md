@@ -14,7 +14,7 @@ phase: <pre_control | post_control>
        object: risk_estimate and `phase`, exactly `pre_control` or
        `post_control`. `phase` is a top-level frontmatter key so that required
        relations can select on it.
-     - "## Estimate" (H2) is REQUIRED: a table with headers exactly
+     - "## Judgement" (H2) is REQUIRED: a table with headers exactly
        Severity | Probability | Rationale and exactly one data row.
      - "## Provenance" (H2) is REQUIRED: a table with headers exactly
        Asserted by | Asserted at and exactly one data row. Asserted at is a
@@ -47,7 +47,7 @@ phase: <pre_control | post_control>
            type: assumes -->
 # [EST-001] PreControlEstimateOfDecelerationSituation
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

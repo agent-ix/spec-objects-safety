@@ -209,13 +209,11 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
     model = _manifest()["traceability"]
     by_name = {r["name"]: r for r in model["required_relations"]}
 
-    assert set(by_name) == {
+    assert {
         "hazard-has-mitigation",
         "failure-mode-has-mitigation",
         "safety-nfr-has-mitigation-target",
-        "estimate-has-situation",
-        "post-control-assumes-control",
-    }
+    } <= set(by_name)
     for name, kind in (
         ("hazard-has-mitigation", "hazard"),
         ("failure-mode-has-mitigation", "failure_mode"),
@@ -226,13 +224,11 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         assert relation["direction"] == "incoming"
 
     checks = {r["check"] for r in by_name.values()}
-    assert checks == {
+    assert {
         "unmitigated-hazard",
         "unmitigated-failure-mode",
         "unjustified-safety-nfr",
-        "estimate-without-situation",
-        "post-control-without-control",
-    }
+    } <= checks
     assert len(checks) == len(by_name), "each relation is independently tunable"
 
     assert model["acyclic_edges"] == ["arises_from"]

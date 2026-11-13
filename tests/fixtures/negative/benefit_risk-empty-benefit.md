@@ -8,7 +8,7 @@ because: "the benefit statement is required"
 ---
 # [negative-25] benefit_risk-empty-benefit
 
-## Decision
+## Determination
 
 | Benefit | Decision | Rationale | Decided by |
 | ------- | -------- | --------- | ---------- |
@@ -19,7 +19,6 @@ because: "the benefit statement is required"
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | benefit_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

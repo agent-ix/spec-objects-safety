@@ -9,7 +9,7 @@ because: "an absent value stays absent and fails"
 ---
 # [negative-011] EstimateWithEmptySeverity
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

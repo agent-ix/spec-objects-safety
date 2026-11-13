@@ -10,7 +10,7 @@ object: residual_risk
      asserts):
      - Frontmatter MUST carry id, title, type: residual_risk,
        object: residual_risk.
-     - "## Decision" (H2) is REQUIRED: a table with headers exactly
+     - "## Determination" (H2) is REQUIRED: a table with headers exactly
        `Decision | Rationale | Decided by` and exactly one data row. `Decision` is exactly
        `undecided`, `accepted` or `not_accepted`; there is no default.
        `Rationale` is stated. `Decided by` is the named person who decided;
@@ -44,7 +44,7 @@ object: residual_risk
            type: references -->
 # [RR-001] ResidualRiskOfDecelerationSituation
 
-## Decision
+## Determination
 
 | Decision | Rationale | Decided by |
 | -------- | --------- | ---------- |
@@ -55,7 +55,6 @@ object: residual_risk
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | residual_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

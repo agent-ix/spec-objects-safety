@@ -516,3 +516,85 @@ def test_an_evaluation_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_pat
     evaluation(tmp_path, "ORE-001", "HAZ-001")
     lines = findings(validate(tmp_path), "disallowed-edge-target")
     assert any("ORE-001:" in line and "'hazard'" in line for line in lines), lines
+
+
+def _warns_once_then_clears(tmp_path, check, name, build_without, build_with):
+    build_without()
+    result = validate(tmp_path)
+    lines = findings(result, check)
+    assert len(lines) == 1 and name in lines[0], result.stderr
+    assert lines[0].startswith("warning:") and result.returncode == 0
+    build_with()
+    assert _count(validate(tmp_path), check) == 0
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_a_residual_risk_with_no_estimate_is_reported_once_and_the_edge_clears_it(
+    tmp_path,
+):
+    risk_chain(tmp_path)
+    _warns_once_then_clears(
+        tmp_path,
+        "residual-risk-without-estimate",
+        "RR-001",
+        lambda: residual_risk(tmp_path, "RR-001", policy=["POL-001"]),
+        lambda: residual_risk(
+            tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"]
+        ),
+    )
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_a_residual_risk_with_no_policy_is_reported_once_and_the_edge_clears_it(
+    tmp_path,
+):
+    risk_chain(tmp_path)
+    _warns_once_then_clears(
+        tmp_path,
+        "residual-risk-without-policy",
+        "RR-001",
+        lambda: residual_risk(tmp_path, "RR-001", estimate=["EST-001"]),
+        lambda: residual_risk(
+            tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"]
+        ),
+    )
+
+
+@pytest.mark.trace("FR-106-AC-2")
+def test_a_benefit_risk_with_no_residual_risk_is_reported_once_and_the_edge_clears_it(
+    tmp_path,
+):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"])
+    _warns_once_then_clears(
+        tmp_path,
+        "benefit-risk-without-risk",
+        "BR-001",
+        lambda: benefit_risk(tmp_path, "BR-001"),
+        lambda: benefit_risk(tmp_path, "BR-001", "RR-001"),
+    )
+
+
+@pytest.mark.trace("FR-107-AC-1")
+def test_an_evaluation_considering_nothing_is_reported_once_and_a_reference_clears_it(
+    tmp_path,
+):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"])
+    _warns_once_then_clears(
+        tmp_path,
+        "evaluation-without-considered-record",
+        "ORE-001",
+        lambda: evaluation(tmp_path, "ORE-001"),
+        lambda: evaluation(tmp_path, "ORE-001", "RR-001"),
+    )
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_a_residual_risk_relation_check_is_tunable_on_its_own_key(tmp_path):
+    residual_risk(tmp_path, "RR-001", policy=["POL-001"])
+    result = validate(
+        tmp_path, "--severity", "trace:residual-risk-without-estimate=error"
+    )
+    assert result.returncode != 0, result.stderr
+    assert _count(result, "residual-risk-without-estimate") == 1

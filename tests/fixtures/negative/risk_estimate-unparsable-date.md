@@ -9,7 +9,7 @@ because: "assertedAt is a date"
 ---
 # [negative-014] EstimateWithUnparsableDate
 
-## Estimate
+## Judgement
 
 | Severity | Probability | Rationale |
 | -------- | ----------- | --------- |

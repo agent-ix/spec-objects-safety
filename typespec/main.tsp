@@ -557,32 +557,52 @@ model AcceptabilityPolicy {
 }
 
 /**
- * A decision not yet made. `decided_by` is refused: nobody has decided.
+ * The three decisions a person can record. There is no default.
  */
-@extension("additionalProperties", false)
-model UndecidedDetermination {
-  decision: "undecided";
-  rationale?: StatedText;
-  ...Record<never>;
+enum DecisionState {
+  undecided,
+  accepted,
+  not_accepted,
 }
 
 /**
- * A decision a named person made. The rationale and `decided_by` are required
- * and non-blank. There is no default for `decision`; a decision date or history
- * comes from version control, not from a field.
+ * The decision rules shared by the decision objects below, as JSON Schema 2020-12
+ * conditionals on the one plain object a document section reads:
+ *
+ *   * `accepted` or `not_accepted` requires a named `decided_by` and a non-blank
+ *     `rationale`;
+ *   * `undecided` refuses `decided_by`.
+ *
+ * `rationale` is a required string on every decision; whether it may be empty
+ * depends on the decision. A union of an undecided and a decided object states
+ * the same rule more directly, but a document section cannot read a union key
+ * (quire-rs PLAT-1677), so the rule sits on one object.
+ */
+const decisionRules = #[
+  #{
+    `if`: #{ properties: #{ decision: #{ `enum`: #["accepted", "not_accepted"] } } },
+    `then`: #{
+      required: #["decided_by"],
+      properties: #{ rationale: #{ minLength: 1, pattern: "^[^<>\\s][^<>]*$" } },
+    },
+  },
+  #{
+    `if`: #{ properties: #{ decision: #{ `const`: "undecided" } } },
+    `then`: #{ not: #{ required: #["decided_by"] } },
+  },
+];
+
+/**
+ * The decision on a residual risk. Read from the document's `## Determination`
+ * section, one table row. An empty `Decided by` cell leaves `decided_by` absent.
  */
 @extension("additionalProperties", false)
-model DecidedDetermination {
-  decision: "accepted" | "not_accepted";
-  rationale: StatedText;
-  decided_by: PersonName;
+@extension("allOf", decisionRules)
+model Determination {
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
   ...Record<never>;
-}
-
-/** The decision on a residual risk: undecided, or decided by a named person. */
-union Determination {
-  UndecidedDetermination,
-  DecidedDetermination,
 }
 
 /**
@@ -604,29 +624,15 @@ model ResidualRisk {
   ...Record<never>;
 }
 
-/** A benefit-risk decision not yet made. */
-@extension("additionalProperties", false)
-model UndecidedBenefitDetermination {
-  benefit: StatedText;
-  decision: "undecided";
-  rationale?: StatedText;
-  ...Record<never>;
-}
-
-/** A benefit-risk decision a named person made. */
-@extension("additionalProperties", false)
-model DecidedBenefitDetermination {
-  benefit: StatedText;
-  decision: "accepted" | "not_accepted";
-  rationale: StatedText;
-  decided_by: PersonName;
-  ...Record<never>;
-}
-
 /** The weighing of a benefit against the residual risks a record covers. */
-union BenefitDetermination {
-  UndecidedBenefitDetermination,
-  DecidedBenefitDetermination,
+@extension("additionalProperties", false)
+@extension("allOf", decisionRules)
+model BenefitDetermination {
+  benefit: StatedText;
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
+  ...Record<never>;
 }
 
 /**
@@ -646,29 +652,15 @@ model BenefitRisk {
   ...Record<never>;
 }
 
-/** An overall evaluation not yet decided. */
-@extension("additionalProperties", false)
-model UndecidedEvaluation {
-  product: StatedText;
-  decision: "undecided";
-  rationale?: StatedText;
-  ...Record<never>;
-}
-
-/** An overall evaluation a named person decided. */
-@extension("additionalProperties", false)
-model DecidedEvaluation {
-  product: StatedText;
-  decision: "accepted" | "not_accepted";
-  rationale: StatedText;
-  decided_by: PersonName;
-  ...Record<never>;
-}
-
 /** The decision on the residual risk of the product taken together. */
-union EvaluationDetermination {
-  UndecidedEvaluation,
-  DecidedEvaluation,
+@extension("additionalProperties", false)
+@extension("allOf", decisionRules)
+model EvaluationDetermination {
+  product: StatedText;
+  decision: DecisionState;
+  rationale: string;
+  decided_by?: PersonName;
+  ...Record<never>;
 }
 
 /**

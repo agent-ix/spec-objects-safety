@@ -1,13 +1,70 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvaluationDetermination.json",
-  "anyOf": [
+  "type": "object",
+  "properties": {
+    "product": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/StatedText.json"
+    },
+    "decision": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecisionState.json"
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    }
+  },
+  "required": [
+    "product",
+    "decision",
+    "rationale"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The decision on the residual risk of the product taken together.",
+  "allOf": [
     {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/UndecidedEvaluation.json"
+      "if": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "accepted",
+              "not_accepted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "decided_by"
+        ],
+        "properties": {
+          "rationale": {
+            "minLength": 1,
+            "pattern": "^[^<>\\s][^<>]*$"
+          }
+        }
+      }
     },
     {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecidedEvaluation.json"
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "undecided"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "decided_by"
+          ]
+        }
+      }
     }
   ],
-  "description": "The decision on the residual risk of the product taken together."
+  "additionalProperties": false
 }

@@ -8,7 +8,7 @@ because: "a decision without a stated rationale is refused"
 ---
 # [negative-23] residual_risk-empty-rationale
 
-## Decision
+## Determination
 
 | Decision | Rationale | Decided by |
 | -------- | --------- | ---------- |
@@ -19,7 +19,6 @@ because: "a decision without a stated rationale is refused"
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | residual_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

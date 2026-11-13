@@ -33,7 +33,7 @@ semantic:
   # obligation to fill it.
   imports: {}
   targets: [json-schema, markdown]
-  mappings: [typed-table, sysml-fence, ocl-clause]
+  mappings: [typed-table, sysml-fence, ocl-clause, record-sections]
   compatibility_posture: additive
   legacy_forms: warning
 # Order 55, following the family sequence (operational 53, security 54).
@@ -329,7 +329,7 @@ object_types:
             choices: [pre_control, post_control]
         estimate:
           from: table_row
-          under_section: Estimate
+          under_section: Judgement
           required: true
           assert:
             columns:
@@ -453,10 +453,15 @@ object_types:
 # judgement. A hazard's own `status` is not an acceptance and is never read as
 # one. Who decided is a named person; when comes from version control.
 #
-# The decision table is asserted for a stated decision, a stated rationale and
-# no unfilled placeholder. That a decided record names a decider and an
-# undecided one names none is conditional on the decision cell, which table
-# assertions cannot state; the emitted schema states it.
+# The `## Determination` section is read twice. The table assertions below
+# refuse an unknown decision and an unfilled placeholder. The `record-sections`
+# mapping reads the same row into the record's `determination` key, which the
+# emitted schema validates: a decided record needs a named `decided_by` and a
+# non-blank rationale, and an `undecided` one refuses `decided_by`. The engine
+# omits an empty cell, so `rationale`, required by the schema, must be filled in
+# a document even while undecided. The decision rule sits on one object rather
+# than a union of undecided and decided objects because the mapping cannot read
+# a union key (quire-rs PLAT-1677).
 - name: residual_risk
   allowed_links:
     estimate: [risk_estimate]
@@ -471,7 +476,7 @@ object_types:
         type: *id003
         determination:
           from: table_row
-          under_section: Decision
+          under_section: Determination
           required: true
           assert:
             columns:
@@ -513,7 +518,7 @@ object_types:
         type: *id003
         determination:
           from: table_row
-          under_section: Decision
+          under_section: Determination
           required: true
           assert:
             columns:
@@ -557,7 +562,7 @@ object_types:
         type: *id003
         determination:
           from: table_row
-          under_section: Decision
+          under_section: Determination
           required: true
           assert:
             columns:
@@ -654,6 +659,33 @@ traceability:
     to: [control]
     direction: outgoing
     check: post-control-without-control
+  # A decision record names what it decides about. Presence is tested, never
+  # the far end's content: that the estimate is post-control, or that a policy
+  # holds the estimate's levels, is not a relation (quire-rs PLAT-1677).
+  - name: residual-risk-has-estimate
+    from: residual_risk
+    edges: [estimate]
+    to: [risk_estimate]
+    direction: outgoing
+    check: residual-risk-without-estimate
+  - name: residual-risk-has-policy
+    from: residual_risk
+    edges: [references]
+    to: [acceptability_policy]
+    direction: outgoing
+    check: residual-risk-without-policy
+  - name: benefit-risk-covers-risk
+    from: benefit_risk
+    edges: [references]
+    to: [residual_risk]
+    direction: outgoing
+    check: benefit-risk-without-risk
+  - name: evaluation-considers-record
+    from: overall_residual_risk_evaluation
+    edges: [references]
+    to: [residual_risk, benefit_risk]
+    direction: outgoing
+    check: evaluation-without-considered-record
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:

@@ -8,7 +8,7 @@ because: "a placeholder is not a named decider"
 ---
 # [negative-24] residual_risk-placeholder-decider
 
-## Decision
+## Determination
 
 | Decision | Rationale | Decided by |
 | -------- | --------- | ---------- |
@@ -19,7 +19,6 @@ because: "a placeholder is not a named decider"
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | residual_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

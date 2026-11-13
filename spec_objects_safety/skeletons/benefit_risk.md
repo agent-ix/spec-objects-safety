@@ -10,7 +10,7 @@ object: benefit_risk
      asserts):
      - Frontmatter MUST carry id, title, type: benefit_risk,
        object: benefit_risk.
-     - "## Decision" (H2) is REQUIRED: a table with headers exactly
+     - "## Determination" (H2) is REQUIRED: a table with headers exactly
        `Benefit | Decision | Rationale | Decided by` and exactly one data row. `Decision` is exactly
        `undecided`, `accepted` or `not_accepted`; there is no default.
        `Rationale` is stated. `Decided by` is the named person who decided;
@@ -38,7 +38,7 @@ object: benefit_risk
            type: references -->
 # [BR-001] BenefitWeighedAgainstDecelerationRisk
 
-## Decision
+## Determination
 
 | Benefit | Decision | Rationale | Decided by |
 | ------- | -------- | --------- | ---------- |
@@ -49,7 +49,6 @@ object: benefit_risk
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | benefit_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

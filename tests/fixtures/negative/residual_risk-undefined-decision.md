@@ -8,7 +8,7 @@ because: "decision is exactly undecided, accepted or not_accepted and has no def
 ---
 # [negative-22] residual_risk-undefined-decision
 
-## Decision
+## Determination
 
 | Decision | Rationale | Decided by |
 | -------- | --------- | ---------- |
@@ -19,7 +19,6 @@ because: "decision is exactly undecided, accepted or not_accepted and has no def
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | residual_risk_id | UUID | 1..1 | identity |
-| reviewed_at | Timestamp | 0..1 | |
 
 ## Invariants
 

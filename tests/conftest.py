@@ -59,7 +59,8 @@ OBJECT_TYPES = (
 )
 
 # Verbs the manifest uses that `spec-artifacts-iso` has not declared yet. Each
-# is a vocabulary change that belongs to that module (PLAT-1676). Expiry: when
+# is a vocabulary change that belongs to that module (PLAT-1676, whose scope
+# includes `estimate`). Expiry: when
 # PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
 # vocabulary tests cover the verbs again.
 PENDING_ISO_VERBS = frozenset({"estimates", "assumes", "estimate"})
@@ -106,21 +107,6 @@ SUPPORT_MODELS = (
     "EstimateLevelText",
     "EstimateLevel",
     "EstimateJudgement",
-    "PolicyName",
-    "StatedText",
-    "PersonName",
-    "PolicyRegion",
-    "PolicyCell",
-    "PolicyTable",
-    "UndecidedDetermination",
-    "DecidedDetermination",
-    "Determination",
-    "UndecidedBenefitDetermination",
-    "DecidedBenefitDetermination",
-    "BenefitDetermination",
-    "UndecidedEvaluation",
-    "DecidedEvaluation",
-    "EvaluationDetermination",
 )
 
 

@@ -18,10 +18,8 @@ import re
 import pytest
 
 from tests.conftest import (
-    NEGATIVE_DIR,
     PACKAGE_ROOT,
     SKELETONS_DIR,
-    frontmatter,
     load_manifest,
     locators,
     object_type,
@@ -63,7 +61,7 @@ ACCEPTED = {
     "decided_by": "A. Person",
 }
 NOT_ACCEPTED = dict(ACCEPTED, decision="not_accepted")
-UNDECIDED = {"decision": "undecided"}
+UNDECIDED = {"decision": "undecided", "rationale": "Not yet reviewed."}
 
 
 def valid(validator, record) -> bool:
@@ -241,7 +239,7 @@ def test_the_policy_skeleton_fails_until_filled_and_no_policy_ships(quire_engine
     assert documents == [SKELETONS_DIR / "acceptability_policy.md"]
 
 
-@pytest.mark.trace("FR-101-AC-2")
+@pytest.mark.trace("FR-101-AC-6")
 def test_a_blank_policy_cell_fails_at_the_document(quire_engine):
     text = filled_policy()
     first_cell = re.search(r"^\| minor \| rare \| (.+) \|$", text, re.M)
@@ -272,7 +270,6 @@ def record_with(schema_registry, record, determination, extra):
     )
 
 
-@pytest.mark.trace("FR-103-AC-1", "FR-103-AC-3", "FR-106-AC-1", "FR-107-AC-1")
 @pytest.mark.parametrize(
     ("record", "_union", "extra"), DECISION_RECORDS, ids=DECISION_IDS
 )
@@ -283,7 +280,6 @@ def test_accepted_not_accepted_and_undecided_all_validate(
         assert record_with(schema_registry, record, determination, extra), determination
 
 
-@pytest.mark.trace("FR-103-AC-2", "FR-106-AC-3", "FR-107-AC-2")
 @pytest.mark.parametrize(
     ("record", "_union", "extra"), DECISION_RECORDS, ids=DECISION_IDS
 )
@@ -306,13 +302,15 @@ def test_a_decided_record_needs_a_named_decider_and_a_rationale(
                 )
 
 
-@pytest.mark.trace("FR-103-AC-3", "FR-106-AC-3", "FR-107-AC-2")
 @pytest.mark.parametrize(
     ("record", "_union", "extra"), DECISION_RECORDS, ids=DECISION_IDS
 )
 def test_an_undecided_record_refuses_a_decider(schema_registry, record, _union, extra):
     assert not record_with(
         schema_registry, record, dict(UNDECIDED, decided_by="A. Person"), extra
+    )
+    assert not record_with(
+        schema_registry, record, without(UNDECIDED, "rationale"), extra
     )
 
 
@@ -339,16 +337,11 @@ NEW_MODELS = {
     "PolicyCell",
     "ResidualRisk",
     "Determination",
-    "UndecidedDetermination",
-    "DecidedDetermination",
+    "DecisionState",
     "BenefitRisk",
     "BenefitDetermination",
-    "UndecidedBenefitDetermination",
-    "DecidedBenefitDetermination",
     "OverallResidualRiskEvaluation",
     "EvaluationDetermination",
-    "UndecidedEvaluation",
-    "DecidedEvaluation",
 }
 
 
@@ -373,16 +366,10 @@ def test_no_schema_declares_a_score_region_ratio_total_date_or_history():
     for name in (
         "ResidualRisk",
         "Determination",
-        "UndecidedDetermination",
-        "DecidedDetermination",
         "BenefitRisk",
         "BenefitDetermination",
-        "UndecidedBenefitDetermination",
-        "DecidedBenefitDetermination",
         "OverallResidualRiskEvaluation",
         "EvaluationDetermination",
-        "UndecidedEvaluation",
-        "DecidedEvaluation",
     ):
         properties = set(schema_of(name).get("properties", {}))
         assert not banned & properties, (name, banned & properties)
@@ -468,14 +455,36 @@ def test_an_undecided_document_validates_and_a_blank_or_unknown_decision_fails(
         assert any("Decision" in e["message"] for e in result["errors"]), bad
 
 
-@pytest.mark.trace("FR-103-AC-2", "FR-106-AC-2", "FR-107-AC-8")
+@pytest.mark.trace("FR-103-AC-2", "FR-106-AC-3", "FR-107-AC-2")
+@pytest.mark.parametrize("name", sorted(set(FILLED) - {"acceptability_policy"}))
+@pytest.mark.parametrize("decision", ["accepted", "not_accepted"])
+def test_a_decided_document_without_a_named_decider_fails(quire_engine, name, decision):
+    text = FILLED[name]().replace("| accepted |", f"| {decision} |")
+    for blank in ("|  |\n", "| <person> |\n"):
+        result = validate_text(
+            quire_engine, name, text.replace("| A. Person |\n", blank, 1)
+        )
+        assert not result["is_valid"], blank
+        assert any(
+            "decided_by" in e["message"] or "Decided by" in e["message"]
+            for e in result["errors"]
+        ), blank
+
+
+@pytest.mark.trace("FR-103-AC-3", "FR-106-AC-3", "FR-107-AC-2")
+@pytest.mark.parametrize("name", sorted(set(FILLED) - {"acceptability_policy"}))
+def test_an_undecided_document_that_names_a_decider_fails(quire_engine, name):
+    text = FILLED[name]().replace("| accepted |", "| undecided |")
+    result = validate_text(quire_engine, name, text)
+    assert not result["is_valid"]
+    assert any("decided_by" in e["message"] for e in result["errors"])
+
+
+@pytest.mark.trace("FR-106-AC-2", "FR-107-AC-8")
 @pytest.mark.parametrize(
     ("name", "old", "label"),
     [
-        ("residual_risk", "| Within the policy. |", "rationale"),
-        ("benefit_risk", "| Within the policy. |", "rationale"),
         ("benefit_risk", "| Faster braking. |", "benefit"),
-        ("overall_residual_risk_evaluation", "| Within the policy. |", "rationale"),
         ("overall_residual_risk_evaluation", "| Brake controller |", "product"),
     ],
 )
@@ -486,51 +495,11 @@ def test_an_empty_stated_value_fails_at_the_document(quire_engine, name, old, la
     assert not result["is_valid"], label
 
 
-# ── edges ───────────────────────────────────────────────────────────────────
-
-
-@pytest.mark.trace("FR-103-AC-4", "FR-106-AC-6")
-def test_each_reference_is_allowed_to_exactly_its_target_type():
-    links = {
-        ot["name"]: ot.get("allowed_links", {})
-        for ot in load_manifest()["object_types"]
-    }
-    assert links["residual_risk"] == {
-        "estimate": ["risk_estimate"],
-        "references": ["acceptability_policy"],
-    }
-    assert links["benefit_risk"] == {"references": ["residual_risk"]}
-    assert links["overall_residual_risk_evaluation"] == {
-        "references": ["residual_risk", "benefit_risk"]
-    }
-    assert "allowed_links" not in object_type("acceptability_policy")
-
-
-# ── negative fixtures ───────────────────────────────────────────────────────
-
-
-@pytest.mark.parametrize(
-    "path",
-    sorted(
-        p
-        for prefix in (
-            "acceptability_policy",
-            "residual_risk",
-            "benefit_risk",
-            "overall_residual_risk_evaluation",
-        )
-        for p in NEGATIVE_DIR.glob(f"{prefix}-*.md")
-    ),
-    ids=lambda p: p.stem,
-)
-def test_each_residual_risk_negative_fixture_fails_for_its_stated_reason(
-    quire_engine, path
-):
-    text = path.read_text()
-    front = frontmatter(text)
-    result = validate_text(quire_engine, front["type"], text)
-    assert not result["is_valid"]
-    assert any(front["expect"] in e["message"] for e in result["errors"]), (
-        path.name,
-        [e["message"] for e in result["errors"]],
+@pytest.mark.trace("FR-103-AC-2")
+@pytest.mark.parametrize("name", sorted(set(FILLED) - {"acceptability_policy"}))
+def test_an_empty_rationale_fails_at_the_document(quire_engine, name):
+    text = FILLED[name]()
+    result = validate_text(
+        quire_engine, name, text.replace("| Within the policy. |", "|  |", 1)
     )
+    assert not result["is_valid"]

@@ -1,13 +1,66 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Determination.json",
-  "anyOf": [
+  "type": "object",
+  "properties": {
+    "decision": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecisionState.json"
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    }
+  },
+  "required": [
+    "decision",
+    "rationale"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The decision on a residual risk. Read from the document's `## Determination`\nsection, one table row. An empty `Decided by` cell leaves `decided_by` absent.",
+  "allOf": [
     {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/UndecidedDetermination.json"
+      "if": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "accepted",
+              "not_accepted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "decided_by"
+        ],
+        "properties": {
+          "rationale": {
+            "minLength": 1,
+            "pattern": "^[^<>\\s][^<>]*$"
+          }
+        }
+      }
     },
     {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecidedDetermination.json"
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "undecided"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "decided_by"
+          ]
+        }
+      }
     }
   ],
-  "description": "The decision on a residual risk: undecided, or decided by a named person."
+  "additionalProperties": false
 }
