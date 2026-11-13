@@ -274,8 +274,22 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
         e["inverse"] for e in edge_types.values() if e.get("inverse")
     }
 
+    import spec_objects_security
+
+    security_path = (
+        pathlib.Path(spec_objects_security.__file__).resolve().parent / "manifest.yaml"
+    )
+    security = yaml.safe_load(security_path.read_text())
+    # A relation may also start from a kind spec-objects-security declares
+    # (`control`), scoped by `when_any` to the controls used as risk controls.
+    security_kinds = {o["name"] for o in security.get("object_types") or []}
+    assert "control" in security_kinds, "the security module declares no control"
+    kinds = declared | iso_kinds | security_kinds
     for relation in manifest["traceability"]["required_relations"]:
-        assert relation["from"] in declared | iso_kinds, relation["from"]
+        assert relation["from"] in kinds, relation["from"]
+        for condition in relation.get("when_any", []):
+            assert condition["verb"] in vocabulary, condition["verb"]
+            assert set(condition["other"]) <= kinds, condition["other"]
         for verb in relation["edges"]:
             assert (
                 verb in vocabulary | PENDING_ISO_VERBS
