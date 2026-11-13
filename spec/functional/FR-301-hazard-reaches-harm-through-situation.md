@@ -18,26 +18,33 @@ relationships:
 
 ## Description
 
-Tracked by Linear PLAT-1524. A hazard that no hazardous situation involves, or
-a situation that can result in no harm, is a risk chain that stops before it
-says anything. The module **SHALL** declare two `traceability.required_relations`
-entries that together make "each hazard reaches at least one harm through a
-hazardous situation" a corpus check. Both are manifest data read by the
-existing upward-trace engine (`agent-ix/quire-rs` FR-058); the engine holds no
-archetype name, verb or direction of this chain.
+Tracked by Linear PLAT-1524. A hazard that no hazardous situation arises from,
+a situation that arises from no hazard, or a situation no harm arises from, is a
+risk chain that stops before it says anything. The module **SHALL** declare
+three `traceability.required_relations` entries that together make "each hazard
+reaches at least one harm through a hazardous situation" a corpus check. They
+are manifest data read by the existing upward-trace engine (`agent-ix/quire-rs`
+FR-058); the engine holds no archetype name, verb or direction of this chain.
 
-The edges are those of [FR-202](./FR-202-hazardous-situation-object-and-chain.md):
-authored on the situation, `involves` to a hazard and `can_result_in` to a
-harm. Whatever verb names FR-202 settles, the relations use those names.
+The chain uses the one verb of [FR-202](./FR-202-hazardous-situation-object-and-chain.md):
+`arises_from`, authored on the later link. A hazardous situation `arises_from` a
+hazard, and a harm `arises_from` a hazardous situation. Read from the hazard, the
+edges are incoming.
 
-### Engine gap: one hop per relation
+### Engine limit: one hop per relation
 
-A required relation tests one edge hop. It cannot say "a hazard has a path of
-two hops that ends at a harm". The module therefore declares two relations, one
-per hop. Together they are stronger than the plain reading: every hazard has a
-situation **and** every situation has a harm, so every hazard reaches a harm,
-and a situation that leads nowhere is also reported. No engine change is
-needed, and none is assumed.
+A required relation tests one edge hop. It cannot say "a hazard has a two-hop
+path that ends at a harm". The module therefore declares one relation per
+hop, and the three together imply the path: every hazard has a situation, every
+situation has a hazard, and every situation has a harm. They are stricter than
+the plain reading, since a situation that leads nowhere is reported too. No
+engine change is needed.
+
+### Ownership
+
+This requirement is the single place the three relations are declared. FR-202
+specifies the object type and the edges and the checks are owned here. The
+module declares exactly one relation per `check` token (NFR-300).
 
 ## Inputs
 
@@ -45,30 +52,33 @@ needed, and none is assumed.
 
 ## Outputs
 
-- Advisory findings `hazard-without-situation` and `situation-without-harm`, each naming the document and the declaration.
+- Advisory findings `hazard-without-situation`, `situation-without-hazard` and `situation-without-harm`, each naming the document and the declaration.
 
 ## Behavior
 
-- The manifest SHALL declare a relation `hazard-has-situation`: `from: hazard`, `edges: [involves]`, `to: [hazardous_situation]`, `direction: incoming`, `check: hazard-without-situation`.
-- The manifest SHALL declare a relation `situation-has-harm`: `from: hazardous_situation`, `edges: [can_result_in]`, `to: [harm]`, `direction: outgoing`, `check: situation-without-harm`.
-- `situation-without-harm` is the check named in FR-202; this requirement is the single declaration of it, and FR-202 SHALL NOT declare a second one.
-- Each relation SHALL carry its own `trace:<check>` severity key, advisory by default; a repository promotes one without the other by key.
-- A dangling edge SHALL NOT satisfy either relation, because `to` is constrained (FR-058).
+- The manifest SHALL declare `hazard-has-situation`: `from: hazard`, `edges: [arises_from]`, `to: [hazardous_situation]`, `direction: incoming`, `check: hazard-without-situation`.
+- The manifest SHALL declare `situation-has-hazard`: `from: hazardous_situation`, `edges: [arises_from]`, `to: [hazard]`, `direction: outgoing`, `check: situation-without-hazard`.
+- The manifest SHALL declare `situation-has-harm`: `from: hazardous_situation`, `edges: [arises_from]`, `to: [harm]`, `direction: incoming`, `check: situation-without-harm`.
+- Each relation SHALL carry its own `trace:<check>` severity key, advisory by default.
+- A dangling edge SHALL NOT satisfy any of the three relations, because `to` is constrained (FR-058).
 - The relations SHALL carry no `exclude` glob and no per-project data.
-- A hazard that is authored with only the free string `context.situation` and no situation object the tooling SHALL report `hazard-without-situation`; the string is not a situation.
+- If a hazard carries only the free string `context.situation` and no situation document arises from it, then the tooling SHALL report `hazard-without-situation`.
+- The tooling SHALL report a situation that has no hazard as `situation-without-hazard`, so that a situation absent from every hazard row is still found.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-301-AC-1 | The manifest declares `hazard-has-situation` and `situation-has-harm` with exactly the fields above, and `quire` loads the module without a declaration error. | Test |
-| FR-301-AC-2 | A fixture bundle of hazard H1, situation S1 (`involves` H1, `can_result_in` harm M1) and M1 yields no `hazard-without-situation` and no `situation-without-harm` finding. | Test |
-| FR-301-AC-3 | Removing S1 from the fixture yields exactly one `hazard-without-situation` finding naming H1. | Test |
-| FR-301-AC-4 | Removing the `can_result_in` edge from S1 yields exactly one `situation-without-harm` finding naming S1 and none for H1. | Test |
+| FR-301-AC-1 | The manifest declares the three relations with exactly the fields above, and `quire` loads the module without a declaration error. | Test |
+| FR-301-AC-2 | A fixture of hazard H1, situation S1 (`arises_from` H1) and harm M1 (`arises_from` S1) yields no finding from any of the three checks. | Test |
+| FR-301-AC-3 | Removing S1 yields exactly one `hazard-without-situation` finding naming H1. | Test |
+| FR-301-AC-4 | Removing M1 yields exactly one `situation-without-harm` finding naming S1 and none for H1. | Test |
 | FR-301-AC-5 | A hazard with `context.situation` text and no situation document yields one `hazard-without-situation` finding. | Test |
-| FR-301-AC-6 | A `can_result_in` edge to an id no loaded document declares does not satisfy `situation-has-harm`; S1 is reported. | Test |
-| FR-301-AC-7 | `--severity trace:hazard-without-situation=error` makes the run exit non-zero while `situation-without-harm` findings stay warnings; with no flag the run exits 0. | Test |
-| FR-301-AC-8 | With two situations on one hazard, one reaching a harm and one not, only the second is reported. | Test |
+| FR-301-AC-6 | A harm `arises_from` an id no loaded document declares does not satisfy `situation-has-harm`; S1 is reported. | Test |
+| FR-301-AC-7 | `--severity trace:hazard-without-situation=error` makes the run exit non-zero while the other two checks stay warnings; with no flag the run exits 0. | Test |
+| FR-301-AC-8 | With two situations on one hazard, one with a harm and one without, only the second is reported. | Test |
+| FR-301-AC-9 | A situation with no `arises_from` edge to a hazard yields exactly one `situation-without-hazard` finding naming it; adding the edge removes it. | Test |
+| FR-301-AC-10 | The manifest holds exactly one relation for each of the three `check` tokens. | Inspection |
 
 ## Dependencies
 
