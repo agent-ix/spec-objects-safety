@@ -465,6 +465,16 @@ model RiskEstimate {
   ...Record<never>;
 }
 
+/**
+ * The frontmatter keys of a risk estimate document that the manifest's
+ * required relations select on. `phase` is a top-level frontmatter key, so the
+ * relation `where` clauses can name it and the engine sees it as declared.
+ * Open to the identity keys every document carries.
+ */
+model RiskEstimateFrontmatter {
+  phase?: "pre_control" | "post_control";
+}
+
 // ---------------------------------------------------------------------------
 // Acceptability policy, residual-risk decisions, benefit-risk and the overall
 // evaluation (FR-101, FR-103, FR-104, FR-106, FR-107).

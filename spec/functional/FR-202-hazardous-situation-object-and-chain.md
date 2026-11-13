@@ -88,7 +88,7 @@ This requirement defines the types and the edges only.
 | FR-202-AC-3 | A situation with `arises_from` to a `harm`, or a harm with `arises_from` to a `hazard`, is reported `disallowed-edge-target` naming the target type. | Test |
 | FR-202-AC-4 | A `hazardous_situation` carrying `severity`, `probability`, `score` or `acceptance` fails validation. | Test |
 | FR-202-AC-5 | An existing hazard fixture with `context.situation` and no situation object validates unchanged. | Test |
-| FR-202-AC-6 | The manifest declares no `required_relations` entry whose `from` is `hazardous_situation` or whose check is `situation-without-hazard` (declared once, in PLAT-1524 FR-301). | Inspection |
+| FR-202-AC-6 | FR-202 declares no `required_relations` entry of its own: the relations whose `from` is `hazardous_situation`, including the `situation-without-hazard` check, are declared once, in PLAT-1524 FR-301, and no check token is declared by two relations. | Inspection |
 | FR-202-AC-7 | A situation with two `arises_from` edges to two hazards validates with no diagnostic and both inverses resolve. | Test |
 | FR-202-AC-8 | An `arises_from` edge to an undeclared local id makes `quire validate --okf --strict` exit non-zero with stderr naming the source path, `arises_from` and the missing id. | Test |
 | FR-202-AC-9 | A cycle among chain edges is reported by the existing `arises_from` acyclicity check. | Test |

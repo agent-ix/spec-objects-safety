@@ -175,9 +175,9 @@ def test_each_chain_edge_is_allowed_to_exactly_its_target_type():
 
 
 @pytest.mark.trace("FR-205-AC-6")
-def test_no_completeness_relation_is_declared_over_control_without_a_scope():
+def test_no_completeness_relation_is_declared_over_control():
     relations = load_manifest()["traceability"]["required_relations"]
-    assert not [r for r in relations if r["from"] == "control" and "when_any" not in r]
+    assert not [r for r in relations if r["from"] == "control"]
 
 
 @pytest.mark.trace("FR-202-AC-6", "FR-301-AC-10")
@@ -185,10 +185,11 @@ def test_each_completeness_check_is_declared_by_exactly_one_relation():
     relations = load_manifest()["traceability"]["required_relations"]
     checks = [r["check"] for r in relations]
     assert len(checks) == len(set(checks))
-    assert "situation-without-hazard" in checks
+    owners = [r["from"] for r in relations if r["check"] == "situation-without-hazard"]
+    assert owners == ["hazardous_situation"]
 
 
-@pytest.mark.trace("FR-202-AC-9")
+@pytest.mark.trace("FR-202-AC-9", "FR-304-AC-1")
 def test_arises_from_stays_acyclic_across_the_whole_chain():
     assert "arises_from" in load_manifest()["traceability"]["acyclic_edges"]
 
@@ -277,6 +278,23 @@ def test_phase_is_a_top_level_frontmatter_key_and_not_body_extracted():
         text = path.read_text()
         if path.stem != "risk_estimate-no-phase":
             assert "phase" in frontmatter(text), path.name
+
+
+@pytest.mark.trace("FR-303-AC-5")
+def test_the_emitted_schema_declares_phase_as_a_frontmatter_key():
+    declared = object_type("risk_estimate")["frontmatter_schema_ref"]
+    properties = json.loads((PACKAGE_ROOT / declared).read_text())["properties"]
+    assert "phase" in properties
+
+
+@pytest.mark.trace("FR-303-AC-5")
+def test_a_phase_only_in_the_body_is_invalid(quire_engine):
+    text = filled_estimate("post_control")
+    body_only = text.replace("phase: post_control\n", "", 1).replace(
+        "## Judgement\n", "## Judgement\n\nphase: post_control\n", 1
+    )
+    assert validate_text(quire_engine, "risk_estimate", text)["is_valid"]
+    assert not validate_text(quire_engine, "risk_estimate", body_only)["is_valid"]
 
 
 @pytest.mark.trace("FR-203-AC-7")

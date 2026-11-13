@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/RiskEstimateFrontmatter.json",
+  "type": "object",
+  "properties": {
+    "phase": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "pre_control"
+        },
+        {
+          "type": "string",
+          "const": "post_control"
+        }
+      ]
+    }
+  },
+  "description": "The frontmatter keys of a risk estimate document that the manifest's\nrequired relations select on. `phase` is a top-level frontmatter key, so the\nrelation `where` clauses can name it and the engine sees it as declared.\nOpen to the identity keys every document carries."
+}

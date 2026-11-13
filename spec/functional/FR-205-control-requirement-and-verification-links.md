@@ -88,9 +88,9 @@ unscoped rule would report every unrelated security control.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-205-AC-1 | `quire extract` over a fixture `FR` with a `satisfies` edge to a fixture `control` lists the FR as an incoming `satisfied_by` edge on the control. | Test |
-| FR-205-AC-2 | `quire extract` over a fixture `IT` with a `verifies` edge to the control lists the IT as an incoming `verifies` edge on the control. | Test |
-| FR-205-AC-3 | For a fixture `FR` that `satisfies` a control, caller-supplied evidence passed to quire-rs `evidence::qualify` for one of that FR's acceptance criteria qualifies that criterion, while the control carries no authored `verifies` edge and the module raises no diagnostic about a missing one. | Test |
+| FR-205-AC-1 | A fixture `FR` with a `satisfies` edge to a fixture `control` validates under `quire validate --okf --strict` with no `dangling-reference` for the edge; removing the `control` makes the same edge a `dangling-reference`. | Test |
+| FR-205-AC-2 | A fixture `IT` with a `verifies` edge to the fixture `control` validates under `quire validate --okf --strict` with no `dangling-reference` for the edge; removing the `control` makes the same edge a `dangling-reference`. | Test |
+| FR-205-AC-3 | For a fixture `FR` that `satisfies` a control, with the control carrying no authored `verifies` edge, `quire validate --okf` raises no missing-`verifies` diagnostic for the control. Qualifying caller-supplied evidence through `evidence::qualify` is quire-rs FR-078's behaviour and is tested there. | Test |
 | FR-205-AC-4 | A `satisfies` edge to an undeclared local id makes `quire validate --okf --strict` exit non-zero with stderr naming the source path, `satisfies` and the id. | Test |
 | FR-205-AC-5 | The manifest and emitted schemas contain no `effective`, `verified` or `passed` key. | Inspection |
 | FR-205-AC-6 | The manifest declares no `required_relations` entry whose `from` is `control`. | Inspection |

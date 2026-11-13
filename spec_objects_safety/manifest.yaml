@@ -309,6 +309,7 @@ object_types:
 # that is not an unfilled placeholder; the check against the project's policy
 # is the policy module's. An absent or placeholder value fails validation.
 - name: risk_estimate
+  frontmatter_schema_ref: schemas/RiskEstimateFrontmatter.json
   allowed_links:
     estimates: [hazardous_situation]
     assumes: [control]
