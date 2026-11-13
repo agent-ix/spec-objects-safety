@@ -36,18 +36,18 @@ acceptance ([FR-104](./FR-104-no-computed-verdicts.md), NFR-201).
 `attribution` (a string) and `rows` (an array). `--format markdown` (the default)
 writes the same rows as one table with the same columns and the attribution
 statement above it. A row has these keys, all present, `null` or `[]` when
-empty:
+empty. `policy_region` is a key of each estimate entry, not of the row: it is the
+policy's own label for that estimate's entered levels (FR-102), or `null`:
 
 | Key | Content |
 |---|---|
 | `hazard` | the hazard id, or `null` for a situation with no hazard |
 | `situation` | the situation id, or `null` for a hazard with no situation |
 | `harms` | ids of harms that arise from the situation |
-| `pre_control` | each pre-control estimate: id, `severity`, `probability` as entered |
+| `pre_control` | each pre-control estimate: id, `severity`, `probability` as entered, and `policy_region` |
 | `controls` | each assumed control: id, `requirements` (ids), `verifications` (ids) |
-| `post_control` | each post-control estimate: id, `severity`, `probability` as entered |
+| `post_control` | each post-control estimate: id, `severity`, `probability` as entered, and `policy_region` |
 | `residual_risks` | each record: id, `decision`, `decided_by` as entered |
-| `policy_region` | the policy's own label for the entered levels (FR-102), or `null` |
 | `findings` | the completeness finding tokens of FR-301 to FR-303 and FR-105 that name this row |
 
 There is one row per hazard and situation pairing. A hazard with no situation
@@ -84,9 +84,9 @@ rendering and may be regenerated at will.
 |----|----------|--------------|
 | FR-305-AC-1 | Over a complete fixture chain, `--format json` yields one row per hazard and situation pairing, each key holding the entered value, and the output parses as one JSON object with `attribution` and `rows`. | Test |
 | FR-305-AC-2 | A hazard with no situation yields a row with `situation: null` and `hazard-without-situation` in `findings`. | Test |
-| FR-305-AC-3 | A fixture with `probability: not_assessed` shows `not_assessed` in its row and `policy_region: null`. | Test |
+| FR-305-AC-3 | A fixture with `probability: not_assessed` shows `not_assessed` in its estimate entry with that entry's `policy_region: null`, while another estimate in the same row keeps its own label. | Test |
 | FR-305-AC-4 | A fixture residual risk with `decision: undecided` shows `undecided`, and no row shows `accepted` that a person did not write. | Test |
-| FR-305-AC-5 | No row key and no top-level key is numeric, a rank, or a verdict: the JSON keys of every row equal the set in the contract table exactly. | Test |
+| FR-305-AC-5 | No row key and no top-level key is numeric, a rank, or a verdict: the JSON keys of every row, and of every estimate entry, equal the sets in the contract exactly. | Test |
 | FR-305-AC-6 | Running the command leaves every fixture file byte-identical. | Test |
 | FR-305-AC-7 | Two runs over the same fixtures give identical output in both formats, ordered by hazard id then situation id. | Test |
 | FR-305-AC-8 | A control without a verification appears in its row with `control-without-verification` in `findings`; adding the verification removes it. | Test |

@@ -57,3 +57,18 @@ other-end kind, and it must allow OR across directions: an outgoing
 | FND-006 | medium | FR-304 applies its value test unevenly. `arises_from` has the same shape as the chain verbs: hazard to failure_mode only, and failure_mode declares no `arises_from`. A cycle over it is possible only through an off-vocabulary edge that Tier-1 already reports, which is the reason given for dropping the chain verbs. FR-304-AC-4 needs exactly such an edge. By FR-304's own argument the `arises_from` entry is ceremony. Delete it, and set AC-1 to an empty `acyclic_edges`, or explain what it guards that the chain verbs do not. | spec/functional/FR-304-chain-edges-cannot-cycle.md:28-30,34,42,45 |
 | FND-007 | medium | NFR-300 says each completeness rule of FR-301 to FR-304 SHALL be a `traceability` entry. FR-303 puts the decidedness, person and benefit-risk rules in the schema and in FR-105 instead, and FR-304 declares no entry. The NFR contradicts both. Restrict it to the rules that are relations. | spec/non-functional/NFR-300-completeness-rules-are-data-advisory-and-deterministic.md:22-25 |
 | FND-008 | medium | FR-202 allows a situation with zero `involves` edges. No relation reports such a situation, and FR-305's rows are hazard x situation pairs, so it disappears from both the findings and the report. FR-301 claims "a situation that leads nowhere is also reported", but that covers only the harm side. Add an outgoing `situation-has-hazard` relation, or state the gap. | spec/functional/FR-301-hazard-reaches-harm-through-situation.md:37-40,52-53 |
+
+## Dispositions
+
+Round 1, head `0da287c`. Committed in `reviews/` as SR-042; the review comment on PLAT-1524 carries the pre-renumbering id SR-025. Checked against `origin/main` FR-103 (PR #33 merged) and `origin/plat-1409-spec` at `33c79d4` (PR #34).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-302 now scopes by an outgoing `mitigates` (written on the control, FR-007) OR an incoming `assumes` from a `risk_estimate`. |
+| FND-002 | fixed | FR-302 forbids declaring the control relations anywhere without the scope; #34 FR-205-AC-6 now says the manifest declares no relation whose `from` is `control`, so the two agree. |
+| FND-003 | fixed | FR-103 on main now requires an `estimate` reference to a post-control `risk_estimate` and drops severity and probability. FR-303 uses `edges: [estimate]`. The "engine gap" heading is gone. |
+| FND-004 | fixed | FR-301 no longer tells FR-202 what to declare and states single ownership of the three relations. The duplicate `situation-has-hazard` still in #34 FR-202 is #34's to remove. |
+| FND-005 | fixed | FR-304 names `DisallowedEdgeType` and `disallowed-edge-target`, says both are warnings and that the edge still loads, and says the module does not prevent a cycle. |
+| FND-006 | fixed | The chain was redesigned onto `arises_from` (#34 FR-202). The existing `acyclic_edges` entry now covers failure mode to harm, so it guards authorable cycles and is not ceremony. AC-2..4 test this. |
+| FND-007 | fixed | NFR-300 now covers only the relations of FR-301..303 and the FR-304 cycle entry, and its Scope puts the FR-303 schema and report rules out of scope. |
+| FND-008 | fixed | FR-301 adds `situation-has-hazard` (FR-301-AC-9). FR-305 gives such a situation a row with `hazard: null` (FR-305-AC-9). |

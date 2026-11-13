@@ -60,3 +60,21 @@ requested on four points:
 - The `depends_on` targets resolve to existing or in-flight ids.
 - No paywalled standard text or names appear.
 - No score, region or acceptance is stored or defaulted.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | FR-305's row has a single `policy_region` ("the policy's own label for the entered levels"), but a row can hold several pre-control and post-control estimates (FR-305-AC-10). The contract does not say which estimate's levels the region belongs to, so two implementers would differ. Move `policy_region` into each `pre_control`/`post_control` entry, or name the one estimate it is computed from. FR-305-AC-3 should then name that entry. | spec/functional/FR-305-risk-summary-report.md:50,87 |
+
+## Dispositions
+
+Round 1, head `0da287c`. Committed in `reviews/` as SR-041; the review comment on PLAT-1524 carries the pre-renumbering id SR-024. `quire validate --scope . "spec/**/*.md"` reports no error or warning on FR-301..305 or NFR-300.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-302 states the `when_any` selector shape and links quire-rs ticket PLAT-1674, which exists. AC-1 is explicitly conditional on PLAT-1674 landing, by design. |
+| FND-002 | fixed | FR-302 now defines "verified" as an incoming `verifies` edge from any document, and says it does not test Test Matrix tagging. |
+| FND-003 | fixed | FR-303 requires `phase` as a top-level frontmatter key of `risk_estimate`, in a Behavior bullet, and FR-303-AC-5 tests it. |
+| FND-004 | fixed | FR-305 names the host, `quoin risk-summary <scope> [--format markdown\|json]` under PLAT-1576, and gives a JSON output contract with an exact key set. |
+| FND-005 | fixed | FR-303 no longer restates FR-103/FR-105 criteria; the attribution AC was removed from FR-305. |
