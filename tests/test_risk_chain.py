@@ -175,9 +175,12 @@ def test_each_chain_edge_is_allowed_to_exactly_its_target_type():
 
 
 @pytest.mark.trace("FR-205-AC-6")
-def test_no_completeness_relation_is_declared_over_control():
+def test_every_completeness_relation_over_control_is_scoped():
     relations = load_manifest()["traceability"]["required_relations"]
-    assert not [r for r in relations if r["from"] == "control"]
+    unscoped = [
+        r for r in relations if r["from"] == "control" and not r.get("when_any")
+    ]
+    assert unscoped == []
 
 
 @pytest.mark.trace("FR-202-AC-6", "FR-301-AC-10")

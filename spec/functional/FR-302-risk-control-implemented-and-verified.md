@@ -43,19 +43,15 @@ control, FR-007), **or** an incoming `assumes` edge from a `risk_estimate`
 (FR-204). A security control that does neither is not reported.
 
 The `where` selector (FR-058) filters on a top-level frontmatter field of the
-`from` document and cannot express this. The engine lacks a selector that
-narrows `from` documents by an edge. That selector is quire-rs ticket
-**PLAT-1674**. Its declared shape, which this requirement asks for and PLAT-1674
-may refine, is an optional relation key `when_any`: a list of conditions, each
-`{verb, direction, other: [kinds]}`, where the `from` document is in scope if
-any one condition holds. The scope here is therefore:
+`from` document and cannot express this. The edge-conditioned selector is the
+optional relation key `when_any` (`agent-ix/quire-rs` FR-058): a list
+of conditions, each `{verb, direction, other: [kinds]}`, where the `from`
+document is in scope if any one condition holds. The scope here is therefore:
 
 `when_any: [{verb: mitigates, direction: outgoing, other: [hazard, failure_mode]}, {verb: assumes, direction: incoming, other: [risk_estimate]}]`
 
 The relations SHALL NOT be declared, in this module or any other, without that
 scope. Declared unscoped they would report every unrelated security control.
-Until PLAT-1674 lands the manifest holds no control relation, and the
-acceptance criteria that load or run them are not runnable.
 
 ## Inputs
 
@@ -77,16 +73,16 @@ acceptance criteria that load or run them are not runnable.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-302-AC-1 | With PLAT-1674 landed, the manifest declares both relations with the fields and scope above and loads without a declaration error. | Test |
+| FR-302-AC-1 | The manifest declares both relations with the fields and scope above and loads without a declaration error. | Test |
 | FR-302-AC-2 | A control that mitigates a hazard, is satisfied by an `FR` and is verified by a test document yields no finding. | Test |
 | FR-302-AC-3 | The same control without the `satisfies` edge yields exactly one `control-without-requirement` finding; without the `verifies` edge, exactly one `control-without-verification` finding. | Test |
 | FR-302-AC-4 | A `verifies` edge from a retained-evidence record referenced by id satisfies `control-without-verification`. | Test |
 | FR-302-AC-5 | A control assumed by a `post_control` estimate that mitigates no hazard is reported when it lacks either link. | Test |
 | FR-302-AC-6 | A control that mitigates no hazard or failure mode and is assumed by no estimate yields neither finding. | Test |
 | FR-302-AC-7 | A verification whose evidence records a failing result still satisfies the relation, and no module key records the result. | Test |
-| FR-302-AC-8 | The scope is stated as the `when_any` shape above and links quire-rs ticket PLAT-1674 as its provider. | Inspection |
+| FR-302-AC-8 | The scope is stated as the `when_any` shape above and cites `agent-ix/quire-rs` FR-058 as its provider. | Inspection |
 
 ## Dependencies
 
-- **Upstream**: [FR-205](./FR-205-control-requirement-and-verification-links.md), [FR-204](./FR-204-post-control-risk-estimate.md), [FR-301](./FR-301-hazard-reaches-harm-through-situation.md); `agent-ix/quire-rs` FR-058 and PLAT-1674 (edge-conditioned scope selector)
+- **Upstream**: [FR-205](./FR-205-control-requirement-and-verification-links.md), [FR-204](./FR-204-post-control-risk-estimate.md), [FR-301](./FR-301-hazard-reaches-harm-through-situation.md); `agent-ix/quire-rs` FR-058 (edge-conditioned `when_any` scope)
 - **Downstream**: [FR-305](./FR-305-risk-summary-report.md)
