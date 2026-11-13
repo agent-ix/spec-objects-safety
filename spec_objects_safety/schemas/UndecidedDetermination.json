@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/UndecidedDetermination.json",
+  "type": "object",
+  "properties": {
+    "decision": {
+      "type": "string",
+      "const": "undecided"
+    },
+    "rationale": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/StatedText.json"
+    }
+  },
+  "required": [
+    "decision"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A decision not yet made. `decided_by` is refused: nobody has decided.",
+  "additionalProperties": false
+}

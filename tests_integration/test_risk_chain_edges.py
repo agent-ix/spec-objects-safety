@@ -109,6 +109,58 @@ def control(root, cid="CTRL-001"):
     (root / f"{cid}.md").write_text(text.replace("CTRL-001", cid))
 
 
+DECISION_FILL = {
+    "<undecided, accepted or not_accepted>": "accepted",
+    "<why the person decided so>": "Within the policy.",
+    "<person who decided, empty while undecided>": "A. Person",
+    "<the benefit that justifies the residual risks>": "Faster braking.",
+    "<product>": "Brake controller",
+}
+
+
+def decision_doc(root, kind, did, old_id, edges=()):
+    """A filled residual_risk, benefit_risk or evaluation carrying `edges`."""
+    text = (SKELETONS_DIR / f"{kind}.md").read_text().replace(old_id, did)
+    for placeholder, value in DECISION_FILL.items():
+        text = text.replace(placeholder, value)
+    (root / f"{did}.md").write_text(_with_edges(text, edges))
+
+
+def residual_risk(root, rid, *, estimate=(), policy=()):
+    edges = [("estimate", t) for t in estimate] + [("references", t) for t in policy]
+    decision_doc(root, "residual_risk", rid, "RR-001", edges)
+
+
+def benefit_risk(root, bid, *covers):
+    decision_doc(
+        root, "benefit_risk", bid, "BR-001", [("references", t) for t in covers]
+    )
+
+
+def evaluation(root, oid, *considers):
+    decision_doc(
+        root,
+        "overall_residual_risk_evaluation",
+        oid,
+        "ORE-001",
+        [("references", t) for t in considers],
+    )
+
+
+def policy(root, pid="POL-001"):
+    text = (
+        (SKELETONS_DIR / "acceptability_policy.md").read_text().replace("POL-001", pid)
+    )
+    for placeholder, value in (
+        ("<severity level>", "minor"),
+        ("<probability level>", "rare"),
+        ("<region>", "acceptable"),
+        ("<true or false>", "false"),
+    ):
+        text = text.replace(placeholder, value)
+    (root / f"{pid}.md").write_text(text)
+
+
 def requirement(root, rid, kind, edge, target):
     """An iso FR or IT (a TC would do) carrying one edge to `target`."""
     text = (_module("spec_artifacts_iso") / "skeletons" / f"{kind}.md").read_text()
@@ -378,3 +430,89 @@ def test_the_post_control_finding_is_tunable_on_its_own_key(tmp_path):
 def test_an_assumes_edge_to_an_undeclared_id_does_not_satisfy_the_relation(tmp_path):
     estimate(tmp_path, "EST-001", "post_control", assumes=["CTRL-999"])
     assert _count(validate(tmp_path), "post-control-without-control") == 1
+
+
+# ── FR-103 / FR-106 / FR-107: residual-risk edges ───────────────────────────
+
+
+def risk_chain(root):
+    hazard(root)
+    situation(root, "SIT-001", "HAZ-001")
+    control(root)
+    estimate(root, "EST-001", estimates=["SIT-001"], assumes=["CTRL-001"])
+    policy(root)
+
+
+@pytest.mark.trace("FR-103-AC-1")
+def test_a_residual_risk_naming_an_estimate_and_a_policy_validates(tmp_path):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"])
+    clean_of_edge_errors(validate(tmp_path))
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_an_estimate_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["HAZ-001"])
+    lines = findings(validate(tmp_path), "disallowed-edge-target")
+    assert any("RR-001:" in line and "'hazard'" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_a_policy_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["EST-001"])
+    lines = findings(validate(tmp_path), "disallowed-edge-target")
+    assert any("RR-001:" in line and "'risk_estimate'" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-103-AC-4")
+def test_strict_validate_fails_on_an_undeclared_estimate(tmp_path):
+    residual_risk(tmp_path, "RR-001", estimate=["EST-999"])
+    result = validate(tmp_path, "--strict")
+    assert result.returncode != 0, result.stderr
+    line = next(iter(findings(result, "dangling-reference")), "")
+    assert "RR-001.md" in line and "estimate" in line and "EST-999" in line, line
+
+
+@pytest.mark.trace("FR-106-AC-1")
+def test_a_benefit_risk_covering_two_residual_risks_validates(tmp_path):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"])
+    residual_risk(tmp_path, "RR-002", estimate=["EST-001"], policy=["POL-001"])
+    benefit_risk(tmp_path, "BR-001", "RR-001", "RR-002")
+    clean_of_edge_errors(validate(tmp_path))
+
+
+@pytest.mark.trace("FR-106-AC-4")
+def test_strict_validate_fails_on_an_undeclared_covered_risk(tmp_path):
+    benefit_risk(tmp_path, "BR-001", "RR-999")
+    result = validate(tmp_path, "--strict")
+    assert result.returncode != 0, result.stderr
+    line = next(iter(findings(result, "dangling-reference")), "")
+    assert "BR-001.md" in line and "RR-999" in line, line
+
+
+@pytest.mark.trace("FR-106-AC-6")
+def test_a_benefit_risk_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
+    hazard(tmp_path)
+    benefit_risk(tmp_path, "BR-001", "HAZ-001")
+    lines = findings(validate(tmp_path), "disallowed-edge-target")
+    assert any("BR-001:" in line and "'hazard'" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-107-AC-1")
+def test_an_evaluation_considering_residual_risks_and_benefit_risks_validates(tmp_path):
+    risk_chain(tmp_path)
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["POL-001"])
+    benefit_risk(tmp_path, "BR-001", "RR-001")
+    evaluation(tmp_path, "ORE-001", "RR-001", "BR-001")
+    clean_of_edge_errors(validate(tmp_path))
+
+
+@pytest.mark.trace("FR-107-AC-1")
+def test_an_evaluation_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
+    hazard(tmp_path)
+    evaluation(tmp_path, "ORE-001", "HAZ-001")
+    lines = findings(validate(tmp_path), "disallowed-edge-target")
+    assert any("ORE-001:" in line and "'hazard'" in line for line in lines), lines

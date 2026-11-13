@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json",
+  "type": "string",
+  "minLength": 1,
+  "pattern": "^[^<>\\s][^<>]*$",
+  "description": "A named person who decided: not blank and not an unfilled `<placeholder>`."
+}

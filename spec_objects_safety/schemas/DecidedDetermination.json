@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecidedDetermination.json",
+  "type": "object",
+  "properties": {
+    "decision": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "accepted"
+        },
+        {
+          "type": "string",
+          "const": "not_accepted"
+        }
+      ]
+    },
+    "rationale": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/StatedText.json"
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    }
+  },
+  "required": [
+    "decision",
+    "rationale",
+    "decided_by"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A decision a named person made. The rationale and `decided_by` are required\nand non-blank. There is no default for `decision`; a decision date or history\ncomes from version control, not from a field.",
+  "additionalProperties": false
+}

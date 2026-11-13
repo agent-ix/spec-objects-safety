@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyCell.json",
+  "type": "object",
+  "properties": {
+    "severity": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+    },
+    "probability": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+    },
+    "region": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PolicyName.json"
+    }
+  },
+  "required": [
+    "severity",
+    "probability",
+    "region"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The region the policy assigns to one severity and probability pairing.",
+  "additionalProperties": false
+}

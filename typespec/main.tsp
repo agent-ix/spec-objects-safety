@@ -461,3 +461,231 @@ model RiskEstimate {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+// ---------------------------------------------------------------------------
+// Acceptability policy, residual-risk decisions, benefit-risk and the overall
+// evaluation (FR-101, FR-103, FR-104, FR-106, FR-107).
+//
+// Every value here is written by a person. The seal on each model forbids a
+// score, a region on a decision record, a ratio, a total and a date, and no
+// member has a default, so no tool derives, stores or defaults a score, a
+// region or an acceptance.
+// ---------------------------------------------------------------------------
+
+/**
+ * A level or region name a project chooses: text that is not blank and not an
+ * unfilled `<placeholder>`.
+ */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar PolicyName extends string;
+
+/**
+ * Text a person wrote (a rationale, a benefit, a product): not blank and not an
+ * unfilled `<placeholder>`.
+ */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar StatedText extends string;
+
+/** A named person who decided: not blank and not an unfilled `<placeholder>`. */
+@minLength(1)
+@pattern("^[^<>\\s][^<>]*$")
+scalar PersonName extends string;
+
+/**
+ * One region of the policy. `outside_acceptable` is set by the project's
+ * people and has no default: a region that omits it is refused.
+ */
+@extension("additionalProperties", false)
+model PolicyRegion {
+  name: PolicyName;
+  outside_acceptable: boolean;
+  ...Record<never>;
+}
+
+/** The region the policy assigns to one severity and probability pairing. */
+@extension("additionalProperties", false)
+model PolicyCell {
+  severity: PolicyName;
+  probability: PolicyName;
+  region: PolicyName;
+  ...Record<never>;
+}
+
+/**
+ * The policy table: the severity levels, the probability levels, the regions
+ * and the region of each pairing. A level name is listed once per list.
+ * Whether every pairing has exactly one cell naming a listed region is a
+ * cross-row rule a JSON Schema cannot state; it is checked over the document
+ * by the engine's table assertions once they can (see the manifest).
+ */
+@extension("additionalProperties", false)
+model PolicyTable {
+  @minItems(1)
+  @uniqueItems
+  severities: PolicyName[];
+
+  @minItems(1)
+  @uniqueItems
+  probabilities: PolicyName[];
+
+  @minItems(1)
+  regions: PolicyRegion[];
+
+  @minItems(1)
+  cells: PolicyCell[];
+
+  ...Record<never>;
+}
+
+/**
+ * An acceptability policy object. The table sits under `policy`, whole or
+ * refused, optional on the record for the reason `RiskEstimate.estimate` is.
+ */
+@extension("additionalProperties", false)
+model AcceptabilityPolicy {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  policy?: PolicyTable;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/**
+ * A decision not yet made. `decided_by` is refused: nobody has decided.
+ */
+@extension("additionalProperties", false)
+model UndecidedDetermination {
+  decision: "undecided";
+  rationale?: StatedText;
+  ...Record<never>;
+}
+
+/**
+ * A decision a named person made. The rationale and `decided_by` are required
+ * and non-blank. There is no default for `decision`; a decision date or history
+ * comes from version control, not from a field.
+ */
+@extension("additionalProperties", false)
+model DecidedDetermination {
+  decision: "accepted" | "not_accepted";
+  rationale: StatedText;
+  decided_by: PersonName;
+  ...Record<never>;
+}
+
+/** The decision on a residual risk: undecided, or decided by a named person. */
+union Determination {
+  UndecidedDetermination,
+  DecidedDetermination,
+}
+
+/**
+ * A residual-risk record. The post-control severity and probability live only
+ * on the referenced `risk_estimate`; the record carries the decision. The
+ * `estimate` reference and the policy reference are edges authored in the
+ * document's relationships, not members here.
+ */
+@extension("additionalProperties", false)
+model ResidualRisk {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: Determination;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/** A benefit-risk decision not yet made. */
+@extension("additionalProperties", false)
+model UndecidedBenefitDetermination {
+  benefit: StatedText;
+  decision: "undecided";
+  rationale?: StatedText;
+  ...Record<never>;
+}
+
+/** A benefit-risk decision a named person made. */
+@extension("additionalProperties", false)
+model DecidedBenefitDetermination {
+  benefit: StatedText;
+  decision: "accepted" | "not_accepted";
+  rationale: StatedText;
+  decided_by: PersonName;
+  ...Record<never>;
+}
+
+/** The weighing of a benefit against the residual risks a record covers. */
+union BenefitDetermination {
+  UndecidedBenefitDetermination,
+  DecidedBenefitDetermination,
+}
+
+/**
+ * A benefit-risk record. The residual risks it covers are `references` edges
+ * to `residual_risk` documents, authored in the document's relationships.
+ */
+@extension("additionalProperties", false)
+model BenefitRisk {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: BenefitDetermination;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/** An overall evaluation not yet decided. */
+@extension("additionalProperties", false)
+model UndecidedEvaluation {
+  product: StatedText;
+  decision: "undecided";
+  rationale?: StatedText;
+  ...Record<never>;
+}
+
+/** An overall evaluation a named person decided. */
+@extension("additionalProperties", false)
+model DecidedEvaluation {
+  product: StatedText;
+  decision: "accepted" | "not_accepted";
+  rationale: StatedText;
+  decided_by: PersonName;
+  ...Record<never>;
+}
+
+/** The decision on the residual risk of the product taken together. */
+union EvaluationDetermination {
+  UndecidedEvaluation,
+  DecidedEvaluation,
+}
+
+/**
+ * The overall residual-risk evaluation of one product. The residual risks and
+ * benefit-risk records it considers are `references` edges authored in the
+ * document's relationships; the tooling does not aggregate them into the
+ * decision.
+ */
+@extension("additionalProperties", false)
+model OverallResidualRiskEvaluation {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  determination?: EvaluationDetermination;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

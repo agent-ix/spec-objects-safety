@@ -38,6 +38,10 @@ SCORED_COLUMNS = {
     "harm": set(),
     "hazardous_situation": set(),
     "risk_estimate": {"severity", "probability", "rationale"},
+    "acceptability_policy": set(),
+    "residual_risk": set(),
+    "benefit_risk": set(),
+    "overall_residual_risk_evaluation": set(),
 }
 
 NAMED_NEGATIVE_CASES = {
@@ -57,6 +61,13 @@ NAMED_NEGATIVE_CASES = {
     "risk_estimate-no-estimate-table.md",
     "risk_estimate-no-provenance.md",
     "risk_estimate-unparsable-date.md",
+    "acceptability_policy-unfilled-flag.md",
+    "acceptability_policy-no-cells.md",
+    "residual_risk-undefined-decision.md",
+    "residual_risk-empty-rationale.md",
+    "residual_risk-placeholder-decider.md",
+    "benefit_risk-empty-benefit.md",
+    "overall_residual_risk_evaluation-empty-product.md",
 }
 
 

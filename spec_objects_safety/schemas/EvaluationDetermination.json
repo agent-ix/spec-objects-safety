@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvaluationDetermination.json",
+  "anyOf": [
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/UndecidedEvaluation.json"
+    },
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecidedEvaluation.json"
+    }
+  ],
+  "description": "The decision on the residual risk of the product taken together."
+}

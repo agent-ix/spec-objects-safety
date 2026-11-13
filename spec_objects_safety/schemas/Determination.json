@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Determination.json",
+  "anyOf": [
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/UndecidedDetermination.json"
+    },
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/DecidedDetermination.json"
+    }
+  ],
+  "description": "The decision on a residual risk: undecided, or decided by a named person."
+}

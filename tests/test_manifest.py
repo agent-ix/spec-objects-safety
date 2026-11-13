@@ -47,7 +47,9 @@ def test_object_types_are_well_formed() -> None:
     assert sorted(types) == sorted(OBJECT_TYPES)
     for name, entry in types.items():
         assert entry.get("data_schema"), f"{name}: declares a data_schema"
-        assert entry.get("allowed_links"), f"{name}: declares allowed_links"
+        # A policy is a leaf: it names levels and links to nothing.
+        if name != "acceptability_policy":
+            assert entry.get("allowed_links"), f"{name}: declares allowed_links"
 
 
 @pytest.mark.trace("TC-007", "FR-001-AC-7", "FR-001-CON-2")

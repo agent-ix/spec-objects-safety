@@ -160,7 +160,10 @@ def test_lexicon_and_types_hold_the_chain_words():
 
 @pytest.mark.trace("FR-202-AC-3", "FR-203-AC-8")
 def test_each_chain_edge_is_allowed_to_exactly_its_target_type():
-    links = {ot["name"]: ot["allowed_links"] for ot in load_manifest()["object_types"]}
+    links = {
+        ot["name"]: ot.get("allowed_links", {})
+        for ot in load_manifest()["object_types"]
+    }
     assert links["hazardous_situation"] == {"arises_from": ["hazard"]}
     assert links["harm"] == {"arises_from": ["hazardous_situation"]}
     assert links["risk_estimate"] == {
