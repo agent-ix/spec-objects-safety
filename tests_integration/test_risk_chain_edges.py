@@ -868,9 +868,25 @@ def test_a_control_assumed_by_an_estimate_is_reported_without_mitigating(tmp_pat
         assert len(lines) == 1 and "CTRL-001" in lines[0], result.stderr
 
 
-@pytest.mark.trace("FR-302-AC-6")
+@pytest.mark.trace("FR-302-AC-6", "FR-205-AC-3")
 def test_an_unrelated_security_control_is_not_reported(tmp_path):
     control(tmp_path)
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    result = validate(tmp_path)
+    for check in CONTROL_CHECKS:
+        assert findings(result, check) == [], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-7")
+def test_a_verification_recording_a_failing_result_still_satisfies_the_relation(
+    tmp_path,
+):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    requirement(tmp_path, "TC-901", "tc", "verifies", f"{LOCAL}/CTRL-001")
+    path = tmp_path / "TC-901.md"
+    path.write_text(path.read_text() + "\nResult: failed.\n")
     result = validate(tmp_path)
     for check in CONTROL_CHECKS:
         assert findings(result, check) == [], result.stderr
