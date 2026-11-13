@@ -111,3 +111,5 @@ three of those are high.
 | FND-008 | fixed | 33c79d4: a lexicon entry `probability` is added with its own meaning (AC-13). |
 | FND-009 | fixed | 33c79d4: the link is an edge, the verb is `assumes`, and AC-1 asserts the resolved incoming edge. Schema enforcement of that edge is new finding FND-011. |
 | FND-010 | fixed | 33c79d4: FR-205-AC-1 and AC-2 assert the resolved incoming `satisfied_by`/`verifies` edge in `quire extract`, which can fail. |
+| FND-011 | fixed | Round 2 (4ef0e38): FR-204 declares `post-control-assumes-control` with `where: {field: phase, values: [post_control]}`, `to: [control]`, outgoing. AC-2, AC-7, AC-8 and AC-9 test the warning, the pre-control silence, promotion and the dangling-target case. FR-203 makes `phase` a top-level frontmatter key (AC-6) and states that the pre-control edge ban is not enforced. |
+| FND-012 | fixed | Round 2 (4ef0e38): FR-203 types a level as a non-empty string equal to none of the three `EpistemicState` members, or as exactly one of them. AC-14 checks that the emitted level branch excludes the markers. |
