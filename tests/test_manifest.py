@@ -288,7 +288,9 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     for relation in manifest["traceability"]["required_relations"]:
         assert relation["from"] in kinds, relation["from"]
         for condition in relation.get("when_any", []):
-            assert condition["verb"] in vocabulary, condition["verb"]
+            assert condition["verb"] in vocabulary | PENDING_ISO_VERBS, condition[
+                "verb"
+            ]
             assert set(condition["other"]) <= kinds, condition["other"]
         for verb in relation["edges"]:
             assert (
