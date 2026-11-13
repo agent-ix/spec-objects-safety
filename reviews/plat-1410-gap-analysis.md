@@ -70,3 +70,15 @@ as shipped, dangling and disallowed-target diagnostics, acyclicity, and no
   relation because `to` is constrained.
 - FND-003: add TC rows to `spec/tests.md` and `covers` edges for FR-201..FR-205,
   and put the TC id on each `trace` marker.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, a9a13c2: `estimate-has-situation` is declared, and FR-203-AC-9 is tested (one warning, exit 0, the edge clears it). |
+| FND-002 | fixed | Round 1, a9a13c2: `post-control-assumes-control` is declared with `where` on `phase`; FR-204-AC-2, AC-7, AC-8 and AC-9 are tested. |
+| FND-003 | rejected | Out of this PR, engine convention. Ruling from the code lead: the hand-written TC rows in spec/tests.md are a known antipattern, and the engine's TC-row requirement is an engine/convention gap outside this PR. |
+| FND-004 | fixed | Round 1, a9a13c2: PLAT-1676 (spec-artifacts-iso verbs and the `arises_from` inverse) exists and is cited, with an expiry in conftest.py and the integration docstring. |
+| FND-005 | deferred | PLAT-1561 owns the control links; the PR body records FR-205-AC-3 as deferred because it needs a quire-rs `evidence::qualify` library call. |
+| FND-006 | deferred | The PR body records it: `quire extract` returns the Estimate row as a raw string, so only the schema half of FR-203-AC-14 can be tested until the engine maps module-specific keys. |
+| FND-007 | fixed | Round 1, a9a13c2: the `sequence_of_events` locator, its skeleton section and its contract line are removed. |

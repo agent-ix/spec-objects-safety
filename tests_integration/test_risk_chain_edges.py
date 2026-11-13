@@ -209,10 +209,15 @@ def test_estimates_of_one_situation_and_of_two_validate_without_a_choice(tmp_pat
     situation(tmp_path, "SIT-001", "HAZ-001")
     situation(tmp_path, "SIT-002", "HAZ-001")
     estimate(tmp_path, "EST-001", "pre_control", estimates=["SIT-001", "SIT-002"])
-    estimate(tmp_path, "EST-002", "post_control", estimates=["SIT-001"])
+    control(tmp_path)
+    estimate(
+        tmp_path, "EST-002", "post_control", estimates=["SIT-001"], assumes=["CTRL-001"]
+    )
     result = validate(tmp_path)
     clean_of_edge_errors(result)
-    for word in ("primary", "preferred", "upper"):
+    assert findings(result, "post-control-without-control") == [], result.stderr
+    assert findings(result, "estimate-without-situation") == [], result.stderr
+    for word in ("primary", "preferred", "selected", "upper"):
         assert word not in result.stderr, result.stderr
 
 

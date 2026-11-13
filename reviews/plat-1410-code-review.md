@@ -65,3 +65,12 @@ blocks the FR-204 relation SR-057 FND-002 asks for.
   validates. The integration test already makes that assertion.
 - FND-004: low with medium confidence, because the ticket names the file. The
   value test fails: nothing reads it.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, a9a13c2: the string-absence test is deleted; FR-204-AC-5 stays covered by the integration test. |
+| FND-002 | fixed | Round 1, a9a13c2: `assert len(skeletons) == 7` removed. |
+| FND-003 | fixed | Round 1, a9a13c2: the `MODEL_OF` literal comparison and its import are removed. |
+| FND-004 | fixed | Round 1, a9a13c2: `mappings.yaml`, its four tests, and its wheel, npm and stage-npm includes are removed. |
