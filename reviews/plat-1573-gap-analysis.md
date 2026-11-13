@@ -61,3 +61,9 @@ that type.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-302-AC-4 (a `verifies` edge from a retained-evidence record satisfies `control-without-verification`) has no tagged test, and no ticket or `blocked-by` edge tracks the gap. | spec/functional/FR-302-risk-control-implemented-and-verified.md:79 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | still-open | Round 1, b29e139. FR-302-AC-4 is correctly left as written (Test), and the module half (`to: []`, a non-test verifier counts) is now tested. But PLAT-1573 still has no blocked-by edge or ticket for the engineering-assurance evidence-record type. Its only relations are blocks PLAT-1576 and blocked-by PLAT-1561 and PLAT-1524. The gap is still untracked. This is a tracker action, not a code change: once the lead creates or links that ticket as blocked-by, the outcome becomes deferred with that ticket id. |

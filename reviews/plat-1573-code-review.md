@@ -76,3 +76,16 @@ text and no roadmap.
   `status: failed`, which is the `status`-derived value FR-302 Behavior names.
   In the same test, assert that neither relation and no declared type has a
   `result`, `status`, `passed`, `verified` or `effective` key.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | `test_a_verifies_edge_from_a_non_test_document_counts_as_verification` is tagged FR-302-AC-2. AC-2 is about a control "verified by a test document", but this test uses an `NFR` verifier. It actually backs the empty `to:` that FR-302 Behavior requires, one of "the fields above" in FR-302-AC-1. Retag it FR-302-AC-1. | tests_integration/test_risk_chain_edges.py:885-893 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, b29e139. `test_the_control_relations_declare_the_specified_shape_and_scope` asserts the exact relation names, `edges`, `to`, `direction`, `check` and `when_any` (equal to the FR-302 scope) for both relations. A failure-mode-only fixture and an `NFR`-verifier fixture were added. The reviewer re-ran both mutants against a copy of b29e139 and both are now killed. `other: [hazard]` fails the shape test and the failure-mode test. `to: [IT, TC]` fails the shape test and the non-test-verifier test. |
+| FND-002 | fixed | Round 1, b29e139. TC-901 now carries `status: failed` in frontmatter, and the test asserts it landed there. The test then walks the manifest and asserts that no key, and no `field`/`fields` selector value, is `status`, `result`, `passed`, `verified` or `effective`. The TC skeleton has no `status` field, but quire 0.45.0 accepts the extra key: the reviewer's probe shows no diagnostic for TC-901 or `status`, with or without `--strict`. That is acceptable, because a frontmatter `status` is exactly the `status`-derived value FR-302 Behavior says the relations must not read, so it is the right adversarial input. |

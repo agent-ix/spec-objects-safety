@@ -55,3 +55,11 @@ ships.
 - FND-003: AC-8 could read "... and cites quire-rs FR-058 as its provider".
   Drop PLAT-1674 from Dependencies, or keep it only as the Description's
   tracking note.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, b29e139. The FR-205 Behavior line now reads "The module SHALL declare no completeness relation over `control` without the FR-302 `when_any` scope.", which agrees with AC-6 and the manifest. |
+| FND-002 | still-open | Round 1, b29e139. The Description is fixed: it now cites quire-rs FR-058 `when_any` and no longer says the selector does not exist. The frontmatter gains `ix://agent-ix/quire-rs/FR-058` `depends_on`, a full ix:// target, not a bare id; `quire validate` exits 0 and the foreign authority is skipped. But Dependencies still lists FR-058 under **Downstream** ("`agent-ix/quire-rs` FR-058 (the `when_any` scope)"), which contradicts the new `depends_on` edge. It belongs on the Upstream line. |
+| FND-003 | fixed | Round 1, b29e139. FR-302-AC-8 now reads "cites `agent-ix/quire-rs` FR-058 as its provider". The Description and the Upstream line cite FR-058 without the ticket. |

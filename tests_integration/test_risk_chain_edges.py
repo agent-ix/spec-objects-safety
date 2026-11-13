@@ -882,7 +882,7 @@ def test_a_control_mitigating_only_a_failure_mode_is_in_scope(tmp_path):
         assert len(lines) == 1 and "CTRL-001" in lines[0], result.stderr
 
 
-@pytest.mark.trace("FR-302-AC-2")
+@pytest.mark.trace("FR-302-AC-1")
 def test_a_verifies_edge_from_a_non_test_document_counts_as_verification(tmp_path):
     hazard(tmp_path)
     risk_control(tmp_path, "CTRL-001", "HAZ-001")

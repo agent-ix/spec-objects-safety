@@ -94,5 +94,5 @@ unscoped rule would report every unrelated security control.
 
 ## Dependencies
 
-- **Upstream**: [FR-007](./FR-007-authorable-mitigates-edge.md), [FR-204](./FR-204-post-control-risk-estimate.md); `agent-ix/spec-objects-security` FR-007; `agent-ix/engineering-assurance` (retained-evidence records); FR-302
-- **Downstream**: PLAT-1524 FR-302 (completeness rules); `agent-ix/quire-rs` FR-058 (the `when_any` scope)
+- **Upstream**: [FR-007](./FR-007-authorable-mitigates-edge.md), [FR-204](./FR-204-post-control-risk-estimate.md); `agent-ix/spec-objects-security` FR-007; `agent-ix/engineering-assurance` (retained-evidence records); FR-302; `agent-ix/quire-rs` FR-058 (the `when_any` scope)
+- **Downstream**: PLAT-1524 FR-302 (completeness rules)
