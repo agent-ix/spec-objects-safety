@@ -91,3 +91,12 @@ PR creates, and the test tagged with that criterion asserts its opposite.
   with no flag. Then assert that `trace:hazard-without-situation=error` exits
   non-zero and that the `situation-without-harm` line for S2 still starts
   with `warning:`.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, eac2fb4: FR-202-AC-6 now says FR-202 declares no relation of its own, that the `hazardous_situation` relations (including `situation-without-hazard`) are declared once in FR-301, and that no check token is declared by two relations. The test asserts check uniqueness and `owners == ["hazardous_situation"]` for `situation-without-hazard`, which matches the reworded criterion. |
+| FND-002 | fixed | Round 1, eac2fb4: the guard is back to `assert not [r for r in relations if r["from"] == "control"]`, renamed `test_no_completeness_relation_is_declared_over_control`, and matches FR-205-AC-6 on main. The `when_any` relaxation stays with PLAT-1573 (#41). |
+| FND-003 | fixed | Round 1, eac2fb4: the fixture is a hazard with no situation, a situation with no hazard, and a harm with no situation, so each chain check fires once. With no flag the run exits 0. `trace:hazard-without-situation=error` exits non-zero, and each other check's line still starts with `warning:`. |
+| FND-004 | fixed | Round 1, eac2fb4: `test_arises_from_stays_acyclic_across_the_whole_chain` is tagged `FR-202-AC-9` and `FR-304-AC-1`. |

@@ -93,3 +93,39 @@ PLAT-1561's claims, checked:
   will report exactly the missing-`verifies` diagnostic that FR-205 says the
   retained-evidence route SHALL NOT need. The PLAT-1573 review should check
   that conflict.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, eac2fb4: there are three FR-303-AC-5 tests. A unit test reads `phase` from the emitted frontmatter schema. A unit test shows a body-only `phase` estimate is invalid while the filled one validates. An integration test shows the relation stops reporting once `phase` moves to the body. |
+| FND-002 | fixed | Round 1, eac2fb4: `risk_estimate` declares `frontmatter_schema_ref: schemas/RiskEstimateFrontmatter.json`, emitted from TypeSpec (`schemas-check`: 37 match). The reviewer compared stderr before and after on 13 bundles. Both false `phase` advisories are gone from every bundle with no estimate. Exit codes are unchanged everywhere. The only other change is one extra `[frontmatter]` error when `phase` is not one of the two values, which the body extraction already reports: a duplicate diagnostic, not a new failure. |
+| FND-003 | fixed | Round 1, eac2fb4: the FR-304-AC-4 fixture is FM-001, then HAZ-001 `arises_from` FM-001, then SIT-001, then HARM-001, with no cycle finding asserted. |
+| FND-004 | fixed | Round 1, eac2fb4: FR-205-AC-1 and AC-2 now ask for no `dangling-reference` for the edge under `--strict`, and for the same edge to dangle once the control is removed. The existing test asserts exactly that and can fail. Wording nit: "validates under `--strict`" is not literally true for this fixture. The strict run exits 3 on an unrelated `references 'name'` dangling edge from the iso FR skeleton, and the test asserts only the edge-specific part. |
+| FND-005 | fixed | Round 1, eac2fb4: FR-205-AC-3 is reworded to the module-observable claim, with `evidence::qualify` cited to quire-rs FR-078. A `quire validate` test asserts exit 0 and no line containing `verif` for a satisfied control that has no `verifies` edge. The conflict with FR-302 is recorded as FND-006. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | FR-205 and FR-302, both on main, disagree on how a risk control verified only by retained evidence is checked. FR-205 says retained evidence binds to the satisfying FR's criteria through `evidence::qualify` and "SHALL require no authored `verifies` edge". FR-302 counts a control as verified only through an incoming `verifies` edge, from a test or from a retained-evidence record referenced by id (FR-302-AC-4). PLAT-1573's `control-has-verification` (#41, `df09e8c`) implements FR-302, so a risk control backed only by evidence on its FR will be reported `control-without-verification`. The reworded FR-205-AC-3 test cannot show this: its fixture control mitigates nothing and no estimate assumes it, so it is outside FR-302's `when_any` scope and passes with #41 too. | spec/functional/FR-205-control-requirement-and-verification-links.md:39-49, spec/functional/FR-205-control-requirement-and-verification-links.md:82, spec/functional/FR-205-control-requirement-and-verification-links.md:93, spec/functional/FR-302-risk-control-implemented-and-verified.md |
+
+## New finding detail
+
+- FND-006: FR-205 is the side that must change. A required relation tests
+  one edge hop and cannot follow an `evidence::qualify` binding from an FR's
+  criterion back to a control, so FR-302's model is the only one the engine
+  can check. FR-302 already provides for retained evidence: a `verifies`
+  edge from an evidence record referenced by id, with an empty `to`.
+  - Rewrite FR-205's "Retained evidence" paragraph and its Behavior line
+    "The module SHALL require no authored `verifies` edge for the
+    retained-evidence route" to match FR-302: a risk control's retained
+    evidence reaches it through a `verifies` edge from the evidence record.
+  - Scope FR-205-AC-3 to what stays true: a control outside FR-302's scope
+    raises no missing-verification diagnostic. That is what its test asserts.
+  - #41 needs no change for this; FR-302-AC-4 tests the evidence-record
+    route.
+
+  #40 rewrote AC-3, so the edit fits there. #40's code does not conflict with
+  #41, so deferring the FR-205 prose edit to #41 is also sound, if the lead
+  records that.
