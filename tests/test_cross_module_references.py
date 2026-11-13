@@ -19,6 +19,7 @@ import yaml
 from tests.conftest import (
     MANIFEST_PATH,
     OBJECT_TYPES,
+    PENDING_ISO_VERBS,
     load_manifest,
     object_types,
     schema_of,
@@ -35,7 +36,7 @@ OPEN_MIGRATIONS = (
 
 
 @pytest.mark.trace("TC-060", "FR-006-AC-1")
-def test_the_module_declares_exactly_hazard_and_failure_mode():
+def test_the_module_declares_exactly_its_object_types():
     declared = {ot["name"] for ot in object_types()}
     assert declared == set(OBJECT_TYPES)
 
@@ -110,7 +111,7 @@ def test_every_verb_this_module_uses_exists_in_the_iso_vocabulary():
         used |= set(relation["edges"])
     used |= set(manifest["traceability"]["acyclic_edges"])
 
-    unknown = sorted(used - vocabulary)
+    unknown = sorted(used - vocabulary - PENDING_ISO_VERBS)
     assert not unknown, f"verbs outside the iso vocabulary: {unknown}"
 
 

@@ -11,6 +11,7 @@ authors = ["Agent IX <agents@agent-ix.dev>"]
 packages = [{ include = "spec_objects_safety" }]
 include = [
     { path = "spec_objects_safety/manifest.yaml", format = ["sdist", "wheel"] },
+    { path = "spec_objects_safety/mappings.yaml", format = ["sdist", "wheel"] },
     { path = "spec_objects_safety/skeletons/*.md", format = ["sdist", "wheel"] },
     { path = "spec_objects_safety/schemas/*.json", format = ["sdist", "wheel"] },
 ]
@@ -141,6 +142,7 @@ testpaths = [
     "tests",
     "tests_integration/test_mitigates_edge.py",
     "tests_integration/test_reverse_mitigates.py",
+    "tests_integration/test_risk_chain_edges.py",
 ]
 addopts = "--cov=spec_objects_safety --cov-report=term-missing --cov-fail-under=100 --json-report --json-report-file=report.json"
 

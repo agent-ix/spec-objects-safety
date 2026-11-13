@@ -1,0 +1,55 @@
+# Markdown -> record mappings for the risk-chain object types.
+#
+# For each type: the document location that fills each record key, and the
+# frontmatter edge that carries each link. `record` is a path into the type's
+# emitted schema (`schema`); `locator` names the manifest `body_extraction`
+# match key that reads the document. Authored data, read by consumers building a
+# record from Markdown; this module computes nothing from it.
+#
+# Edges are frontmatter `relationships`, authored on the effect end, so no
+# record key lists them. `to` is the manifest `allowed_links` target set.
+version: 1
+
+types:
+  harm:
+    schema: schemas/Harm.json
+    skeleton: skeletons/harm.md
+    fields:
+      id: {locator: id, source: {frontmatter: id}}
+      title: {locator: title, source: {frontmatter: title}}
+      description: {locator: description, source: {section: Description}}
+      fields: {locator: properties, record: fields, source: {typed_table: Properties}}
+      clauses: {locator: invariants, record: clauses, source: {ocl_clauses: Invariants}}
+    links:
+      arises_from: {source: {frontmatter: relationships}, to: [hazardous_situation]}
+
+  hazardous_situation:
+    schema: schemas/HazardousSituation.json
+    skeleton: skeletons/hazardous_situation.md
+    fields:
+      id: {locator: id, source: {frontmatter: id}}
+      title: {locator: title, source: {frontmatter: title}}
+      description: {locator: description, source: {section: Description}}
+      sequence_of_events: {locator: sequence_of_events, source: {section: Sequence of Events}}
+      fields: {locator: properties, record: fields, source: {typed_table: Properties}}
+      clauses: {locator: invariants, record: clauses, source: {ocl_clauses: Invariants}}
+    links:
+      arises_from: {source: {frontmatter: relationships}, to: [hazard]}
+
+  risk_estimate:
+    schema: schemas/RiskEstimate.json
+    skeleton: skeletons/risk_estimate.md
+    fields:
+      id: {locator: id, source: {frontmatter: id}}
+      title: {locator: title, source: {frontmatter: title}}
+      phase: {locator: phase, record: estimate.phase, source: {frontmatter: phase}}
+      severity: {locator: estimate, record: estimate.severity, source: {table: Estimate, column: Severity}}
+      probability: {locator: estimate, record: estimate.probability, source: {table: Estimate, column: Probability}}
+      rationale: {locator: estimate, record: estimate.rationale, source: {table: Estimate, column: Rationale}}
+      assertedBy: {locator: provenance, record: estimate.provenance.assertedBy, source: {table: Provenance, column: Asserted by}}
+      assertedAt: {locator: provenance, record: estimate.provenance.assertedAt, source: {table: Provenance, column: Asserted at}}
+      fields: {locator: properties, record: fields, source: {typed_table: Properties}}
+      clauses: {locator: invariants, record: clauses, source: {ocl_clauses: Invariants}}
+    links:
+      estimates: {source: {frontmatter: relationships}, to: [hazardous_situation]}
+      assumes: {source: {frontmatter: relationships}, to: [control]}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateJudgement.json",
+  "type": "object",
+  "properties": {
+    "phase": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimatePhase.json"
+    },
+    "severity": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateLevel.json"
+    },
+    "probability": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateLevel.json"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provenance": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Provenance.json"
+    }
+  },
+  "required": [
+    "phase",
+    "severity",
+    "probability",
+    "rationale",
+    "provenance"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "The judgement of a risk estimate: one person's view of how bad (`severity`)\nand how likely (`probability`) the harm is for one hazardous situation,\nbefore any control is assumed (`pre_control`) or on the assumption that named\ncontrols are in place (`post_control`).\n\nEvery member is required and entered by a named person: there is no default\nfor `phase`, `severity` or `probability`, and the seal forbids `score`,\n`region`, `level`, `acceptable` and `acceptance`, so no tool derives or stores\na score, a region or an acceptance. `provenance` carries `assertedBy` and\n`assertedAt`.",
+  "additionalProperties": false
+}

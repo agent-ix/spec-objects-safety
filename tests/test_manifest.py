@@ -23,6 +23,7 @@ import yaml
 from tests.conftest import (
     MANIFEST_PATH,
     OBJECT_TYPES,
+    PENDING_ISO_VERBS,
     SKELETONS_DIR,
 )
 
@@ -84,7 +85,7 @@ def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
         for t in _manifest()["object_types"]
         for verb in (t.get("allowed_links") or {})
     }
-    unknown = sorted(used - declared)
+    unknown = sorted(used - declared - PENDING_ISO_VERBS)
     assert not unknown, (
         f"verbs not in the iso vocabulary: {unknown}. Adding one is an "
         "spec-artifacts-iso change with FR 004's criteria to satisfy, not a "

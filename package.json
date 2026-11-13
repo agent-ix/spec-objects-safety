@@ -14,6 +14,7 @@
   ],
   "files": [
     "manifest.yaml",
+    "mappings.yaml",
     "schemas/",
     "skeletons/",
     "README.md",

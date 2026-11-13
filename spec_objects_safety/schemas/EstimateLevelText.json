@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateLevelText.json",
+  "type": "string",
+  "minLength": 1,
+  "description": "A level a person enters on an estimate: any non-empty text that is none of\nthe three `EpistemicState` members. The project's acceptability policy names\nthe levels; this module fixes no list, so a project can use its own scale.\nExcluding the three members keeps a marker distinct from every level, so a\nproject cannot name a level `not_assessed`.",
+  "not": {
+    "enum": [
+      "unknown",
+      "not_assessed",
+      "not_applicable"
+    ]
+  }
+}

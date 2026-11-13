@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateLevel.json",
+  "anyOf": [
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateLevelText.json"
+    },
+    {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EpistemicState.json"
+    }
+  ],
+  "description": "A level entered on an estimate, or one of the `EpistemicState` markers.\nA marker validates only through the marker branch."
+}

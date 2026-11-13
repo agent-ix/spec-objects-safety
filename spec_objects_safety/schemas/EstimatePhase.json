@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimatePhase.json",
+  "type": "string",
+  "enum": [
+    "pre_control",
+    "post_control"
+  ],
+  "description": "Whether an estimate is made before any control is assumed or on the\nassumption that named controls are in place. Declared with no default: a\nperson chooses."
+}

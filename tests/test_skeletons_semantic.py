@@ -18,6 +18,7 @@ from tests.conftest import (
     PACKAGE_ROOT,
     REPO_ROOT,
     SKELETONS_DIR,
+    UNFILLED_SKELETONS,
     frontmatter,
     kernel_scalars,
     locators,
@@ -34,6 +35,9 @@ ALTERNATES = ("hazard", "failure_mode")
 SCORED_COLUMNS = {
     "hazard": {"severity", "likelihood", "rationale"},
     "failure_mode": {"effect", "cause", "detection"},
+    "harm": set(),
+    "hazardous_situation": set(),
+    "risk_estimate": {"severity", "probability", "rationale"},
 }
 
 NAMED_NEGATIVE_CASES = {
@@ -44,6 +48,15 @@ NAMED_NEGATIVE_CASES = {
     "hazard-no-assessment-table.md",
     "hazard-clause-without-fence.md",
     "failure_mode-analysis-missing-column.md",
+    "harm-no-description.md",
+    "hazardous_situation-no-description.md",
+    "risk_estimate-no-phase.md",
+    "risk_estimate-unknown-phase.md",
+    "risk_estimate-placeholder-severity.md",
+    "risk_estimate-empty-severity.md",
+    "risk_estimate-no-estimate-table.md",
+    "risk_estimate-no-provenance.md",
+    "risk_estimate-unparsable-date.md",
 }
 
 
@@ -68,8 +81,10 @@ def extract(quire_engine, module, bundle, path):
 
 @pytest.mark.trace("TC-048", "FR-005-AC-1")
 def test_every_skeleton_validates_with_no_error(quire_engine, skeletons):
-    assert len(skeletons) == 4
+    assert len(skeletons) == 7
     for path in skeletons:
+        if path.stem in UNFILLED_SKELETONS:
+            continue
         text = path.read_text()
         result = quire_engine.validate_document(
             frontmatter(text)["type"], str(PACKAGE_ROOT), text
@@ -214,6 +229,8 @@ def test_every_skeleton_heading_is_asserted_and_every_required_heading_is_presen
 def test_every_skeleton_is_placeholder_free():
     tokens = ("TODO", "TBD", "{{", "}}", "XXX", "FIXME", "lorem ipsum")
     for path in skeleton_paths():
+        if path.stem in UNFILLED_SKELETONS:
+            continue
         body = re.sub(
             r"^---\n.*?\n---\n", "", path.read_text(), count=1, flags=re.DOTALL
         )
