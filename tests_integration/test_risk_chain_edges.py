@@ -269,8 +269,11 @@ def test_estimates_of_one_situation_and_of_two_validate_without_a_choice(tmp_pat
     clean_of_edge_errors(result)
     assert findings(result, "post-control-without-control") == [], result.stderr
     assert findings(result, "estimate-without-situation") == [], result.stderr
+    # The engine's own "selected because `phase` is ..." wording is not a choice
+    # among estimates.
+    stderr = result.stderr.replace("selected because", "")
     for word in ("primary", "preferred", "selected", "upper"):
-        assert word not in result.stderr, result.stderr
+        assert word not in stderr, result.stderr
 
 
 @pytest.mark.trace("FR-203-AC-12")
@@ -598,3 +601,207 @@ def test_a_residual_risk_relation_check_is_tunable_on_its_own_key(tmp_path):
     )
     assert result.returncode != 0, result.stderr
     assert _count(result, "residual-risk-without-estimate") == 1
+
+
+# ── FR-301, FR-303, FR-304: completeness relations and the cycle check ──────
+
+
+def chain(root):
+    hazard(root)
+    situation(root, "SIT-001", "HAZ-001")
+    harm(root, "HARM-001", "SIT-001")
+
+
+CHAIN_CHECKS = (
+    "hazard-without-situation",
+    "situation-without-hazard",
+    "situation-without-harm",
+)
+
+
+@pytest.mark.trace("FR-301-AC-1", "FR-301-AC-2")
+def test_a_complete_chain_yields_no_chain_finding(tmp_path):
+    chain(tmp_path)
+    result = validate(tmp_path)
+    assert result.returncode == 0, result.stderr
+    for check in CHAIN_CHECKS:
+        assert findings(result, check) == [], result.stderr
+
+
+@pytest.mark.trace("FR-301-AC-3")
+def test_a_hazard_with_no_situation_is_reported_by_name(tmp_path):
+    hazard(tmp_path)
+    harm(tmp_path, "HARM-001")
+    lines = findings(validate(tmp_path), "hazard-without-situation")
+    assert len(lines) == 1 and "HAZ-001" in lines[0], lines
+
+
+@pytest.mark.trace("FR-301-AC-4")
+def test_a_situation_with_no_harm_is_reported_and_its_hazard_is_not(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    result = validate(tmp_path)
+    lines = findings(result, "situation-without-harm")
+    assert len(lines) == 1 and "SIT-001" in lines[0], lines
+    assert findings(result, "hazard-without-situation") == [], result.stderr
+
+
+@pytest.mark.trace("FR-301-AC-5")
+def test_free_text_situation_on_a_hazard_does_not_satisfy_the_relation(tmp_path):
+    hazard(tmp_path)
+    path = tmp_path / "HAZ-001.md"
+    path.write_text(
+        path.read_text().replace(
+            "\n---\n<!--", "\ncontext:\n  situation: braking at speed\n---\n<!--", 1
+        )
+    )
+    lines = findings(validate(tmp_path), "hazard-without-situation")
+    assert len(lines) == 1 and "HAZ-001" in lines[0], lines
+
+
+@pytest.mark.trace("FR-301-AC-6")
+def test_a_harm_arising_from_an_undeclared_situation_does_not_satisfy(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    harm(tmp_path, "HARM-001", "SIT-999")
+    lines = findings(validate(tmp_path), "situation-without-harm")
+    assert len(lines) == 1 and "SIT-001" in lines[0], lines
+
+
+@pytest.mark.trace("FR-301-AC-7")
+def test_the_hazard_without_situation_check_alone_is_escalated(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001")
+    harm(tmp_path, "HARM-001")
+    assert validate(tmp_path).returncode == 0
+    for check in CHAIN_CHECKS:
+        assert len(findings(validate(tmp_path), check)) == 1, check
+    tuned = validate(tmp_path, "--severity", "trace:hazard-without-situation=error")
+    assert tuned.returncode != 0, tuned.stderr
+    for check in CHAIN_CHECKS:
+        line = findings(tuned, check)
+        assert len(line) == 1, check
+        is_warning = line[0].startswith("warning:")
+        assert is_warning == (check != "hazard-without-situation"), line
+
+
+@pytest.mark.trace("FR-301-AC-8")
+def test_only_the_situation_without_a_harm_is_reported(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    situation(tmp_path, "SIT-002", "HAZ-001")
+    harm(tmp_path, "HARM-001", "SIT-001")
+    lines = findings(validate(tmp_path), "situation-without-harm")
+    assert len(lines) == 1 and "SIT-002" in lines[0], lines
+
+
+@pytest.mark.trace("FR-301-AC-9")
+def test_a_situation_with_no_hazard_is_reported_until_the_edge_is_added(tmp_path):
+    situation(tmp_path, "SIT-001")
+    lines = findings(validate(tmp_path), "situation-without-hazard")
+    assert len(lines) == 1 and "SIT-001" in lines[0], lines
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    assert findings(validate(tmp_path), "situation-without-hazard") == []
+
+
+@pytest.mark.trace("FR-303-AC-1", "FR-303-AC-2")
+def test_a_post_control_estimate_without_a_residual_risk_is_reported(tmp_path):
+    estimate(tmp_path, "EST-001", "post_control")
+    result = validate(tmp_path)
+    assert result.returncode == 0, result.stderr
+    lines = findings(result, "post-control-estimate-without-decision")
+    assert len(lines) == 1 and "EST-001" in lines[0], lines
+
+
+@pytest.mark.trace("FR-303-AC-3")
+def test_a_pre_control_estimate_is_not_reported(tmp_path):
+    estimate(tmp_path, "EST-001", "pre_control")
+    lines = findings(validate(tmp_path), "post-control-estimate-without-decision")
+    assert lines == [], lines
+
+
+@pytest.mark.trace("FR-303-AC-4")
+@pytest.mark.parametrize("decision", ["undecided", "accepted"])
+def test_any_residual_risk_record_removes_the_decision_finding(tmp_path, decision):
+    estimate(tmp_path, "EST-001", "post_control")
+    residual_risk(tmp_path, "RR-001", estimate=["EST-001"])
+    if decision == "undecided":
+        path = tmp_path / "RR-001.md"
+        path.write_text(path.read_text().replace("accepted", "undecided"))
+    lines = findings(validate(tmp_path), "post-control-estimate-without-decision")
+    assert lines == [], lines
+
+
+@pytest.mark.trace("FR-304-AC-2")
+def test_a_two_document_cycle_is_reported_once_naming_both(tmp_path):
+    hazard_text = (SKELETONS_DIR / "hazard.md").read_text()
+    (tmp_path / "HAZ-001.md").write_text(
+        _with_edges(hazard_text, [("arises_from", f"{LOCAL}/SIT-001")])
+    )
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    lines = findings(validate(tmp_path), "cyclic-arises_from")
+    assert len(lines) == 1, lines
+    assert "HAZ-001" in lines[0] and "SIT-001" in lines[0], lines
+
+
+@pytest.mark.trace("FR-304-AC-3")
+def test_a_three_document_cycle_is_reported_once(tmp_path):
+    hazard_text = (SKELETONS_DIR / "hazard.md").read_text()
+    (tmp_path / "HAZ-001.md").write_text(
+        _with_edges(hazard_text, [("arises_from", f"{LOCAL}/HARM-001")])
+    )
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    harm(tmp_path, "HARM-001", "SIT-001")
+    assert len(findings(validate(tmp_path), "cyclic-arises_from")) == 1
+
+
+@pytest.mark.trace("FR-303-AC-5")
+def test_a_phase_only_in_the_body_is_not_selected_by_the_relation(tmp_path):
+    estimate(tmp_path, "EST-001", "post_control")
+    assert (
+        len(findings(validate(tmp_path), "post-control-estimate-without-decision")) == 1
+    )
+    path = tmp_path / "EST-001.md"
+    text = path.read_text().replace("phase: post_control\n", "", 1)
+    path.write_text(
+        text.replace("## Judgement\n", "## Judgement\n\nphase: post_control\n", 1)
+    )
+    result = validate(tmp_path)
+    assert findings(result, "post-control-estimate-without-decision") == []
+
+
+@pytest.mark.trace("FR-303-AC-5")
+def test_the_phase_selector_is_declared_vocabulary_in_a_bundle_with_no_estimate(
+    tmp_path,
+):
+    hazard(tmp_path)
+    advisories = findings(validate(tmp_path), "undeclared-relation-vocabulary")
+    assert not [line for line in advisories if "'phase'" in line], advisories
+
+
+@pytest.mark.trace("FR-205-AC-3")
+def test_a_satisfied_control_with_no_verifies_edge_raises_no_missing_verification(
+    tmp_path,
+):
+    control(tmp_path)
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    result = validate(tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert not [x for x in result.stderr.splitlines() if "verif" in x.lower()]
+
+
+@pytest.mark.trace("FR-304-AC-4")
+def test_an_acyclic_chain_yields_no_cycle_finding(tmp_path):
+    _write(tmp_path, "failure_mode", SKELETONS_DIR, "FM-001", "FM-001")
+    _write(
+        tmp_path,
+        "hazard",
+        SKELETONS_DIR,
+        "HAZ-001",
+        "HAZ-001",
+        [("arises_from", f"{LOCAL}/FM-001")],
+    )
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    harm(tmp_path, "HARM-001", "SIT-001")
+    assert findings(validate(tmp_path), "cyclic-arises_from") == []

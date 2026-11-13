@@ -11,7 +11,7 @@ relationships:
     type: "depends_on"
   - target: "ix://agent-ix/spec-objects-security/FR-007"
     type: "depends_on"
-  - target: "ix://agent-ix/quire-rs/FR-078"
+  - target: "ix://agent-ix/spec-objects-safety/FR-302"
     type: "depends_on"
 ---
 # FR-205: A risk control links to the requirement that implements it and the verification that shows it is effective
@@ -38,15 +38,11 @@ can fail, and not the absence of a diagnostic, which cannot.
 
 ### Retained evidence
 
-The second verification route is retained evidence: caller-supplied evidence
-that `agent-ix/quire-rs` FR-078 binds to an acceptance criterion through its
-`evidence::qualify` library call. It binds to no control, and not through
-`quire extract`. For a control, effectiveness evidence therefore binds to the
-acceptance criteria of the `FR` or `NFR` that `satisfies` the control, so a
-control with retained evidence is reached through its implementing
-requirement. It is not a document with frontmatter edges, so this requirement
-does not require an authored `verifies` edge for it, and this module copies no
-evidence record.
+The second verification route is a retained-evidence record of an Inspection or
+Analysis, owned by `agent-ix/engineering-assurance`. It verifies a control the
+same way a test does: through a `verifies` edge it authors to the control,
+referenced by id. FR-302 owns which controls must have such an edge. This module
+copies no evidence record.
 
 ### Effectiveness is a link, not a verdict
 
@@ -79,7 +75,7 @@ unscoped rule would report every unrelated security control.
 
 - Quire SHALL resolve a `satisfies` edge from an `FR` or `NFR` to a `control` as an incoming `satisfied_by` edge on the control.
 - Quire SHALL resolve a `verifies` edge from an `IT` or `TC` to a `control` as an incoming edge on the control.
-- The module SHALL require no authored `verifies` edge for the retained-evidence route.
+- A retained-evidence record SHALL verify a control through an authored `verifies` edge to it, as a test does (FR-302).
 - The module SHALL define no `effective`, `verified` or `passed` key on any type it declares.
 - The module SHALL declare no completeness relation over `control` until the quire-rs incoming-edge selector exists.
 - Quire SHALL make `quire validate --okf --strict` exit non-zero for an edge to an undeclared local id, as FR-007 specifies; a target under a foreign authority is skipped.
@@ -88,14 +84,14 @@ unscoped rule would report every unrelated security control.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-205-AC-1 | `quire extract` over a fixture `FR` with a `satisfies` edge to a fixture `control` lists the FR as an incoming `satisfied_by` edge on the control. | Test |
-| FR-205-AC-2 | `quire extract` over a fixture `IT` with a `verifies` edge to the control lists the IT as an incoming `verifies` edge on the control. | Test |
-| FR-205-AC-3 | For a fixture `FR` that `satisfies` a control, caller-supplied evidence passed to quire-rs `evidence::qualify` for one of that FR's acceptance criteria qualifies that criterion, while the control carries no authored `verifies` edge and the module raises no diagnostic about a missing one. | Test |
+| FR-205-AC-1 | With a fixture `control` present, `quire validate --okf --strict` over a fixture `FR` with a `satisfies` edge to it reports no `dangling-reference` for that edge; with the `control` removed, it reports one `dangling-reference` naming the `FR` path, `satisfies` and the control id. | Test |
+| FR-205-AC-2 | With a fixture `control` present, `quire validate --okf --strict` over a fixture `IT` with a `verifies` edge to it reports no `dangling-reference` for that edge; with the `control` removed, it reports one `dangling-reference` naming the `IT` path, `verifies` and the control id. | Test |
+| FR-205-AC-3 | For a fixture `FR` that `satisfies` a control that neither `mitigates` a `hazard` or `failure_mode` nor is `assumes`-d by a `risk_estimate` (outside the FR-302 scope), `quire validate --okf` raises no missing-`verifies` diagnostic for the control. | Test |
 | FR-205-AC-4 | A `satisfies` edge to an undeclared local id makes `quire validate --okf --strict` exit non-zero with stderr naming the source path, `satisfies` and the id. | Test |
 | FR-205-AC-5 | The manifest and emitted schemas contain no `effective`, `verified` or `passed` key. | Inspection |
 | FR-205-AC-6 | The manifest declares no `required_relations` entry whose `from` is `control`. | Inspection |
 
 ## Dependencies
 
-- **Upstream**: [FR-007](./FR-007-authorable-mitigates-edge.md), [FR-204](./FR-204-post-control-risk-estimate.md); `agent-ix/spec-objects-security` FR-007; `agent-ix/quire-rs` FR-078 (retained evidence)
+- **Upstream**: [FR-007](./FR-007-authorable-mitigates-edge.md), [FR-204](./FR-204-post-control-risk-estimate.md); `agent-ix/spec-objects-security` FR-007; `agent-ix/engineering-assurance` (retained-evidence records); FR-302
 - **Downstream**: PLAT-1524 FR-302 (completeness rules); the quire-rs incoming-edge selector, which has no ticket yet
