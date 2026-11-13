@@ -11,6 +11,8 @@ relationships:
     type: "depends_on"
   - target: "ix://agent-ix/spec-objects-safety/FR-303"
     type: "depends_on"
+  - target: "ix://agent-ix/spec-objects-safety/FR-204"
+    type: "depends_on"
   - target: "ix://agent-ix/spec-objects-safety/FR-102"
     type: "depends_on"
   - target: "ix://agent-ix/spec-objects-safety/FR-104"
@@ -22,7 +24,7 @@ relationships:
 
 ## Description
 
-Tracked by Linear PLAT-1524; implemented under the quoin ticket PLAT-1576, which aligned the entry keys and the finding shape with the quoin specification. The
+Tracked by Linear PLAT-1524; implemented under the quoin ticket PLAT-1576. The
 quoin CLI **SHALL** provide a read-only command `quoin risk-summary <scope>
 [--format markdown|json]` that reports the whole chain: hazard, hazardous
 situation, harm, estimates, controls with their requirement and verification,
@@ -96,4 +98,4 @@ rendering and may be regenerated at will.
 
 ## Dependencies
 
-- **Upstream**: [FR-301](./FR-301-hazard-reaches-harm-through-situation.md), [FR-302](./FR-302-risk-control-implemented-and-verified.md), [FR-303](./FR-303-residual-risk-decided-by-named-person.md), [FR-102](./FR-102-estimate-levels-resolve-in-policy.md), [FR-104](./FR-104-no-computed-verdicts.md), [NFR-201](../non-functional/NFR-201-no-stored-or-defaulted-risk-values.md)
+- **Upstream**: [FR-301](./FR-301-hazard-reaches-harm-through-situation.md), [FR-302](./FR-302-risk-control-implemented-and-verified.md), [FR-303](./FR-303-residual-risk-decided-by-named-person.md), [FR-204](./FR-204-post-control-risk-estimate.md), [FR-102](./FR-102-estimate-levels-resolve-in-policy.md), [FR-104](./FR-104-no-computed-verdicts.md), [NFR-201](../non-functional/NFR-201-no-stored-or-defaulted-risk-values.md)
