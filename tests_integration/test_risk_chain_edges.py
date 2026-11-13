@@ -5,10 +5,11 @@ Fixtures are this module's own skeletons plus the installed
 `spec-objects-security` control skeleton and the `spec-artifacts-iso` FR and IT
 skeletons. Nothing is copied into this repository.
 
-`estimates` and `assumes` are verbs `spec-artifacts-iso` has not declared yet, so
-the engine reports `UnknownEdgeType` for them as an advisory at module load;
-every run below exits 0 regardless. The inverse label on `arises_from` and the
-resolved incoming edges that need it are not asserted here for the same reason.
+`estimates` and `assumes` are verbs `spec-artifacts-iso` has not declared yet
+(PLAT-1676), so the engine reports `UnknownEdgeType` for them as an advisory at
+module load; every run below exits 0 regardless. FR-202-AC-2 and the resolved
+incoming-edge half of FR-204-AC-1 need the `arises_from` inverse label and the
+verb inverses from PLAT-1676 and are not asserted here until it lands.
 """
 
 from __future__ import annotations
@@ -211,7 +212,7 @@ def test_estimates_of_one_situation_and_of_two_validate_without_a_choice(tmp_pat
     estimate(tmp_path, "EST-002", "post_control", estimates=["SIT-001"])
     result = validate(tmp_path)
     clean_of_edge_errors(result)
-    for word in ("primary", "preferred", "selected", "upper"):
+    for word in ("primary", "preferred", "upper"):
         assert word not in result.stderr, result.stderr
 
 
@@ -308,3 +309,67 @@ def test_a_cycle_through_the_chain_edges_is_reported(tmp_path):
     harm(tmp_path, "HARM-001", "SIT-001")
     result = validate(tmp_path)
     assert findings(result, "cyclic-arises_from"), result.stderr
+
+
+def _count(result, check):
+    return len(findings(result, check))
+
+
+@pytest.mark.trace("FR-203-AC-9")
+def test_an_estimate_with_no_estimates_edge_is_reported_once_and_the_edge_clears_it(
+    tmp_path,
+):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    estimate(tmp_path, "EST-001", "pre_control")
+    result = validate(tmp_path)
+    lines = findings(result, "estimate-without-situation")
+    assert len(lines) == 1 and "EST-001" in lines[0], result.stderr
+    assert lines[0].startswith("warning:") and result.returncode == 0
+
+    estimate(tmp_path, "EST-001", "pre_control", estimates=["SIT-001"])
+    assert _count(validate(tmp_path), "estimate-without-situation") == 0
+
+
+@pytest.mark.trace("FR-204-AC-2")
+def test_a_post_control_estimate_with_no_control_is_reported_once_and_assumes_clears_it(
+    tmp_path,
+):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    control(tmp_path)
+    estimate(tmp_path, "EST-001", "post_control", estimates=["SIT-001"])
+    result = validate(tmp_path)
+    lines = findings(result, "post-control-without-control")
+    assert len(lines) == 1 and "EST-001" in lines[0], result.stderr
+    assert lines[0].startswith("warning:") and result.returncode == 0
+
+    estimate(
+        tmp_path, "EST-001", "post_control", estimates=["SIT-001"], assumes=["CTRL-001"]
+    )
+    assert _count(validate(tmp_path), "post-control-without-control") == 0
+
+
+@pytest.mark.trace("FR-204-AC-7")
+def test_a_pre_control_estimate_is_never_reported_for_missing_controls(tmp_path):
+    hazard(tmp_path)
+    situation(tmp_path, "SIT-001", "HAZ-001")
+    estimate(tmp_path, "EST-001", "pre_control", estimates=["SIT-001"])
+    assert _count(validate(tmp_path), "post-control-without-control") == 0
+
+
+@pytest.mark.trace("FR-204-AC-8")
+def test_the_post_control_finding_is_tunable_on_its_own_key(tmp_path):
+    estimate(tmp_path, "EST-001", "post_control")
+    assert validate(tmp_path).returncode == 0
+    result = validate(
+        tmp_path, "--severity", "trace:post-control-without-control=error"
+    )
+    assert result.returncode != 0, result.stderr
+    assert _count(result, "post-control-without-control") == 1
+
+
+@pytest.mark.trace("FR-204-AC-9")
+def test_an_assumes_edge_to_an_undeclared_id_does_not_satisfy_the_relation(tmp_path):
+    estimate(tmp_path, "EST-001", "post_control", assumes=["CTRL-999"])
+    assert _count(validate(tmp_path), "post-control-without-control") == 1

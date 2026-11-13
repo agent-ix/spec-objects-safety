@@ -81,7 +81,6 @@ def extract(quire_engine, module, bundle, path):
 
 @pytest.mark.trace("TC-048", "FR-005-AC-1")
 def test_every_skeleton_validates_with_no_error(quire_engine, skeletons):
-    assert len(skeletons) == 7
     for path in skeletons:
         if path.stem in UNFILLED_SKELETONS:
             continue

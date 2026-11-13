@@ -284,11 +284,6 @@ object_types:
           from: section_body
           after_heading: Description
           required: true
-        # The events that lead from the hazard state to the harm, in order.
-        sequence_of_events:
-          from: section_body
-          after_heading: Sequence of Events
-          required: false
         properties:
           from: section_body
           after_heading: Properties
@@ -416,6 +411,27 @@ traceability:
     to: []
     direction: outgoing
     check: unjustified-safety-nfr
+  # An estimate judges one hazardous situation, and says which with an
+  # `estimates` edge it authors itself. Presence is tested, not count, so
+  # several estimates of one situation, or one estimate of several, are fine.
+  - name: estimate-has-situation
+    from: risk_estimate
+    edges: [estimates]
+    to: [hazardous_situation]
+    direction: outgoing
+    check: estimate-without-situation
+  # A post-control estimate is made on the assumption that named controls are
+  # in place; one that names none cannot be checked against anything. `where`
+  # reads the top-level `phase` frontmatter key, so a pre-control estimate is
+  # never reported. A dangling `assumes` edge cannot satisfy the constrained
+  # `to`.
+  - name: post-control-assumes-control
+    from: risk_estimate
+    where: {field: phase, values: [post_control]}
+    edges: [assumes]
+    to: [control]
+    direction: outgoing
+    check: post-control-without-control
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:

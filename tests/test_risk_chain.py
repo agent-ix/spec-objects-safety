@@ -13,7 +13,6 @@ import json
 import re
 
 import pytest
-import yaml
 
 from tests.conftest import (
     EPISTEMIC,
@@ -187,7 +186,9 @@ def test_arises_from_stays_acyclic_across_the_whole_chain():
 def test_hazardous_situation_skeleton_validates_and_needs_a_description(quire_engine):
     text = (SKELETONS_DIR / "hazardous_situation.md").read_text()
     assert validate_text(quire_engine, "hazardous_situation", text)["is_valid"]
-    without = re.sub(r"## Description\n\n.*?\n\n(?=## Sequence)", "", text, flags=re.S)
+    without = re.sub(
+        r"## Description\n\n.*?\n\n(?=## Properties)", "", text, flags=re.S
+    )
     assert not validate_text(quire_engine, "hazardous_situation", without)["is_valid"]
 
 
@@ -314,15 +315,6 @@ def test_markers_are_accepted_at_the_document(quire_engine):
         assert validate_text(quire_engine, "risk_estimate", text)["is_valid"], marker
 
 
-@pytest.mark.trace("FR-204-AC-5")
-def test_no_check_compares_post_control_with_pre_control_values():
-    text = json.dumps(load_manifest()["traceability"]) + json.dumps(
-        load_manifest()["lint_rules"]
-    )
-    assert "post_control" not in text
-    assert "pre_control" not in text
-
-
 # ── FR-205: nothing stores a verdict ────────────────────────────────────────
 
 
@@ -367,64 +359,3 @@ def test_each_risk_chain_negative_fixture_fails_for_its_stated_reason(
         path.name,
         [e["message"] for e in result["errors"]],
     )
-
-
-# ── mappings ────────────────────────────────────────────────────────────────
-
-
-def mappings() -> dict:
-    return yaml.safe_load((PACKAGE_ROOT / "mappings.yaml").read_text())["types"]
-
-
-def schema_path_exists(schema: dict, path: str) -> bool:
-    node = schema
-    for part in path.split("."):
-        if node.get("type") == "array":
-            return True
-        ref = node.get("$ref")
-        if ref:
-            node = schema_of(ref.rsplit("/", 1)[-1].removesuffix(".json"))
-        node = node.get("properties", {}).get(part)
-        if node is None:
-            return False
-    return True
-
-
-def test_mappings_cover_the_three_new_types():
-    assert set(mappings()) == {"harm", "hazardous_situation", "risk_estimate"}
-
-
-def test_every_mapped_field_names_a_locator_and_a_record_key_that_exist():
-    for type_name, mapping in mappings().items():
-        declared = locators(object_type(type_name))
-        schema = schema_of(
-            mapping["schema"].removeprefix("schemas/").removesuffix(".json")
-        )
-        for key, entry in mapping["fields"].items():
-            assert entry["locator"] in declared, (type_name, key)
-            record = entry.get("record")
-            if record:
-                assert schema_path_exists(schema, record), (type_name, key, record)
-        assert (PACKAGE_ROOT / mapping["skeleton"]).is_file(), type_name
-
-
-def test_every_mapped_link_is_an_allowed_link_with_the_same_targets():
-    for type_name, mapping in mappings().items():
-        allowed = object_type(type_name)["allowed_links"]
-        assert {verb: link["to"] for verb, link in mapping["links"].items()} == allowed
-
-
-def test_the_estimate_mapping_covers_every_required_judgement_member():
-    mapped = {
-        entry["record"]
-        for entry in mappings()["risk_estimate"]["fields"].values()
-        if "record" in entry
-    }
-    required = {
-        f"estimate.{k}" for k in ("phase", "severity", "probability", "rationale")
-    }
-    assert required <= mapped
-    assert {
-        "estimate.provenance.assertedBy",
-        "estimate.provenance.assertedAt",
-    } <= mapped

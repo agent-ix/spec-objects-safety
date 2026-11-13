@@ -11,8 +11,6 @@ object: hazardous_situation
        object: hazardous_situation.
      - "## Description" (H2) is REQUIRED: the case in which the hazard state
        coincides with something that can be hurt.
-     - "## Sequence of Events" (H2) is OPTIONAL: the events that lead from the
-       hazard state to the harm, in order.
      - "## Properties" (H2): one typed row per attribute, header exactly
        `Field | Type | Multiplicity | Constraints`. At least one row carries
        the `identity` constraint.
@@ -41,12 +39,6 @@ object: hazardous_situation
 
 The vehicle cannot decelerate on operator command while it is moving under its
 own power on a public road with other road users close ahead.
-
-## Sequence of Events
-
-1. The operator commands deceleration on a public road.
-2. The vehicle does not reduce speed.
-3. The vehicle reaches the road user ahead.
 
 ## Properties
 

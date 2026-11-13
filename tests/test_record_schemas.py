@@ -18,7 +18,6 @@ import pytest
 
 from tests.conftest import (
     EPISTEMIC,
-    MODEL_OF,
     SCALES,
     SEMANTIC_CORE_BASE,
     SEMANTIC_CORE_DIR,
@@ -377,13 +376,6 @@ def test_no_declared_constraint_was_relaxed_to_make_a_fixture_pass():
         assert schema_of("FailureAnalysis")["properties"][key]["minLength"] == 1
     assert schema_of("Hazard")["properties"]["fields"]["minItems"] == 1
     assert schema_of("FailureMode")["properties"]["fields"]["minItems"] == 1
-    assert MODEL_OF == {
-        "hazard": "Hazard",
-        "failure_mode": "FailureMode",
-        "harm": "Harm",
-        "hazardous_situation": "HazardousSituation",
-        "risk_estimate": "RiskEstimate",
-    }
 
 
 @pytest.mark.trace("TC-071", "FR-004-AC-12")

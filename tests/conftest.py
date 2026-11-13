@@ -55,8 +55,9 @@ OBJECT_TYPES = (
 )
 
 # Verbs the manifest uses that `spec-artifacts-iso` has not declared yet. Each
-# is a vocabulary change that belongs to that module; remove an entry here the
-# release that declares the verb, so the vocabulary tests cover it again.
+# is a vocabulary change that belongs to that module (PLAT-1676). Expiry: when
+# PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
+# vocabulary tests cover the verbs again.
 PENDING_ISO_VERBS = frozenset({"estimates", "assumes"})
 
 # Skeletons that carry unfilled placeholders and fail validation as shipped, by

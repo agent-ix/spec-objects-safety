@@ -211,6 +211,8 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         "hazard-has-mitigation",
         "failure-mode-has-mitigation",
         "safety-nfr-has-mitigation-target",
+        "estimate-has-situation",
+        "post-control-assumes-control",
     }
     for name, kind in (
         ("hazard-has-mitigation", "hazard"),
@@ -226,6 +228,8 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         "unmitigated-hazard",
         "unmitigated-failure-mode",
         "unjustified-safety-nfr",
+        "estimate-without-situation",
+        "post-control-without-control",
     }
     assert len(checks) == len(by_name), "each relation is independently tunable"
 
@@ -275,6 +279,8 @@ def test_tc011_the_relation_vocabulary_is_the_declared_one() -> None:
     for relation in manifest["traceability"]["required_relations"]:
         assert relation["from"] in declared | iso_kinds, relation["from"]
         for verb in relation["edges"]:
-            assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
+            assert (
+                verb in vocabulary | PENDING_ISO_VERBS
+            ), f"{verb} is not in the iso edge vocabulary"
     for verb in manifest["traceability"]["acyclic_edges"]:
         assert verb in vocabulary, f"{verb} is not in the iso edge vocabulary"
