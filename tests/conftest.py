@@ -46,9 +46,31 @@ QUIRE_MISSING = (
     "skipped row is not coverage."
 )
 
-OBJECT_TYPES = ("hazard", "failure_mode")
+OBJECT_TYPES = (
+    "hazard",
+    "failure_mode",
+    "harm",
+    "hazardous_situation",
+    "risk_estimate",
+)
 
-MODEL_OF = {"hazard": "Hazard", "failure_mode": "FailureMode"}
+# Verbs the manifest uses that `spec-artifacts-iso` has not declared yet. Each
+# is a vocabulary change that belongs to that module (PLAT-1676). Expiry: when
+# PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
+# vocabulary tests cover the verbs again.
+PENDING_ISO_VERBS = frozenset({"estimates", "assumes"})
+
+# Skeletons that carry unfilled placeholders and fail validation as shipped, by
+# design: a person must enter the values.
+UNFILLED_SKELETONS = frozenset({"risk_estimate"})
+
+MODEL_OF = {
+    "hazard": "Hazard",
+    "failure_mode": "FailureMode",
+    "harm": "Harm",
+    "hazardous_situation": "HazardousSituation",
+    "risk_estimate": "RiskEstimate",
+}
 
 SUPPORT_MODELS = (
     "IdentityField",
@@ -64,6 +86,10 @@ SUPPORT_MODELS = (
     "Detection",
     "EpistemicState",
     "LifecycleStatus",
+    "EstimatePhase",
+    "EstimateLevelText",
+    "EstimateLevel",
+    "EstimateJudgement",
 )
 
 

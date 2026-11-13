@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Harm.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
+      }
+    },
+    "provenance": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Provenance.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/RelationDecl.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A harm: the thing that happens to a person, property or the environment\n(the manifest `lexicon` entry `harm` is the definition). A harm is not a\nhazard (a state) and not a hazardous situation (a case in which a hazard\nstate coincides with something that can be hurt).\n\nThe seal forbids `severity`, `probability`, `score`, `status` and\n`acceptance`. Severity belongs to a risk estimate, because the same harm is\nmore or less severe depending on the situation and the controls in place.\nThere is no `status` because `LifecycleStatus` includes `accepted`, and an\nacceptance of a harm means nothing: acceptance is recorded only on the\nresidual-risk decision.\n\nThe chain edge `arises_from` (harm to hazardous situation) is authored in the\ndocument's relationships, not in this record, so no key here lists situations.",
+  "additionalProperties": false
+}

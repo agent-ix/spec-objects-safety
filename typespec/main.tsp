@@ -327,3 +327,137 @@ model FailureMode {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+/**
+ * A harm: the thing that happens to a person, property or the environment
+ * (the manifest `lexicon` entry `harm` is the definition). A harm is not a
+ * hazard (a state) and not a hazardous situation (a case in which a hazard
+ * state coincides with something that can be hurt).
+ *
+ * The seal forbids `severity`, `probability`, `score`, `status` and
+ * `acceptance`. Severity belongs to a risk estimate, because the same harm is
+ * more or less severe depending on the situation and the controls in place.
+ * There is no `status` because `LifecycleStatus` includes `accepted`, and an
+ * acceptance of a harm means nothing: acceptance is recorded only on the
+ * residual-risk decision.
+ *
+ * The chain edge `arises_from` (harm to hazardous situation) is authored in the
+ * document's relationships, not in this record, so no key here lists situations.
+ */
+@extension("additionalProperties", false)
+model Harm {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  provenance?: Provenance;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/**
+ * A hazardous situation: a case in which a hazard state coincides with
+ * something that can be hurt. It promotes the free string
+ * `HazardContext.situation` to a first-class object; that string stays valid
+ * on `Hazard` and nothing here migrates it.
+ *
+ * The seal forbids `severity`, `probability`, `score` and `acceptance`: those
+ * are judgements, and a judgement is a risk estimate of this situation. The
+ * edge to the hazard it arises from (`arises_from`) is authored in the
+ * document's relationships.
+ */
+@extension("additionalProperties", false)
+model HazardousSituation {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  provenance?: Provenance;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}
+
+/**
+ * Whether an estimate is made before any control is assumed or on the
+ * assumption that named controls are in place. Declared with no default: a
+ * person chooses.
+ */
+enum EstimatePhase {
+  pre_control,
+  post_control,
+}
+
+/**
+ * A level a person enters on an estimate: any non-empty text that is none of
+ * the three `EpistemicState` members. The project's acceptability policy names
+ * the levels; this module fixes no list, so a project can use its own scale.
+ * Excluding the three members keeps a marker distinct from every level, so a
+ * project cannot name a level `not_assessed`.
+ */
+@extension("not", #{ `enum`: #["unknown", "not_assessed", "not_applicable"] })
+@minLength(1)
+scalar EstimateLevelText extends string;
+
+/**
+ * A level entered on an estimate, or one of the `EpistemicState` markers.
+ * A marker validates only through the marker branch.
+ */
+union EstimateLevel {
+  EstimateLevelText,
+  EpistemicState,
+}
+
+/**
+ * The judgement of a risk estimate: one person's view of how bad (`severity`)
+ * and how likely (`probability`) the harm is for one hazardous situation,
+ * before any control is assumed (`pre_control`) or on the assumption that named
+ * controls are in place (`post_control`).
+ *
+ * Every member is required and entered by a named person: there is no default
+ * for `phase`, `severity` or `probability`, and the seal forbids `score`,
+ * `region`, `level`, `acceptable` and `acceptance`, so no tool derives or stores
+ * a score, a region or an acceptance. `provenance` carries `assertedBy` and
+ * `assertedAt`.
+ */
+@extension("additionalProperties", false)
+model EstimateJudgement {
+  phase: EstimatePhase;
+  severity: EstimateLevel;
+  probability: EstimateLevel;
+
+  @minLength(1)
+  rationale: string;
+
+  provenance: Provenance;
+  ...Record<never>;
+}
+
+/**
+ * A risk estimate object. The judgement sits under `estimate`, whole or
+ * refused, the same shape `Hazard.assessment` has; it is optional on the record
+ * because Quire populates a declaration record's `fields`, `clauses`,
+ * `operations` and `relations` only, so the document-level requirement is the
+ * manifest's table and frontmatter locators until the Markdown mapping for
+ * module-specific keys lands.
+ *
+ * `phase` is also a top-level frontmatter key of the document, so required
+ * relations can select on it. The edges `estimates` (to the situation) and
+ * `assumes` (to controls) are authored in the document's relationships, not in
+ * this record.
+ */
+@extension("additionalProperties", false)
+model RiskEstimate {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  estimate?: EstimateJudgement;
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

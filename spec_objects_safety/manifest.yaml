@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
 version: 0.3.0
-description: 'Filament Module: safety ObjectTypes (hazard, failure_mode) — IEC 61508 / ISO 26262 / FMEA lineage'
+description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate) — IEC 61508 / ISO 26262 / FMEA lineage'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
   # this contract version refuses the module explicitly instead of loading it as
@@ -11,6 +11,9 @@ semantic:
   exports:
   - hazard
   - failure_mode
+  - harm
+  - hazardous_situation
+  - risk_estimate
   # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
   # references controls (`agent-ix/spec-objects-security` `control`), risks
   # (`risk`), the interfaces and components a failure mode sits in
@@ -225,6 +228,138 @@ object_types:
           after_heading: Invariants
           required: false
 
+# ── harm ─────────────────────────────────────────────────────────────────
+#
+# What happens to a person, property or the environment (see `lexicon`). Named
+# once and referenced by every hazardous situation that can lead to it. It
+# carries no severity, no probability and no status: severity belongs to a
+# risk_estimate, and an acceptance of a harm means nothing because acceptance
+# is recorded only on the residual-risk decision.
+- name: harm
+  allowed_links:
+    # The chain is authored from the effect end: a harm names the situations it
+    # arises from, so a situation never lists its harms.
+    arises_from: [hazardous_situation]
+  data_schema:
+    schema: schemas/Harm.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        # What is harmed, and how.
+        description:
+          from: section_body
+          after_heading: Description
+          required: true
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── hazardous_situation ──────────────────────────────────────────────────
+#
+# A case in which a hazard state coincides with something that can be hurt. It
+# promotes the free string `hazard.context.situation`, which stays valid; no
+# document is migrated. It arises from one or more hazards; whether it has one
+# is a completeness finding, not a validation error.
+- name: hazardous_situation
+  allowed_links:
+    arises_from: [hazard]
+  data_schema:
+    schema: schemas/HazardousSituation.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        # The case: the hazard state and what it coincides with.
+        description:
+          from: section_body
+          after_heading: Description
+          required: true
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
+# ── risk_estimate ────────────────────────────────────────────────────────
+#
+# One person's judgement of severity and probability for one hazardous
+# situation, before (`pre_control`) or after (`post_control`) the controls it
+# assumes. Every value is entered; no tool derives or defaults a score, a
+# region or an acceptance. `phase` is a top-level frontmatter key so required
+# relations can select on it.
+#
+# The levels are the project's own words, so the table cells accept any text
+# that is not an unfilled placeholder; the check against the project's policy
+# is the policy module's. An absent or placeholder value fails validation.
+- name: risk_estimate
+  allowed_links:
+    estimates: [hazardous_situation]
+    assumes: [control]
+  data_schema:
+    schema: schemas/RiskEstimate.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        phase:
+          from: frontmatter_field
+          path:
+          - phase
+          required: true
+          assert:
+            choices: [pre_control, post_control]
+        estimate:
+          from: table_row
+          under_section: Estimate
+          required: true
+          assert:
+            columns:
+            - Severity
+            - Probability
+            - Rationale
+            min_rows: 1
+            max_rows: 1
+            column_patterns:
+              Severity: '^[^<>\s][^<>]*$'
+              Probability: '^[^<>\s][^<>]*$'
+              Rationale: '^[^<>\s][^<>]*$'
+        provenance:
+          from: table_row
+          under_section: Provenance
+          required: true
+          assert:
+            columns:
+            - Asserted by
+            - Asserted at
+            min_rows: 1
+            max_rows: 1
+            column_patterns:
+              Asserted by: '^[^<>\s][^<>]*$'
+              Asserted at: '^\d{4}-\d{2}-\d{2}(T[0-9:.]+(Z|[+-][0-9:]+))?$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
 # FR-058 (quire-rs): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.
 #
@@ -276,6 +411,27 @@ traceability:
     to: []
     direction: outgoing
     check: unjustified-safety-nfr
+  # An estimate judges one hazardous situation, and says which with an
+  # `estimates` edge it authors itself. Presence is tested, not count, so
+  # several estimates of one situation, or one estimate of several, are fine.
+  - name: estimate-has-situation
+    from: risk_estimate
+    edges: [estimates]
+    to: [hazardous_situation]
+    direction: outgoing
+    check: estimate-without-situation
+  # A post-control estimate is made on the assumption that named controls are
+  # in place; one that names none cannot be checked against anything. `where`
+  # reads the top-level `phase` frontmatter key, so a pre-control estimate is
+  # never reported. A dangling `assumes` edge cannot satisfy the constrained
+  # `to`.
+  - name: post-control-assumes-control
+    from: risk_estimate
+    where: {field: phase, values: [post_control]}
+    edges: [assumes]
+    to: [control]
+    direction: outgoing
+    check: post-control-without-control
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:
@@ -288,6 +444,8 @@ traceability:
 lexicon:
   hazard: {definition: "a system state or condition that can lead to harm"}
   harm: {definition: "physical injury, damage to health, or damage to property or environment"}
+  hazardous situation: {definition: "a case in which a hazard state coincides with something that can be hurt"}
+  probability: {definition: "the chance that a hazardous situation leads to the harm; not the frequency with which the hazard state is reached"}
   failure mode: {definition: "the manner in which a component fails to perform its intended function"}
   severity: {definition: "how bad the harm is if the hazard is realised"}
   likelihood: {definition: "how often the hazard state is expected to be reached"}

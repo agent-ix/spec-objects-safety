@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/RiskEstimate.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
+      }
+    },
+    "estimate": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateJudgement.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/RelationDecl.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A risk estimate object. The judgement sits under `estimate`, whole or\nrefused, the same shape `Hazard.assessment` has; it is optional on the record\nbecause Quire populates a declaration record's `fields`, `clauses`,\n`operations` and `relations` only, so the document-level requirement is the\nmanifest's table and frontmatter locators until the Markdown mapping for\nmodule-specific keys lands.\n\n`phase` is also a top-level frontmatter key of the document, so required\nrelations can select on it. The edges `estimates` (to the situation) and\n`assumes` (to controls) are authored in the document's relationships, not in\nthis record.",
+  "additionalProperties": false
+}

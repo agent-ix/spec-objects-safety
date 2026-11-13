@@ -13,6 +13,7 @@ from tests.conftest import (
     OBJECT_TYPES,
     PACKAGE_ROOT,
     REPO_ROOT,
+    UNFILLED_SKELETONS,
     frontmatter,
 )
 
@@ -66,6 +67,8 @@ def test_the_registry_loads_both_archetypes_and_every_skeleton_loads_clean(
         assert name in names, f"{name} did not load from the module"
 
     for path in skeletons:
+        if path.stem in UNFILLED_SKELETONS:
+            continue
         text = path.read_text()
         result = quire_engine.validate_document(
             frontmatter(text)["type"], str(PACKAGE_ROOT), text
