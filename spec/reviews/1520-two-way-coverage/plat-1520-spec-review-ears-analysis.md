@@ -31,3 +31,12 @@ criterion bundles four cases.
 | --- | --- | --- | --- |
 | FND-001 | low | Behavior line 59 ("Quire SHALL NOT let an edge to a document of any other kind, or to a repository that is not loaded, satisfy the obligation") is a negative ubiquitous statement with no observable system response. In EARS unwanted-behaviour form it would read: "If a `safety` NFR's only outgoing `mitigates` edges target a document of another kind or a repository that is not loaded, then Quire SHALL report the NFR". That names the observable, the finding. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:59 |
 | FND-002 | low | FR-009-AC-3 bundles four cases in one criterion: a local hazard, a hazard in a loaded sibling repository, an edge to another kind, and an edge to an unloaded repository. When one case fails, the result cannot say which. Split it into a positive and a negative criterion. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:71 |
+
+## Dispositions
+
+Round 1, fix commit `a435585`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The statement now reads "If a `safety` NFR's only outgoing `mitigates` edges target a document of another kind, or a repository that is not loaded, then Quire SHALL report the NFR." |
+| FND-002 | fixed | AC-3 is split into AC-3 (same-repo hazard), AC-6 (failure_mode), AC-7 (loaded sibling), AC-8 (other kind) and AC-9 (unloaded repo). |

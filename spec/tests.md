@@ -73,7 +73,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
 | FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
 | FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
-| FR-009 | FR-009-AC-1..10 | TC-099..TC-102, TC-103..TC-106 | |
+| FR-009 | FR-009-AC-1..10 | TC-099..TC-102, TC-103..TC-107 | 🚧 |
 
 ### Integration Test Coverage
 
@@ -143,14 +143,15 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-096 | `unmitigated-hazard` fires once for the unmitigated hazard, clears when the edge is added, and fires per hazard when none is mitigated | Integration | P0 | FR-008-AC-1, FR-008-AC-3, FR-008-AC-4 | ✅ |
 | TC-097 | `unmitigated-failure-mode` fires once for the unmitigated failure mode | Integration | P0 | FR-008-AC-2 | ✅ |
 | TC-098 | `--severity trace:unmitigated-hazard=error` fails the run while failure-mode findings stay warnings | Integration | P0 | FR-008-AC-5 | ✅ |
-| TC-099 | The manifest declares the `NFR` required relation with `where` on `quality_attribute` = `safety`, `mitigates`, `to: [hazard, failure_mode]`, outgoing, `unjustified-safety-nfr` | Unit | P0 | FR-009-AC-1 | |
+| TC-099 | The manifest declares the `NFR` required relation with `where` on `quality_attribute` = `safety`, `mitigates`, `to: [hazard, failure_mode]`, outgoing, `unjustified-safety-nfr` | Unit | P0 | FR-009-AC-1 | 🚧 |
 | TC-100 | A `safety` NFR with no `mitigates` edge yields exactly one `unjustified-safety-nfr` finding naming the NFR and `safety`, exit 0 | Integration | P0 | FR-009-AC-2 | ✅ |
-| TC-101 | The same NFR with a `mitigates` edge to a hazard in the same repository yields no finding; an NFR with another `quality_attribute` and no edge yields none | Integration | P0 | FR-009-AC-3, FR-009-AC-4 | |
+| TC-101 | The same NFR with a `mitigates` edge to a hazard in the same repository yields no finding; an NFR with another `quality_attribute` and no edge yields none | Integration | P0 | FR-009-AC-3, FR-009-AC-4 | 🚧 |
 | TC-102 | Under `--okf --strict` the finding stays a `warning:` and is not an error from this rule, and `--severity trace:unjustified-safety-nfr=error` exits non-zero | Integration | P1 | FR-009-AC-5 | ✅ |
-| TC-103 | A safety NFR with a `mitigates` edge to a failure_mode in the same repository yields no finding | Integration | P0 | FR-009-AC-6 | |
-| TC-104 | `quire validate --okf --repo o/a=… --repo o/b=…` with the NFR in `o/a` mitigating a hazard in `o/b` yields no finding | Integration | P0 | FR-009-AC-7 | |
-| TC-105 | An NFR whose only `mitigates` edge targets a threat yields the finding | Integration | P0 | FR-009-AC-8 | |
-| TC-106 | An NFR whose only `mitigates` edge targets a hazard in a repository not named by `--repo` yields the finding | Integration | P0 | FR-009-AC-9, FR-009-AC-10 | |
+| TC-103 | A safety NFR with a `mitigates` edge to a failure_mode in the same repository yields no finding | Integration | P0 | FR-009-AC-6 | 🚧 |
+| TC-104 | `quire validate --okf --repo o/a=… --repo o/b=…` with the NFR in `o/a` mitigating a hazard in `o/b` yields no finding | Integration | P0 | FR-009-AC-7 | 🚧 |
+| TC-105 | An NFR whose only `mitigates` edge targets a threat yields the finding | Integration | P0 | FR-009-AC-8 | 🚧 |
+| TC-106 | An NFR whose only `mitigates` edge targets a hazard in a repository not named by `--repo` yields the finding | Integration | P0 | FR-009-AC-9 | 🚧 |
+| TC-107 | `hazard-has-mitigation` and `failure-mode-has-mitigation` both still declare `to: []` | Unit | P1 | FR-009-AC-10 | 🚧 |
 | TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 

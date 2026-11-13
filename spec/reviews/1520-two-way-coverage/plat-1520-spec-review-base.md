@@ -46,3 +46,27 @@ existing tests contradict the amended ACs, and no ticket owns updating them.
 | FND-004 | medium | `spec/tests.md` contradicts the amended criteria. TC-099 still reads `to: []`, and TC-101 still reads "or to a document in another repository, yields no finding". Both are marked ✅. The tests they name assert the old behaviour: `tests/test_manifest.py:243` asserts `relation["to"] == []`, and `tests_integration/test_reverse_mitigates.py:115` expects no finding for `ix://agent-ix/other-repo/HAZ-900` in a single-repo run. AC-3 now says that case leaves the finding. | spec/tests.md:146,148 |
 | FND-005 | medium | No ticket owns the change in this repo. The implementation tickets PLAT-1554 and PLAT-1556 list only quire-rs and quire-cli. The `to:` SHALL, the manifest comment at `spec_objects_safety/manifest.yaml:265-271`, and TC-099/TC-101 therefore have no owner. Add this repo to an implementation ticket, or file one blocked by PLAT-1556. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:56 |
 | FND-006 | low | The dependency edges point the wrong way. Dependencies lists quire-rs FR-084 as Upstream, but FR-084 reads FR-009's declaration, and FR-009 itself says so at line 37. FR-084 is downstream. The body depends on FR-085, but the frontmatter `relationships` gains no `depends_on` for it and still lists only FR-058. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:11-12,37,77 |
+
+## New findings (disposition pass 1)
+
+Found while checking fix commit `a435585` against regressions.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | The fix turns the old negative "SHALL NOT narrow the `to: []` of `hazard-has-mitigation` or `failure-mode-has-mitigation`" into the positive "SHALL keep `to: []` on `hazard-has-mitigation` or `failure-mode-has-mitigation`", and FR-009-AC-10 says "... or ... still declare `to: []`". In the positive form, `or` is satisfied when only one of the two relations keeps `to: []`, so narrowing the other passes both the statement and the criterion. Use `and` in both. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:73,88 |
+| FND-008 | medium | The new Description paragraph says "Without `--repo`, validate sees one repository and an edge into another repository is dangling." quire-rs FR-085-AC-10 keeps the FR-026 lexical `ix://` resolution for a one-member corpus with no identity: the trailing id is resolved within the one repository. A local document with the same id therefore resolves the cross-repository edge. Line 39 already states the qualified rule ("dangling in a corpus whose members declare identities"). Qualify this sentence the same way, or say that a same-id local document resolves the edge. | spec/functional/FR-009-safety-nfr-needs-mitigation-target.md:46-49 |
+| FND-009 | medium | `spec/tests.md` now fails `quire validate` on six new rows. TC-099, TC-101 and TC-103..TC-106 have an empty `Status` cell, which does not match `^(✅/❌/🚧/⛔)`. On `origin/main` the file fails only on the existing `Coverage Status` column headers. Give these rows a valid status, for example `🚧`. | spec/tests.md:146,148,150-153 |
+| FND-010 | low | TC-106 lists FR-009-AC-10, but its text (a `hazard` in a repository not named by `--repo`) does not exercise AC-10. AC-10 checks that the manifest keeps `to: []` on the hazard-end relations, which is a unit check, so AC-10 has no test case that actually covers it. | spec/tests.md:153 |
+
+## Dispositions
+
+Round 1, fix commit `a435585`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Description now routes the cross-repository case through `quire validate --okf --repo ORG/REPO=DIR` (quire-cli FR-030), and FR-009-AC-7 tests it. Verified on quire-cli `plat-1520-spec` 3746178: FR-030 declares `quire validate --okf --repo <ORG/REPO>=<DIR>...` and FR-030-AC-20. |
+| FND-002 | fixed | Outputs and Behavior bullet 2 now read "no outgoing `mitigates` edge to a resolved `hazard` or `failure_mode`". |
+| FND-003 | fixed | FR-009-AC-6 adds the `failure_mode` case, mapped to TC-103. |
+| FND-004 | fixed | TC-099 now reads `to: [hazard, failure_mode]`, and TC-101 is limited to a same-repository hazard. Both lost their ✅. Updating the test code is an acceptance criterion of PLAT-1673. |
+| FND-005 | fixed | PLAT-1673 (Backlog, blocked by PLAT-1520 and PLAT-1556) owns the manifest and test changes in spec-objects-safety and spec-objects-security. |
+| FND-006 | fixed | FR-084 moved to Downstream. Frontmatter gains `depends_on` FR-085 and quire-cli FR-030. |

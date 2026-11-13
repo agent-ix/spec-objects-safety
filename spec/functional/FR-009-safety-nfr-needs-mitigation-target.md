@@ -45,8 +45,10 @@ NFR with none as a gap.
 
 The cross-repository case is reached through `quire validate --okf --repo ORG/REPO=DIR`
 (`agent-ix/quire-cli` FR-030), which loads the sibling repositories into one
-corpus. Without `--repo`, validate sees one repository and an edge into another
-repository is dangling.
+corpus. Without `--repo`, validate loads one repository as a corpus of one member with no
+identity, where `ix://` links resolve by trailing id (quire-rs FR-085-AC-10): an
+edge to a document in another repository resolves only if a local document has
+the same id, and is dangling otherwise.
 
 The finding is advisory (`warning`, exit 0) and is tunable on its own key,
 `trace:unjustified-safety-nfr`.
@@ -70,7 +72,7 @@ The finding is advisory (`warning`, exit 0) and is tunable on its own key,
 - Quire SHALL report nothing for an NFR whose `quality_attribute` is any other value.
 - The finding SHALL be a warning under `--okf` and under `--okf --strict`; unrelated errors that `--strict` raises (for example iso's `unowned-quality-characteristic`) are not this rule's.
 - When `--severity trace:unjustified-safety-nfr=error` is given, Quire SHALL promote the finding to an error.
-- The manifest SHALL keep `to: []` on `hazard-has-mitigation` or `failure-mode-has-mitigation`.
+- The manifest SHALL keep `to: []` on both `hazard-has-mitigation` and `failure-mode-has-mitigation`.
 
 ## Acceptance Criteria
 
@@ -85,7 +87,7 @@ The finding is advisory (`warning`, exit 0) and is tunable on its own key,
 | FR-009-AC-7 | `quire validate --okf --repo o/a=<A> --repo o/b=<B> --module $M` over a fixture where the NFR in `o/a` has a `mitigates` edge to a `hazard` in `o/b` yields no `unjustified-safety-nfr` finding. | Test |
 | FR-009-AC-8 | An NFR whose only `mitigates` edge targets a `threat` in the same repository still yields the `unjustified-safety-nfr` finding. | Test |
 | FR-009-AC-9 | An NFR whose only `mitigates` edge targets a `hazard` in a repository not named by any `--repo` still yields the `unjustified-safety-nfr` finding. | Test |
-| FR-009-AC-10 | `hazard-has-mitigation` or `failure-mode-has-mitigation` still declare `to: []` in the manifest. | Test |
+| FR-009-AC-10 | `hazard-has-mitigation` and `failure-mode-has-mitigation` both still declare `to: []` in the manifest. | Test |
 
 ## Dependencies
 
