@@ -89,26 +89,6 @@ MODEL_OF = {
     "overall_residual_risk_evaluation": "OverallResidualRiskEvaluation",
 }
 
-SUPPORT_MODELS = (
-    "IdentityField",
-    "HazardAssessment",
-    "HazardContext",
-    "FailureAnalysis",
-    "Provenance",
-    "EvidenceRef",
-    "Severity",
-    "Likelihood",
-    "Exposure",
-    "Controllability",
-    "Detection",
-    "EpistemicState",
-    "LifecycleStatus",
-    "EstimatePhase",
-    "EstimateLevelText",
-    "EstimateLevel",
-    "EstimateJudgement",
-)
-
 
 @functools.lru_cache(maxsize=1)
 def kernel_scalars() -> frozenset[str]:

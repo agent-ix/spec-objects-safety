@@ -107,3 +107,23 @@ validates. FND-003 to FND-005 are in-PR fixes.
   as `estimate-has-situation` has.
 - FND-004: either switch to `references`, or add `estimate` to PLAT-1676's
   scope explicitly. Do not leave it in an allowance whose expiry cannot fire.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, f6a1aa6: the decision sections are now `## Determination` and are read by `record-sections` into one plain `determination` object, with `if`/`then` decision rules. The reviewer's probe through `validate_document`: an `accepted` record with an empty decider fails (`determination.decided_by: "decided_by" is a required property`), an `undecided` record with a decider fails, and an `undecided` record with no decider validates. The new document tests run through `quire_engine.validate_document`. The decider tags were removed from the schema-only tests. |
+| FND-002 | fixed | Round 1, f6a1aa6: `rationale: string` is required on every decision object, and non-blank is required only when decided. The manifest comment records that the document layer is stricter, because the engine omits an empty cell. |
+| FND-003 | fixed | Round 1, f6a1aa6: four required relations are declared once each (`residual-risk-has-estimate`, `residual-risk-has-policy`, `benefit-risk-covers-risk`, `evaluation-considers-record`). Each has a test that it warns once and that adding the edge clears it, plus a severity-promotion test. |
+| FND-004 | fixed | Round 1, f6a1aa6: PLAT-1676 now carries a comment adding `estimate`, with an inverse, to its scope (the reviewer read it on the ticket), and the conftest comment cites it, so the expiry can fire. |
+| FND-005 | fixed | Round 1, f6a1aa6: `reviewed_at` is removed from the residual_risk, benefit_risk and evaluation skeletons and from their negative fixtures. |
+| FND-006 | fixed | Round 1, f6a1aa6: the `allowed_links` self-copy test is deleted. |
+| FND-007 | fixed | Round 1, f6a1aa6: `NAMED_NEGATIVE_CASES` and its equality are deleted. The per-fixture failure assertions remain. |
+| FND-008 | still-open | Round 1, f6a1aa6 removed only the 15 names this PR added. The `SUPPORT_MODELS` tuple itself is still defined at tests/conftest.py:92 with no reader in tests/ or scripts/. Delete the tuple. |
+| FND-009 | fixed | Round 1, f6a1aa6: the blank-cell test is now tagged `FR-101-AC-6`. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | low | The `RiskEstimate` doc comment still says `estimate` is optional "until the Markdown mapping for module-specific keys lands". The mapping is now enabled module-wide, and the `## Estimate` heading was renamed to `## Judgement` so that record-sections does not claim it: the `estimate` key needs `phase` and `provenance`, which live elsewhere, and a probe shows `## Estimate` now fails with `estimate.phase` required. The comment should say why the heading deliberately differs from the key, or a later author who renames it back will break every estimate. | typespec/main.tsp:439-451 |

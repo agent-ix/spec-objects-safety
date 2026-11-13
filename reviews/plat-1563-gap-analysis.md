@@ -91,3 +91,13 @@ merged #38. The code lead ruled it an engine convention gap outside the PR
 - FND-002 and FND-003: file the quire-rs tickets named in the Verdict, or
   place the policy rules in PLAT-1570. Then record the deferral against a
   ticket id.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, f6a1aa6: FR-103-AC-2 and AC-3, FR-106-AC-3 and FR-107-AC-2 now hold at the document level. The new tests `test_a_decided_document_without_a_named_decider_fails` and `test_an_undecided_document_that_names_a_decider_fails` run through `validate_document`, and the reviewer reproduced both outcomes independently. |
+| FND-002 | deferred | PLAT-1677 (quire-rs, Backlog) item 1, cross-row table assertions, owns FR-101-AC-3, AC-4 and the document half of AC-5. The PR body records the deferral. |
+| FND-003 | deferred | PLAT-1677 item 3, a target-side relation selector, owns FR-103-AC-4's phase half. It is cited in the manifest comment at spec_objects_safety/manifest.yaml:664 and in the PR body. |
+| FND-004 | fixed | Round 1, f6a1aa6: `benefit-risk-covers-risk` is declared, and `test_a_benefit_risk_with_no_residual_risk_is_reported_once_and_the_edge_clears_it` covers FR-106-AC-2's list half. The relation warns by default and can be promoted to an error with `trace:benefit-risk-without-risk`. |
+| FND-005 | fixed | Round 1, f6a1aa6: NFR-100 now has an Acceptance Criteria section (NFR-100-AC-1 to AC-3) and uses the `Test` method. `quire matrix` mints the three criteria, and the section-matches-nothing and uncatalogued-method warnings are gone. |

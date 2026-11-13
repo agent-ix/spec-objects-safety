@@ -439,10 +439,13 @@ model EstimateJudgement {
 /**
  * A risk estimate object. The judgement sits under `estimate`, whole or
  * refused, the same shape `Hazard.assessment` has; it is optional on the record
- * because Quire populates a declaration record's `fields`, `clauses`,
- * `operations` and `relations` only, so the document-level requirement is the
- * manifest's table and frontmatter locators until the Markdown mapping for
- * module-specific keys lands.
+ * because the document supplies the judgement through the manifest's table and
+ * frontmatter locators.
+ *
+ * The document's estimate table is under `## Judgement`, never `## Estimate`:
+ * the `record-sections` mapping would read a table under `## Estimate` into this
+ * record's `estimate` key, which needs the `phase` and `provenance` that the
+ * table does not carry.
  *
  * `phase` is also a top-level frontmatter key of the document, so required
  * relations can select on it. The edges `estimates` (to the situation) and
