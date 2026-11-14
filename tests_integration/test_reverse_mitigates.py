@@ -66,9 +66,7 @@ def _hazard(root, hazard_id="HAZ-001"):
 
 def _failure_mode(root, failure_mode_id="FM-001"):
     text = (PACKAGE_ROOT / "skeletons" / "failure_mode.md").read_text()
-    (root / f"{failure_mode_id}.md").write_text(
-        text.replace("FM-001", failure_mode_id)
-    )
+    (root / f"{failure_mode_id}.md").write_text(text.replace("FM-001", failure_mode_id))
 
 
 def _threat(root, threat_id="THR-001"):
