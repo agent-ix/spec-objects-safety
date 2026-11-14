@@ -155,8 +155,8 @@ def test_safety_nfr_mitigating_a_failure_mode_is_not_reported(tmp_path):
     assert _findings(result) == [], result.stderr
 
 
-@pytest.mark.trace("TC-104", "FR-009-AC-7", "FR-009-AC-9")
-def test_cross_repository_target_counts_only_when_its_repository_is_loaded(tmp_path):
+@pytest.mark.trace("TC-104", "FR-009-AC-7")
+def test_cross_repository_target_counts_when_its_repository_is_loaded(tmp_path):
     source = tmp_path / "source"
     target = tmp_path / "target"
     source_spec = source / "spec"
@@ -168,6 +168,14 @@ def test_cross_repository_target_counts_only_when_its_repository_is_loaded(tmp_p
 
     loaded = _registered(_validate_repos(("a", source), ("b", target)))
     assert _findings(loaded) == [], loaded.stderr
+
+
+@pytest.mark.trace("TC-106", "FR-009-AC-9")
+def test_unloaded_cross_repository_target_leaves_a_finding(tmp_path):
+    source = tmp_path / "source"
+    source_spec = source / "spec"
+    source_spec.mkdir(parents=True)
+    _nfr(source_spec, "NFR-001", "safety", ["ix://o/b/HAZ-001"])
 
     unloaded = _registered(_validate_repos(("a", source)))
     findings = _findings(unloaded)

@@ -214,16 +214,6 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         "failure-mode-has-mitigation",
         "safety-nfr-has-mitigation-target",
     } <= set(by_name)
-    for name, kind in (
-        ("hazard-has-mitigation", "hazard"),
-        ("failure-mode-has-mitigation", "failure_mode"),
-    ):
-        relation = by_name[name]
-        assert relation["from"] == kind
-        assert relation["edges"] == ["mitigates"]
-        assert relation["to"] == []
-        assert relation["direction"] == "incoming"
-
     checks = {r["check"] for r in by_name.values()}
     assert {
         "unmitigated-hazard",
@@ -233,6 +223,22 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
     assert len(checks) == len(by_name), "each relation is independently tunable"
 
     assert model["acyclic_edges"] == ["arises_from"]
+
+
+@pytest.mark.trace("TC-107", "FR-009-AC-10")
+def test_tc107_hazard_and_failure_mode_relations_keep_unconstrained_targets() -> None:
+    relations = _manifest()["traceability"]["required_relations"]
+    by_name = {relation["name"]: relation for relation in relations}
+
+    for name, kind in (
+        ("hazard-has-mitigation", "hazard"),
+        ("failure-mode-has-mitigation", "failure_mode"),
+    ):
+        relation = by_name[name]
+        assert relation["from"] == kind
+        assert relation["edges"] == ["mitigates"]
+        assert relation["to"] == []
+        assert relation["direction"] == "incoming"
 
 
 @pytest.mark.trace("TC-099", "FR-009-AC-1")
