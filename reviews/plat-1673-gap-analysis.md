@@ -32,3 +32,16 @@ Checked FR-009 against the changed manifest and tests, with computed matrix and 
 - Untraced behaviors / stubs in reviewed changes: 0.
 - Plan completion: not assessed
 - Semantic review: skipped (optional method not requested).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `26538d1` separates the loaded-target TC-104 test from a new unloaded-target test tagged TC-106 / FR-009-AC-9. |
+| FND-002 | fixed | Commit `26538d1` adds a dedicated TC-107 / FR-009-AC-10 test for both incoming relations. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | high | Quire rejects the TestMatrix tables because their headers say `Coverage Status` while the declared column is `Status`; the changed FR-009 summary status is in the invalid table. | spec/tests.md:52,58,64 |

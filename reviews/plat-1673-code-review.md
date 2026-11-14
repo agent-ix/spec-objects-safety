@@ -31,3 +31,10 @@ Reviewed frozen PR #43 at `8206bd9f0211fd1b4d24afb5b8960b5d488807ad`, including 
 - `tests/__init__.py` is a local package marker; no duplicate fixture source or unrelated repository access was found.
 - No applicable AssuranceProfile was found. Python code-review checks found no source implementation changes, stubs, weak behavioral assertions, or boundary-mock issues in the reviewed additions.
 - `quoin matrix` reports 152 untagged criteria repository-wide; the two findings above are the untagged criteria in this review's FR-009 scope. No run evidence is recorded in the matrix.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `26538d1` separates the loaded-target TC-104 test from a new unloaded-target test tagged TC-106 / FR-009-AC-9. |
+| FND-002 | fixed | Commit `26538d1` adds a dedicated TC-107 / FR-009-AC-10 test for both incoming relations. |

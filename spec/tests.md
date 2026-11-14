@@ -51,19 +51,19 @@ constraint, and NFR metric maps to at least one test case backed by a real
 
 ### Stakeholder Requirement Coverage
 
-| Stakeholder Req | Trace to US/FR | Test/Validation | Coverage Status |
+| Stakeholder Req | Trace to US/FR | Test/Validation | Status |
 |---|---|---|---|
 | StR-001 | US-001, FR-001..FR-009 | StR-001-VC-1 by TC-003, StR-001-VC-2 by TC-063 | ✅ |
 
 ### User Story Coverage
 
-| User Story | Acceptance Criteria | Test Cases | Coverage Status |
+| User Story | Acceptance Criteria | Test Cases | Status |
 |---|---|---|---|
 | US-001 | US-001-EX-1..3 (illustrative) implemented by FR-002..FR-008 | TC-036, TC-039, TC-061 | ✅ |
 
 ### Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 |---|---|---|---|
 | FR-001 | FR-001-AC-1..4, AC-6, AC-7, FR-001-CON-1..2 | TC-002..TC-007, TC-046 | 🚧 AC-1's "declares no role" clause is unbacked; see Coverage Gaps |
 | FR-002 | FR-002-AC-1..4, FR-002-AC-6..7, FR-002-AC-9, FR-002-CON-1..4 | TC-012..TC-025 | ✅ |
