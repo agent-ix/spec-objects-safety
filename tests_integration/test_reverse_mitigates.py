@@ -159,10 +159,12 @@ def test_safety_nfr_mitigating_a_failure_mode_is_not_reported(tmp_path):
 def test_cross_repository_target_counts_only_when_its_repository_is_loaded(tmp_path):
     source = tmp_path / "source"
     target = tmp_path / "target"
-    source.mkdir()
-    target.mkdir()
-    _nfr(source, "NFR-001", "safety", ["ix://o/b/HAZ-001"])
-    _hazard(target)
+    source_spec = source / "spec"
+    target_spec = target / "spec"
+    source_spec.mkdir(parents=True)
+    target_spec.mkdir(parents=True)
+    _nfr(source_spec, "NFR-001", "safety", ["ix://o/b/HAZ-001"])
+    _hazard(target_spec)
 
     loaded = _registered(_validate_repos(("a", source), ("b", target)))
     assert _findings(loaded) == [], loaded.stderr
