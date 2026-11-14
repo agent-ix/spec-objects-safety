@@ -29,3 +29,9 @@ Reviewed the changed FR-009 summary and TC-099..TC-107 coverage statuses in the 
 - FR-009 criteria: AC-1 through AC-10 are tagged in `quoin matrix --repo . --json`; TC-099 through TC-107 each map to the corresponding FR-009 criterion(s), and the changed status cells match those bindings.
 - Structural validation: `quire validate --scope . 'spec/**/*.md'` exits 3 with three TestMatrix column assertion errors: stakeholder, user-story, and functional coverage tables use `Coverage Status` where the declaration expects `Status`.
 - Other repository-wide TestMatrix gaps were outside this requested row review.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `e94369b` changes the stakeholder, user-story, and functional TestMatrix headers to `Status`, matching the declared column. |

@@ -39,6 +39,7 @@ Checked FR-009 against the changed manifest and tests, with computed matrix and 
 | --- | --- | --- |
 | FND-001 | fixed | Commit `26538d1` separates the loaded-target TC-104 test from a new unloaded-target test tagged TC-106 / FR-009-AC-9. |
 | FND-002 | fixed | Commit `26538d1` adds a dedicated TC-107 / FR-009-AC-10 test for both incoming relations. |
+| FND-003 | fixed | Commit `e94369b` changes the three TestMatrix headers in `spec/tests.md` to the declared `Status` column. |
 
 ## New findings (disposition pass 1)
 
