@@ -221,6 +221,7 @@ def test_tc010_hazard_coverage_is_declared_not_coded() -> None:
         relation = by_name[name]
         assert relation["from"] == kind
         assert relation["edges"] == ["mitigates"]
+        assert relation["to"] == []
         assert relation["direction"] == "incoming"
 
     checks = {r["check"] for r in by_name.values()}
@@ -241,7 +242,7 @@ def test_tc099_safety_nfr_relation_is_declared_with_a_where_selector() -> None:
     (relation,) = [r for r in relations if r["from"] == "NFR"]
     assert relation["where"] == {"field": "quality_attribute", "values": ["safety"]}
     assert relation["edges"] == ["mitigates"]
-    assert relation["to"] == []
+    assert relation["to"] == ["hazard", "failure_mode"]
     assert relation["direction"] == "outgoing"
     assert relation["check"] == "unjustified-safety-nfr"
 

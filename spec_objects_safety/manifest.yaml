@@ -1,6 +1,6 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
-version: 0.3.0
+version: 0.4.0
 description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation) — IEC 61508 / ISO 26262 / FMEA lineage'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
@@ -629,14 +629,14 @@ traceability:
   # the `quality_attribute` frontmatter field spec-artifacts-iso declares on
   # `NFR`; `where` (quire-rs FR-058) narrows the obligation to NFRs holding
   # `safety`, so a performance NFR is never reported. The NFR authors the edge,
-  # so `direction: outgoing`. `to: []` on purpose: the hazard an NFR answers is
-  # usually declared in another repository, and a dangling edge cannot satisfy
-  # a constrained `to` (FR-058).
+  # so `direction: outgoing`. Constrain targets to hazards and failure modes;
+  # a resolved cross-repository target satisfies the relation when both
+  # repositories are loaded together (FR-009, FR-085).
   - name: safety-nfr-has-mitigation-target
     from: NFR
     where: {field: quality_attribute, values: [safety]}
     edges: [mitigates]
-    to: []
+    to: [hazard, failure_mode]
     direction: outgoing
     check: unjustified-safety-nfr
   # The chain hazard -> situation -> harm, one relation per hop (the engine

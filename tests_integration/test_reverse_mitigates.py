@@ -64,6 +64,18 @@ def _hazard(root, hazard_id="HAZ-001"):
     (root / f"{hazard_id}.md").write_text(text.replace("HAZ-001", hazard_id))
 
 
+def _failure_mode(root, failure_mode_id="FM-001"):
+    text = (PACKAGE_ROOT / "skeletons" / "failure_mode.md").read_text()
+    (root / f"{failure_mode_id}.md").write_text(
+        text.replace("FM-001", failure_mode_id)
+    )
+
+
+def _threat(root, threat_id="THR-001"):
+    text = (_module("spec_objects_security") / "skeletons" / "threat.md").read_text()
+    (root / f"{threat_id}.md").write_text(text.replace("THR-001", threat_id))
+
+
 def _validate(root, *flags):
     return subprocess.run(
         [
@@ -74,12 +86,30 @@ def _validate(root, *flags):
             "--module",
             str(_module("spec_artifacts_iso")),
             "--module",
+            str(_module("spec_objects_security")),
+            "--module",
             str(PACKAGE_ROOT),
             str(root),
         ],
         capture_output=True,
         text=True,
     )
+
+
+def _validate_repos(*repos, flags=()):
+    command = [_quire(), "validate", "--okf", *flags]
+    command.extend(f"--repo o/{name}={root}" for name, root in repos)
+    command.extend(
+        [
+            "--module",
+            str(_module("spec_artifacts_iso")),
+            "--module",
+            str(_module("spec_objects_security")),
+            "--module",
+            str(PACKAGE_ROOT),
+        ]
+    )
+    return subprocess.run(command, capture_output=True, text=True)
 
 
 def _registered(result):
@@ -111,7 +141,7 @@ def test_safety_nfr_without_a_mitigates_edge_is_reported(tmp_path):
 def test_mitigating_or_differently_classified_nfr_is_not_reported(tmp_path):
     _hazard(tmp_path)
     _nfr(tmp_path, "NFR-001", "safety", [HAZARD_REF])
-    _nfr(tmp_path, "NFR-002", "safety", ["ix://agent-ix/other-repo/HAZ-900"])
+    _nfr(tmp_path, "NFR-002", "safety", ["ix://o/unloaded/HAZ-900"])
     _nfr(tmp_path, "NFR-003", "performance_efficiency")
     _nfr(tmp_path, "NFR-004", "security")
     result = _registered(_validate(tmp_path))
@@ -123,10 +153,47 @@ def test_mitigating_or_differently_classified_nfr_is_not_reported(tmp_path):
     assert len(findings) == 1 and "NFR-002" in findings[0], findings
 
 
+@pytest.mark.trace("TC-103", "FR-009-AC-6")
+def test_safety_nfr_mitigating_a_failure_mode_is_not_reported(tmp_path):
+    _failure_mode(tmp_path)
+    _nfr(tmp_path, "NFR-001", "safety", ["ix://agent-ix/spec-objects-safety/FM-001"])
+    result = _registered(_validate(tmp_path))
+    assert _findings(result) == [], result.stderr
+
+
+@pytest.mark.trace("TC-104", "FR-009-AC-7", "FR-009-AC-9")
+def test_cross_repository_target_counts_only_when_its_repository_is_loaded(tmp_path):
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    source.mkdir()
+    target.mkdir()
+    _nfr(source, "NFR-001", "safety", ["ix://o/b/HAZ-001"])
+    _hazard(target)
+
+    loaded = _registered(_validate_repos(("a", source), ("b", target)))
+    assert _findings(loaded) == [], loaded.stderr
+
+    unloaded = _registered(_validate_repos(("a", source)))
+    findings = _findings(unloaded)
+    assert len(findings) == 1, unloaded.stderr
+    assert "NFR-001" in findings[0] and "'safety'" in findings[0], findings
+
+
+@pytest.mark.trace("TC-105", "FR-009-AC-8")
+def test_safety_nfr_mitigating_only_a_threat_is_still_reported(tmp_path):
+    _threat(tmp_path)
+    _nfr(tmp_path, "NFR-001", "safety", ["ix://agent-ix/spec-objects-security/THR-001"])
+    result = _registered(_validate(tmp_path))
+    findings = _findings(result)
+    assert len(findings) == 1, result.stderr
+    assert "NFR-001" in findings[0] and "'safety'" in findings[0], findings
+
+
 @pytest.mark.trace("TC-102", "FR-009-AC-5")
 def test_finding_is_advisory_and_tunable(tmp_path):
     _nfr(tmp_path, "NFR-001", "safety")
     strict = _registered(_validate(tmp_path, "--strict"))
+    assert strict.returncode == 3, strict.stderr
     findings = _findings(strict)
     assert len(findings) == 1, strict.stderr
     # The rule never promotes itself: under strict it is still a warning.
