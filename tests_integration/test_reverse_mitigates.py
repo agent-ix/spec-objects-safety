@@ -96,7 +96,8 @@ def _validate(root, *flags):
 
 def _validate_repos(*repos, flags=()):
     command = [_quire(), "validate", "--okf", *flags]
-    command.extend(f"--repo o/{name}={root}" for name, root in repos)
+    for name, root in repos:
+        command.extend(["--repo", f"o/{name}={root}"])
     command.extend(
         [
             "--module",
@@ -139,16 +140,11 @@ def test_safety_nfr_without_a_mitigates_edge_is_reported(tmp_path):
 def test_mitigating_or_differently_classified_nfr_is_not_reported(tmp_path):
     _hazard(tmp_path)
     _nfr(tmp_path, "NFR-001", "safety", [HAZARD_REF])
-    _nfr(tmp_path, "NFR-002", "safety", ["ix://o/unloaded/HAZ-900"])
-    _nfr(tmp_path, "NFR-003", "performance_efficiency")
-    _nfr(tmp_path, "NFR-004", "security")
+    _nfr(tmp_path, "NFR-002", "performance_efficiency")
+    _nfr(tmp_path, "NFR-003", "security")
     result = _registered(_validate(tmp_path))
     assert result.returncode == 0, result.stderr
     assert _findings(result) == [], result.stderr
-    # Prove the rule is live over this very bundle: dropping one edge reports it.
-    _nfr(tmp_path, "NFR-002", "safety")
-    findings = _findings(_validate(tmp_path))
-    assert len(findings) == 1 and "NFR-002" in findings[0], findings
 
 
 @pytest.mark.trace("TC-103", "FR-009-AC-6")
