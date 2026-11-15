@@ -219,7 +219,7 @@ def test_a_complete_pre_control_judgement_validates(schema_registry):
     )
 
 
-@pytest.mark.trace("FR-203-AC-15")
+@pytest.mark.trace("FR-203-AC-15", "TC-108")
 def test_composed_risk_estimate_schema_accepts_frontmatter_phase(schema_registry):
     validator = schema_registry("RiskEstimate")
     assert valid(validator, dict(BASE, phase="post_control", estimate=JUDGEMENT))
