@@ -65,7 +65,7 @@ absent.
 ## Behavior
 
 - The manifest SHALL declare `risk_estimate` and export it in `semantic.exports`.
-- The schema SHALL require `phase`.
+- The schema SHALL require `phase` in both the document's frontmatter contract and the composed `RiskEstimate` data record. A composed record contains the phase alongside the body-extracted estimate, so the data schema SHALL accept the top-level phase as an `EstimatePhase`.
 - The schema SHALL require `severity` and `probability`.
 - The schema SHALL require `rationale` and `provenance`, with `assertedBy` and `assertedAt`.
 - The schema SHALL give `phase` the members `pre_control` and `post_control` and no default.
@@ -96,6 +96,7 @@ absent.
 | FR-203-AC-12 | A `hazard` fixture with `assessment` and a `risk_estimate` of its situation validate together, and no output derives one from the other. | Test |
 | FR-203-AC-13 | The manifest `lexicon` has an entry `probability`, and the module declares no type named `risk`. | Inspection |
 | FR-203-AC-14 | The emitted schema's level branch excludes `unknown`, `not_assessed` and `not_applicable`, and a fixture with `severity: not_assessed` validates only through the marker branch, which extraction reports as an `EpistemicState`, never as a level. | Test |
+| FR-203-AC-15 | The composed `RiskEstimate` data schema accepts the top-level `phase` copied from frontmatter alongside the body-extracted estimate, and rejects a phase outside `pre_control` and `post_control`. | Test (TC-108) |
 
 ## Dependencies
 

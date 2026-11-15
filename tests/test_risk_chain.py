@@ -212,11 +212,19 @@ def test_hazardous_situation_skeleton_validates_and_needs_a_description(quire_en
 @pytest.mark.trace("FR-203-AC-1")
 def test_a_complete_pre_control_judgement_validates(schema_registry):
     validator = schema_registry("RiskEstimate")
-    assert valid(validator, dict(BASE, estimate=JUDGEMENT))
+    assert valid(validator, dict(BASE, phase="pre_control", estimate=JUDGEMENT))
     assert valid(schema_registry("EstimateJudgement"), JUDGEMENT)
     assert valid(
         schema_registry("EstimateJudgement"), dict(JUDGEMENT, phase="post_control")
     )
+
+
+@pytest.mark.trace("FR-203-AC-15")
+def test_composed_risk_estimate_schema_accepts_frontmatter_phase(schema_registry):
+    validator = schema_registry("RiskEstimate")
+    assert valid(validator, dict(BASE, phase="post_control", estimate=JUDGEMENT))
+    assert not valid(validator, dict(BASE, phase="pre_controlled", estimate=JUDGEMENT))
+    assert not valid(validator, dict(BASE, estimate=JUDGEMENT))
 
 
 @pytest.mark.trace("FR-203-AC-2")
@@ -226,7 +234,10 @@ def test_a_complete_pre_control_judgement_validates(schema_registry):
 def test_each_judgement_member_is_required(schema_registry, missing):
     partial = {k: v for k, v in JUDGEMENT.items() if k != missing}
     assert not valid(schema_registry("EstimateJudgement"), partial)
-    assert not valid(schema_registry("RiskEstimate"), dict(BASE, estimate=partial))
+    assert not valid(
+        schema_registry("RiskEstimate"),
+        dict(BASE, phase="pre_control", estimate=partial),
+    )
 
 
 @pytest.mark.trace("FR-203-AC-2")
@@ -267,7 +278,8 @@ def test_any_non_empty_level_text_validates_and_empty_fails(schema_registry):
 def test_an_estimate_forbids_a_score_region_or_acceptance(schema_registry, key):
     assert not valid(schema_registry("EstimateJudgement"), dict(JUDGEMENT, **{key: 1}))
     assert not valid(
-        schema_registry("RiskEstimate"), dict(BASE, estimate=JUDGEMENT, **{key: 1})
+        schema_registry("RiskEstimate"),
+        dict(BASE, phase="pre_control", estimate=JUDGEMENT, **{key: 1}),
     )
 
 
