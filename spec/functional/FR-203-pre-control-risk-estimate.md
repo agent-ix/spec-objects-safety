@@ -87,7 +87,7 @@ absent.
 | FR-203-AC-3 | `severity: unknown`, `not_assessed` and `not_applicable` are each accepted and stay distinct from every level string in the extracted data. | Test |
 | FR-203-AC-4 | A fixture whose severity is a level string that appears in no FR-004 list validates; an empty string fails. | Test |
 | FR-203-AC-5 | A fixture with `score`, `region`, `level`, `acceptable` or `acceptance` fails validation. | Test |
-| FR-203-AC-6 | `phase` is a top-level frontmatter key in the shipped skeleton and in every fixture, and not a body-extracted field. | Inspection |
+| FR-203-AC-6 | `phase` is a top-level frontmatter key in the shipped skeleton and in every fixture, is projected into the declaration record and accepted by the `RiskEstimate` data schema only as `pre_control` or `post_control`, and is not a body-extracted field. | Test |
 | FR-203-AC-7 | The shipped `risk_estimate` skeleton fails validation as shipped. | Test |
 | FR-203-AC-8 | An `estimates` edge to anything but a `hazardous_situation` is reported `disallowed-edge-target` naming the type. | Test |
 | FR-203-AC-9 | An estimate with no `estimates` edge yields exactly one `estimate-without-situation` warning and exit 0; adding the edge removes it. | Test |

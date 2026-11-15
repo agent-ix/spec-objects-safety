@@ -290,6 +290,14 @@ def test_the_emitted_schema_declares_phase_as_a_frontmatter_key():
     assert "phase" in properties
 
 
+@pytest.mark.trace("FR-203-AC-6")
+def test_risk_estimate_schema_accepts_only_the_projected_phase(schema_registry):
+    validator = schema_registry("RiskEstimate")
+    for phase in ("pre_control", "post_control"):
+        assert valid(validator, dict(BASE, phase=phase))
+    assert not valid(validator, dict(BASE, phase="unknown"))
+
+
 @pytest.mark.trace("FR-303-AC-5")
 def test_a_phase_only_in_the_body_is_invalid(quire_engine):
     text = filled_estimate("post_control")

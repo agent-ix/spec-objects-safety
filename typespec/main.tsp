@@ -458,6 +458,9 @@ model RiskEstimate {
   @contains(IdentityField)
   fields: FieldDecl[];
 
+  // Frontmatter projection carries this top-level key into the declaration
+  // record so relation selectors and the closed data schema agree.
+  phase?: EstimatePhase;
   estimate?: EstimateJudgement;
   evidence?: EvidenceRef[];
   relations?: RelationDecl[];

@@ -13,6 +13,9 @@
         "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
       }
     },
+    "phase": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimatePhase.json"
+    },
     "estimate": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EstimateJudgement.json"
     },
