@@ -65,7 +65,7 @@ absent.
 ## Behavior
 
 - The manifest SHALL declare `risk_estimate` and export it in `semantic.exports`.
-- The schema SHALL require `phase` in both the document's frontmatter contract and the composed `RiskEstimate` data record. A composed record contains the phase alongside the body-extracted estimate, so the data schema SHALL accept the top-level phase as an `EstimatePhase`.
+- The manifest's body extraction SHALL require `phase` from document frontmatter, and the composed `RiskEstimate` data schema SHALL require the same top-level phase as an `EstimatePhase`. A composed record contains that phase alongside the body-extracted estimate.
 - The schema SHALL require `severity` and `probability`.
 - The schema SHALL require `rationale` and `provenance`, with `assertedBy` and `assertedAt`.
 - The schema SHALL give `phase` the members `pre_control` and `post_control` and no default.
