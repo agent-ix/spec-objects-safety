@@ -74,6 +74,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
 | FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
 | FR-009 | FR-009-AC-1..10 | TC-099..TC-102, TC-103..TC-107 | ✅ |
+| FR-203 | FR-203-AC-15 | TC-108 | ✅ |
 
 ### Integration Test Coverage
 
@@ -152,6 +153,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-105 | An NFR whose only `mitigates` edge targets a threat yields the finding | Integration | P0 | FR-009-AC-8 | ✅ |
 | TC-106 | An NFR whose only `mitigates` edge targets a hazard in a repository not named by `--repo` yields the finding | Integration | P0 | FR-009-AC-9 | ✅ |
 | TC-107 | `hazard-has-mitigation` and `failure-mode-has-mitigation` both still declare `to: []` | Unit | P1 | FR-009-AC-10 | ✅ |
+| TC-108 | The composed `RiskEstimate` data schema accepts its top-level frontmatter `phase` and rejects unsupported or missing values | Unit | P1 | FR-203-AC-15 | ✅ |
 | TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |
 

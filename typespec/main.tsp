@@ -448,9 +448,10 @@ model EstimateJudgement {
  * table does not carry.
  *
  * `phase` is also a top-level frontmatter key of the document, so required
- * relations can select on it. The edges `estimates` (to the situation) and
- * `assumes` (to controls) are authored in the document's relationships, not in
- * this record.
+ * relations can select on it. It remains in this data record too, allowing
+ * Quire to validate the composed frontmatter and body-derived record together.
+ * The edges `estimates` (to the situation) and `assumes` (to controls) are
+ * authored in the document's relationships, not in this record.
  */
 @extension("additionalProperties", false)
 model RiskEstimate {
@@ -458,6 +459,7 @@ model RiskEstimate {
   @contains(IdentityField)
   fields: FieldDecl[];
 
+  phase: EstimatePhase;
   estimate?: EstimateJudgement;
   evidence?: EvidenceRef[];
   relations?: RelationDecl[];
