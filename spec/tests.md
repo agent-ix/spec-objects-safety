@@ -70,7 +70,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
-| FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064 | ✅ |
+| FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064, TC-109 | ✅ |
 | FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
 | FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
 | FR-009 | FR-009-AC-1..10 | TC-099..TC-102, TC-103..TC-107 | ✅ |
@@ -138,6 +138,7 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |
 | TC-063 | Every `allowed_links` and `traceability` verb exists in the iso edge vocabulary | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-064 | No safety-only synonym is minted for a verb or a type another module declares | Unit | P1 | FR-006-CON-1 | ✅ |
+| TC-109 | Pending ISO risk verbs used by safety archetypes are registered in the local edge vocabulary | Unit | P1 | FR-006-AC-4 | ✅ |
 | TC-093 | A fixture `control` mitigating a fixture `hazard` and a `failure_mode` yields no `disallowed-edge-target` | Integration | P0 | FR-007-AC-1, FR-007-AC-2 | ✅ |
 | TC-094 | `quire validate --okf --strict` over a `control` mitigating an undeclared bare id exits non-zero and names the control path, `mitigates` and the id | Integration | P0 | FR-007-AC-3 | ✅ |
 | TC-095 | A `control` mitigating an `asset` is still reported `disallowed-edge-target` naming `asset` | Integration | P0 | FR-007-AC-4 | ✅ |

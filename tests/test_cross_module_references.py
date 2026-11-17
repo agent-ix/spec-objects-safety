@@ -115,6 +115,16 @@ def test_every_verb_this_module_uses_exists_in_the_iso_vocabulary():
     assert not unknown, f"verbs outside the iso vocabulary: {unknown}"
 
 
+@pytest.mark.trace("TC-109", "FR-006-AC-4")
+def test_pending_iso_verbs_are_registered_locally_until_migration():
+    """Pending shared verbs still need entries for a composed edge registry."""
+    manifest = load_manifest()
+    local_edge_types = manifest.get("edge_types") or {}
+    assert PENDING_ISO_VERBS <= set(local_edge_types), sorted(
+        PENDING_ISO_VERBS - set(local_edge_types)
+    )
+
+
 @pytest.mark.trace("TC-064", "FR-006-CON-1")
 def test_no_safety_only_synonym_is_minted():
     """The finding the module was founded on, kept true.

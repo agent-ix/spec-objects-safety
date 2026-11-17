@@ -43,6 +43,13 @@ nav:
     label: Safety
     icon: ShieldAlert
     order: 55
+# The three risk-judgement verbs below are still pending addition to the shared
+# ISO vocabulary (TC-063). Declare them here until that migration lands so a
+# consumer can build the module's edge registry from this manifest.
+edge_types:
+  estimates: { description: "Risk estimate judges a hazardous situation.", category: governance }
+  assumes: { description: "Risk estimate records an assumed control.", category: governance }
+  estimate: { description: "Residual risk identifies its risk estimate.", category: governance }
 archetypes: []
 grammars: []
 artifact_types: []
