@@ -514,7 +514,6 @@ def test_an_evaluation_considering_residual_risks_and_benefit_risks_validates(tm
     clean_of_edge_errors(validate(tmp_path))
 
 
-@pytest.mark.trace("FR-107-AC-1")
 def test_an_evaluation_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
     hazard(tmp_path)
     evaluation(tmp_path, "ORE-001", "HAZ-001")
