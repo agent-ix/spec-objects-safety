@@ -225,8 +225,8 @@ def test_a_chain_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
     situation(tmp_path, "SIT-002", "HARM-001")
     harm(tmp_path, "HARM-002", "HAZ-001")
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("SIT-002:" in line and "'harm'" in line for line in lines), lines
-    assert any("HARM-002:" in line and "'hazard'" in line for line in lines), lines
+    assert any("SIT-002.md" in line and "'harm'" in line for line in lines), lines
+    assert any("HARM-002.md" in line and "'hazard'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-202-AC-8")
@@ -253,7 +253,7 @@ def test_an_estimates_edge_to_a_hazard_is_disallowed_naming_the_type(tmp_path):
     hazard(tmp_path)
     estimate(tmp_path, "EST-001", estimates=["HAZ-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("EST-001:" in line and "'hazard'" in line for line in lines), lines
+    assert any("EST-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-203-AC-10", "FR-203-AC-11", "FR-204-AC-6")
@@ -301,7 +301,7 @@ def test_an_assumes_edge_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
     hazard(tmp_path)
     estimate(tmp_path, "EST-001", assumes=["HAZ-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("EST-001:" in line and "'hazard'" in line for line in lines), lines
+    assert any("EST-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-204-AC-4")
@@ -459,7 +459,7 @@ def test_an_estimate_edge_to_another_type_is_disallowed_naming_the_type(tmp_path
     risk_chain(tmp_path)
     residual_risk(tmp_path, "RR-001", estimate=["HAZ-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("RR-001:" in line and "'hazard'" in line for line in lines), lines
+    assert any("RR-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-103-AC-4")
@@ -467,7 +467,7 @@ def test_a_policy_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
     risk_chain(tmp_path)
     residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["EST-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("RR-001:" in line and "'risk_estimate'" in line for line in lines), lines
+    assert any("RR-001.md" in line and "'risk_estimate'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-103-AC-4")
@@ -502,7 +502,7 @@ def test_a_benefit_risk_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_pa
     hazard(tmp_path)
     benefit_risk(tmp_path, "BR-001", "HAZ-001")
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("BR-001:" in line and "'hazard'" in line for line in lines), lines
+    assert any("BR-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-107-AC-1")
@@ -514,12 +514,11 @@ def test_an_evaluation_considering_residual_risks_and_benefit_risks_validates(tm
     clean_of_edge_errors(validate(tmp_path))
 
 
-@pytest.mark.trace("FR-107-AC-1")
 def test_an_evaluation_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
     hazard(tmp_path)
     evaluation(tmp_path, "ORE-001", "HAZ-001")
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("ORE-001:" in line and "'hazard'" in line for line in lines), lines
+    assert any("ORE-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 def _warns_once_then_clears(tmp_path, check, name, build_without, build_with):
