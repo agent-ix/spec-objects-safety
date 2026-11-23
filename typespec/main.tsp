@@ -731,15 +731,15 @@ model RiskManagementPlan {
 // The reviewer, the statement of plan execution, the post-production readiness
 // and the reviewer's statement are one table row under the document's Review
 // section, read by the manifest's locator. The plan and the overall evaluation
-// are `references` edges authored in the document's relationships, never
-// members here, and the seal keeps a score, a class and an acceptance off the
+// are edges authored in the document's relationships (`reviews` to the plan,
+// `references` to the evaluation), never members here, and the seal keeps a score, a class and an acceptance off the
 // record.
 // ---------------------------------------------------------------------------
 
 /**
- * A risk management review object. The executed plan and the overall
- * residual-risk evaluation are referenced through `references` edges authored
- * in the document's relationships.
+ * A risk management review object. The executed plan is named through a
+ * `reviews` edge and the overall residual-risk evaluation through a
+ * `references` edge, both authored in the document's relationships.
  */
 @extension("additionalProperties", false)
 model RiskManagementReview {

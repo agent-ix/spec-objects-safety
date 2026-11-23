@@ -47,13 +47,14 @@ acceptability or approval of its own, and the module ships no review.
 - The `Post-production readiness` cell SHALL be exactly `ready` or `not_ready`, with no default.
 - The `Statement` cell SHALL be non-empty and not a placeholder.
 - If a Review cell is empty or an unfilled placeholder, then validation SHALL fail naming the table and the column.
-- The type SHALL allow `reviews` edges to `risk_management_plan` documents and `references` edges to `overall_residual_risk_evaluation` documents, and no other edge or target type.
+- The type SHALL allow `reviews` edges to `risk_management_plan` documents and `references` edges to `overall_residual_risk_evaluation` documents, and no other target type for these two edges.
 - If a review has no `reviews` edge to a `risk_management_plan`, then the tooling SHALL report `review-without-plan` naming the review, as a warning.
 - If a review has no `references` edge to an `overall_residual_risk_evaluation`, then the tooling SHALL report `review-without-overall-evaluation` naming the review, as a warning.
 - The tooling SHALL NOT derive `Plan executed`, `Post-production readiness` or the review's outcome from the referenced records.
 - The schema SHALL NOT declare a score, class, acceptability or approval property.
 - The module SHALL NOT ship a review document.
-- The skeleton SHALL carry a placeholder in every review cell and SHALL fail validation until a person fills them.
+- The skeleton SHALL carry a placeholder in every review cell.
+- The skeleton SHALL fail validation until a person fills every review cell.
 
 ## Acceptance Criteria
 
