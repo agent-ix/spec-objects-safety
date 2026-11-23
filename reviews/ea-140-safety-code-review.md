@@ -88,3 +88,9 @@ documentation defect: the schema and TypeSpec description say both links are
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The `RiskManagementReview` TypeSpec doc comment and the emitted schema `description` say "The executed plan and the overall residual-risk evaluation are referenced through `references` edges", and the section comment says "The plan and the overall evaluation are `references` edges". The manifest, FR-109 and the skeleton use a `reviews` edge for the plan. Fix the wording in `typespec/main.tsp` and regenerate the schema. | typespec/main.tsp:734, typespec/main.tsp:741, spec_objects_safety/schemas/RiskManagementReview.json:41 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit 8ff4de4: the TypeSpec section comment and doc comment and the regenerated `RiskManagementReview.json` description now say the plan is named through a `reviews` edge and the evaluation through a `references` edge. Re-measured: `node scripts/generate-schemas.mjs --check` reports 39 schemas match. |

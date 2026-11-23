@@ -26,3 +26,9 @@ Conformant except one compound statement (FND-001).
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | "The skeleton SHALL carry a placeholder in every review cell and SHALL fail validation until a person fills them." carries two `shall`s; quire reports `[ears:non-singular]`. Split into two statements (the second is already covered by FR-109-AC-2). | spec/functional/FR-109-risk-management-review.md:56 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit 8ff4de4 splits the statement into "The skeleton SHALL carry a placeholder in every review cell." and "The skeleton SHALL fail validation until a person fills every review cell." Re-measured: `quire validate --scope .` on FR-109 reports no `ears:non-singular`. |

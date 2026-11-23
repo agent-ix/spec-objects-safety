@@ -53,3 +53,9 @@ claims the type allows no other edge verb, but a review carrying an extra
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-109 Behavior says the type allows `reviews` and `references` edges "and no other edge or target type". Measured: a review with `reviews`→RMP-001, `references`→ORE-001 and an extra `depends_on`→RMP-001 validates (exit 0) with no diagnostic naming RMR-001; `allowed_links` constrains only the verbs it lists. FR-109-AC-6 tests only a wrong target type (hazard), so nothing exercises the "no other edge" half. No sibling FR (FR-101..FR-108) makes this claim. Fix: narrow the statement to "and no other target type for these edges" (matching what the engine enforces), or add an AC and enforcement for unlisted verbs. | spec/functional/FR-109-risk-management-review.md:50, spec_objects_safety/manifest.yaml:690-692, tests_integration/test_risk_chain_edges.py:711 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit 8ff4de4 narrows FR-109 Behavior to "and no other target type for these two edges", which is what the engine enforces (measured: a wrong target type yields `disallowed-edge-target`; an extra unlisted verb is not constrained). The statement no longer claims anything about other verbs; FR-109-AC-6 covers it. Focused tests pass at 8ff4de4. |
