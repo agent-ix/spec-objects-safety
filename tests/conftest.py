@@ -58,11 +58,7 @@ OBJECT_TYPES = (
     "overall_residual_risk_evaluation",
 )
 
-# Verbs the manifest uses that `spec-artifacts-iso` has not declared yet. Each
-# is a vocabulary change that belongs to that module (PLAT-1676, whose scope
-# includes `estimate`). Expiry: when
-# PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
-# vocabulary tests cover the verbs again.
+# Verbs the manifest declares itself because `spec-artifacts-iso` does not.
 PENDING_ISO_VERBS = frozenset({"estimates", "assumes", "estimate"})
 
 # Skeletons that carry unfilled placeholders and fail validation as shipped, by

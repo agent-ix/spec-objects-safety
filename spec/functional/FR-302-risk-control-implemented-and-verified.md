@@ -1,6 +1,6 @@
 ---
 id: FR-302
-title: "Every risk control is implemented by a requirement and has a verification, declared as manifest data"
+title: "Every risk control is implemented by a requirement and has implementation and effectiveness verifications, declared as manifest data"
 type: FR
 relationships:
   - target: "ix://agent-ix/spec-objects-safety/StR-001"
@@ -14,7 +14,7 @@ relationships:
   - target: "ix://agent-ix/quire-rs/FR-058"
     type: "depends_on"
 ---
-# FR-302: Every risk control is implemented by a requirement and has a verification, declared as manifest data
+# FR-302: Every risk control is implemented by a requirement and has implementation and effectiveness verifications, declared as manifest data
 
 ## Description
 
@@ -22,12 +22,13 @@ Tracked by Linear PLAT-1524. A risk control with no implementing requirement is
 a wish, and one with no verification is unproven. The links are authorable under
 [FR-205](./FR-205-control-requirement-and-verification-links.md); this
 requirement owns the completeness rules that read them and which controls they
-apply to. The module declares exactly one relation per `check` token (NFR-300).
+apply to. The module declares exactly one relation per `check` token (NFR-300). A person records which verification was done by choosing the edge; the tool never judges whether either verification is adequate.
 
 ### What the rule checks
 
 - **Implemented**: the control has an incoming `satisfies` edge from an `FR` or `NFR`.
-- **Verified**: the control has an incoming `verifies` edge from any document: a test document, or a retained evidence record of an Inspection or Analysis owned by `agent-ix/engineering-assurance` and referenced by id.
+- **Implementation verified**: the control has an incoming `verifies_implementation` edge from any document: a test document, or a retained evidence record of an Inspection or Analysis owned by `agent-ix/engineering-assurance` and referenced by id. This says the control was built as specified.
+- **Effectiveness verified**: the control has an incoming `verifies_effectiveness` edge from any document, with the same sources. This says the control was shown to do its job. The two are separate relations: one edge never satisfies the other, and the shared `verifies` verb satisfies neither.
 
 The rule tests that the edge exists. It does not test that the verification
 passed, and it does not test Test Matrix tagging of the verifying document;
@@ -59,27 +60,30 @@ scope. Declared unscoped they would report every unrelated security control.
 
 ## Outputs
 
-- Advisory findings `control-without-requirement` and `control-without-verification`.
+- Advisory findings `control-without-requirement`, `control-without-implementation-verification` and `control-without-effectiveness-verification`.
 
 ## Behavior
 
 - The manifest SHALL declare `control-has-requirement`: `from: control`, `edges: [satisfies]`, `to: [FR, NFR]`, `direction: incoming`, `check: control-without-requirement`, with the scope above.
-- The manifest SHALL declare `control-has-verification`: `from: control`, `edges: [verifies]`, `to: []`, `direction: incoming`, `check: control-without-verification`, with the scope above.
-- The verification relation SHALL declare an empty `to`, so that an edge from a retained-evidence record owned by another repository counts.
-- Each relation SHALL be advisory and tunable on its own `trace:<check>` key.
+- The manifest SHALL declare `control-has-implementation-verification`: `from: control`, `edges: [verifies_implementation]`, `to: []`, `direction: incoming`, `check: control-without-implementation-verification`, with the scope above.
+- The manifest SHALL declare `control-has-effectiveness-verification`: `from: control`, `edges: [verifies_effectiveness]`, `to: []`, `direction: incoming`, `check: control-without-effectiveness-verification`, with the scope above.
+- The manifest SHALL declare no `control-has-verification` relation over the shared `verifies` verb.
+- Each verification relation SHALL declare an empty `to`, so that an edge from a retained-evidence record owned by another repository counts.
+- Each of the three relations SHALL be advisory and tunable on its own `trace:<check>` key.
 - The relations SHALL NOT read, set or require an `effective`, `verified`, `passed` or `status`-derived value.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-302-AC-1 | The manifest declares both relations with the fields and scope above and loads without a declaration error. | Test |
-| FR-302-AC-2 | A control that mitigates a hazard, is satisfied by an `FR` and is verified by a test document yields no finding. | Test |
-| FR-302-AC-3 | The same control without the `satisfies` edge yields exactly one `control-without-requirement` finding; without the `verifies` edge, exactly one `control-without-verification` finding. | Test |
-| FR-302-AC-4 | A `verifies` edge from a retained-evidence record referenced by id satisfies `control-without-verification`. | Test |
-| FR-302-AC-5 | A control assumed by a `post_control` estimate that mitigates no hazard is reported when it lacks either link. | Test |
-| FR-302-AC-6 | A control that mitigates no hazard or failure mode and is assumed by no estimate yields neither finding. | Test |
-| FR-302-AC-7 | A verification whose evidence records a failing result still satisfies the relation, and no module key records the result. | Test |
+| FR-302-AC-1 | The manifest declares the three relations with the fields and scope above, declares no relation over `verifies`, and loads without a declaration error. | Test |
+| FR-302-AC-2 | A control that mitigates a hazard, is satisfied by an `FR`, and is verified for implementation by one test document and for effectiveness by another yields no finding. | Test |
+| FR-302-AC-3 | The same control without the `satisfies` edge yields exactly one `control-without-requirement` finding; without the `verifies_implementation` edge, exactly one `control-without-implementation-verification` finding and no effectiveness finding; without the `verifies_effectiveness` edge, exactly one `control-without-effectiveness-verification` finding and no implementation finding. | Test |
+| FR-302-AC-4 | A `verifies_implementation` or `verifies_effectiveness` edge from a document that is not a test document, referenced by id, satisfies the matching check. The test uses an `NFR` as the stand-in for a retained-evidence record, because no such record type exists yet. | Test |
+| FR-302-AC-5 | A control assumed by a `post_control` estimate that mitigates no hazard is reported when it lacks any of the three links. | Test |
+| FR-302-AC-6 | A control that mitigates no hazard or failure mode and is assumed by no estimate yields no finding. | Test |
+| FR-302-AC-9 | A control whose only verification edge is the shared `verifies` verb is reported by both verification checks. | Test |
+| FR-302-AC-7 | A verification whose evidence records a failing result still satisfies its relation, and no module key records the result. | Test |
 | FR-302-AC-8 | The scope is stated as the `when_any` shape above and cites `agent-ix/quire-rs` FR-058 as its provider. | Inspection |
 
 ## Dependencies
