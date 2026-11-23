@@ -61,3 +61,4 @@ verbs) but is tagged only FR-302-AC-1.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | Round 1, c8f1044. `test_a_non_test_document_verifying_edge_satisfies_the_matching_check` is tagged FR-302-AC-4, parametrized per verb, and asserts the matching check clears while the other still fires. `quire matrix` shows FR-302-AC-4 as tagged. It passes with quire 0.52.0. |
+| FND-002 | fixed | Round 2, c6f5f22. FR-302-AC-4 now reads "from a document that is not a test document ... The test uses an `NFR` as the stand-in for a retained-evidence record, because no such record type exists yet." FR-205 "Retained evidence" states the stand-in and that a future record type must allow both verbs in its `allowed_links`. The test carries a matching comment. No ticket ids were added. |

@@ -1150,20 +1150,19 @@ type = ["importlib_metadata (>=7.0.2) ; python_version < \"3.10\"", "jaraco.deve
 
 [[package]]
 name = "spec-artifacts-iso"
-version = "0.25.0"
+version = "0.27.0.post1.dev0+9342304"
 description = "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)"
 optional = false
 python-versions = ">=3.13,<3.14"
 groups = ["dev"]
-files = [
-    {file = "spec_artifacts_iso-0.25.0-py3-none-any.whl", hash = "sha256:c9c3f9cb9919d90e48c304d472e7c8294ff897af78e54a9977d15899fcbe1e1d"},
-    {file = "spec_artifacts_iso-0.25.0.tar.gz", hash = "sha256:76e29c6c92bcf32a2839ca701466c702231da199490e14f08c0ea70389cc85e5"},
-]
+files = []
+develop = false
 
 [package.source]
-type = "legacy"
-url = "https://us-west1-python.pkg.dev/agent-ix/internal-pypi/simple"
-reference = "internal-pypi"
+type = "git"
+url = "https://github.com/agent-ix/spec-artifacts-iso.git"
+reference = "main"
+resolved_reference = "9342304894c8473539b64acd959024e551bccf0e"
 
 [[package]]
 name = "spec-objects-security"
@@ -1197,4 +1196,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "e6ccf5d22aa1d5bda8f542121c9409aca5fa28f947f964a75ba70bc470728d84"
+content-hash = "28c5f9bb5ec063e8f2a65ef6effd79d5de668ff7a969c2595f35d3df7dc06bb4"
