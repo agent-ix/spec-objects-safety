@@ -31,7 +31,7 @@ the module ships no plan, no default responsibility and no default method.
 
 ## Outputs
 
-- A validated plan document, or a validation failure naming the offending table and column.
+- A validated plan document, or a validation failure naming the offending table and, for a cell, its column.
 - A warning, `plan-without-acceptability-criteria`, naming a plan that references no acceptability policy.
 
 ## Behavior
@@ -41,12 +41,14 @@ the module ships no plan, no default responsibility and no default method.
 - The responsibilities table SHALL have the columns `Responsibility` and `Assigned to`.
 - The control verification methods table SHALL have the columns `Method` and `Applies to`.
 - The production and post-production methods table SHALL have the columns `Activity` and `Method`.
-- If a table cell is empty or an unfilled placeholder, then validation SHALL fail naming the table.
+- If a table cell is empty or an unfilled placeholder, then validation SHALL fail naming the table and the column.
+- If a table has no data row, then validation SHALL fail naming the table.
 - The type SHALL allow `references` edges to `acceptability_policy` documents and no other type.
 - If a plan references no `acceptability_policy`, then the tooling SHALL report `plan-without-acceptability-criteria` naming the plan, as a warning.
 - The schema SHALL NOT declare a score, class, acceptability or approval property.
 - The module SHALL NOT ship a plan document, a default responsibility or a default method.
-- The skeleton SHALL contain placeholders only, and SHALL fail validation until a person fills every row.
+- The skeleton SHALL carry a placeholder in every plan row, and SHALL otherwise carry only its identity row and its invariant clause.
+- The skeleton SHALL fail validation until a person fills every plan row.
 
 ## Acceptance Criteria
 
@@ -54,10 +56,11 @@ the module ships no plan, no default responsibility and no default method.
 |----|----------|--------------|
 | FR-108-AC-1 | The emitted manifest declares a `risk_management_plan` type whose locators require the scope, responsibilities, control verification and production and post-production tables. | Test |
 | FR-108-AC-2 | The skeleton with every placeholder filled validates, and the skeleton as shipped fails validation. | Test |
-| FR-108-AC-3 | For each of the four tables, a fixture with that table's row left as a placeholder fails validation naming the table. | Test |
+| FR-108-AC-3 | For each of the four tables, a fixture with one cell left as a placeholder fails validation naming the table and the column of that cell, for every cell of the four tables. | Test |
 | FR-108-AC-4 | A plan with one `references` edge to an `acceptability_policy` document validates without `plan-without-acceptability-criteria`; a plan with no such edge yields that warning once, naming the plan. | Test |
 | FR-108-AC-5 | A `references` edge from a plan to a `hazard` document is disallowed, naming the type. | Test |
-| FR-108-AC-6 | The emitted schema and the skeleton declare no score, class, acceptability or approval property, and the package contains no document of type `risk_management_plan` other than the unfilled skeleton. | Inspection |
+| FR-108-AC-6 | Neither the emitted schema, the manifest's `risk_management_plan` locators and columns, nor the skeleton's headings and table headers declare a score, class, acceptability or approval, and the package contains no document of type `risk_management_plan` other than the unfilled skeleton. | Test |
+| FR-108-AC-7 | A fixture with a table that has no data row fails validation naming that table, for each of the four tables. | Test |
 
 ## Dependencies
 
