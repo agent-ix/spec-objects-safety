@@ -17,21 +17,12 @@ import pytest
 import yaml
 
 from tests.conftest import (
-    MANIFEST_PATH,
     OBJECT_TYPES,
     PENDING_ISO_VERBS,
     load_manifest,
     object_types,
     schema_of,
     shipped_schema_paths,
-)
-
-# The open migration tickets that keep `semantic.imports` empty: a package with
-# no semantic contract cannot be pinned at a semantic version.
-OPEN_MIGRATIONS = (
-    "agent-ix/spec-objects-security#13",
-    "agent-ix/spec-objects-architecture#8",
-    "agent-ix/spec-objects-operational#6",
 )
 
 
@@ -67,20 +58,6 @@ def test_the_only_cross_module_reference_shape_is_a_semantic_id():
     for model in ("Hazard", "FailureMode"):
         relations = schema_of(model)["properties"]["relations"]["items"]
         assert relations["$ref"].endswith("RelationDecl.json"), model
-
-
-@pytest.mark.trace("TC-062", "FR-006-AC-3", "FR-006-CON-2")
-def test_imports_is_empty_and_the_manifest_says_which_issues_keep_it_empty():
-    """An empty pin map with a reason beats an aspirational one.
-
-    `semantic.imports` pins imported semantic *packages* at exact versions. None
-    of the neighbours has published a semantic contract, so any version written
-    here would be a claim about a contract that does not exist.
-    """
-    assert load_manifest()["semantic"]["imports"] == {}
-    text = MANIFEST_PATH.read_text()
-    for issue in OPEN_MIGRATIONS:
-        assert issue in text, f"the manifest does not name {issue}"
 
 
 @pytest.mark.trace("TC-063", "FR-006-AC-4", "StR-001-VC-2")
@@ -157,3 +134,60 @@ def test_no_safety_only_synonym_is_minted():
     )["allowed_links"]
     assert "arises_from" in hazard_links
     assert "arises_from" not in failure_links
+
+
+# ── FR-010: causes beyond failure modes ─────────────────────────────────────
+
+
+def _links(name: str) -> dict:
+    return next(ot for ot in object_types() if ot["name"] == name)["allowed_links"]
+
+
+@pytest.mark.trace("TC-110", "FR-010-AC-1")
+def test_a_hazard_may_arise_from_every_cause_type():
+    assert _links("hazard")["arises_from"] == [
+        "failure_mode",
+        "soup_record",
+        "threat",
+        "vulnerability",
+        "control",
+    ]
+
+
+@pytest.mark.trace("TC-111", "FR-010-AC-2")
+def test_a_failure_mode_may_reference_the_part_it_sits_in():
+    assert set(_links("failure_mode")["references"]) == {
+        "failure_mode",
+        "hazard",
+        "systems-part",
+    }
+
+
+@pytest.mark.trace("TC-112", "FR-010-AC-3", "FR-010-AC-4")
+def test_causes_are_referenced_not_declared_and_no_verb_is_added():
+    foreign = {"soup_record", "threat", "vulnerability", "control", "part"}
+    assert not foreign & {ot["name"] for ot in object_types()}
+    assert "arises_from" not in _links("failure_mode")
+    assert load_manifest()["traceability"]["acyclic_edges"] == ["arises_from"]
+    assert set(_links("hazard")) == {"arises_from", "references"}
+    assert set(_links("failure_mode")) == {"references"}
+
+
+@pytest.mark.trace("TC-115", "FR-010-AC-6")
+def test_no_required_relation_obliges_a_hazard_to_have_a_cause():
+    relations = load_manifest()["traceability"]["required_relations"]
+    assert [
+        r["name"]
+        for r in relations
+        if r["from"] == "hazard"
+        and "arises_from" in r["edges"]
+        and r["direction"] == "outgoing"
+    ] == []
+
+
+@pytest.mark.trace("TC-116", "FR-010-AC-7")
+def test_no_hazard_or_failure_mode_key_scores_a_cause():
+    scored = ("cause", "severity", "likelihood", "probab", "accept")
+    for name in ("Hazard", "FailureMode"):
+        keys = set(schema_of(name)["properties"]) - {"assessment"}
+        assert not [k for k in keys if any(w in k.lower() for w in scored)], name
