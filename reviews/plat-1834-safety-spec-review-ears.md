@@ -33,3 +33,4 @@ Conformant except one statement with two responses.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | still-open | Fix commit a122426 moved "fail validation" to its own line, but the remaining statement "The skeleton SHALL carry a placeholder in every plan row, and SHALL otherwise carry only its identity row and its invariant clause." still has two SHALLs; quire still reports `[ears:non-singular]` at FR-108 line 50. Split it once more. |
+| FND-001 | fixed | Fix commit 5f116b0 splits the statement into "The skeleton SHALL carry a placeholder in every plan row." and "The skeleton SHALL carry no other content than its plan rows, its identity row and its invariant clause."; `quire validate` on FR-108 reports no `ears:non-singular`. |
