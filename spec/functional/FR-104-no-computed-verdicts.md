@@ -20,7 +20,7 @@ authored them. It may read what a person wrote and report disagreement
 
 ## Inputs
 
-- Any authored `acceptability_policy`, `residual_risk`, `benefit_risk` and `overall_residual_risk_evaluation` document.
+- Any authored `acceptability_policy`, `residual_risk`, `benefit_risk`, `overall_residual_risk_evaluation` and `risk_management_plan` document.
 
 ## Outputs
 

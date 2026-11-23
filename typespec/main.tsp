@@ -696,3 +696,31 @@ model OverallResidualRiskEvaluation {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+// ---------------------------------------------------------------------------
+// Risk management plan (FR-108).
+//
+// The plan's scope, responsibilities, control-verification methods and
+// production and post-production methods are tables under the document's
+// sections, read by the manifest's locators like the policy's tables. Every row
+// is written by a person. The acceptability criteria are a `references` edge to
+// the `acceptability_policy` the people wrote, never a member here, and the
+// seal keeps a score, a class and an acceptance off the record.
+// ---------------------------------------------------------------------------
+
+/**
+ * A risk management plan object. The acceptability criteria are referenced
+ * through the `references` edge to an `acceptability_policy` document, authored
+ * in the document's relationships.
+ */
+@extension("additionalProperties", false)
+model RiskManagementPlan {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

@@ -24,6 +24,7 @@ description: "Index of artifacts in this directory."
 * [FR-105: The tooling reports where a recorded decision disagrees with the policy](./FR-105-decision-policy-discrepancy-report.md)
 * [FR-106: A benefit-risk record links the risks, states the benefit and names the decider](./FR-106-benefit-risk-record.md)
 * [FR-107: An overall residual-risk evaluation for the product is decided by a named person](./FR-107-overall-residual-risk-evaluation.md)
+* [FR-108: A risk management plan records scope, responsibilities, control-verification and production methods, and references the acceptability criteria](./FR-108-risk-management-plan.md)
 * [FR-201: The module declares harm as an object type](./FR-201-harm-object-type.md)
 * [FR-202: A hazardous situation arises from a hazard and a harm arises from it](./FR-202-hazardous-situation-object-and-chain.md)
 * [FR-203: A pre-control risk estimate records person-entered severity and probability for a hazardous situation](./FR-203-pre-control-risk-estimate.md)

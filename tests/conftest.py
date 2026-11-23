@@ -56,6 +56,7 @@ OBJECT_TYPES = (
     "residual_risk",
     "benefit_risk",
     "overall_residual_risk_evaluation",
+    "risk_management_plan",
 )
 
 # Verbs the manifest declares itself because `spec-artifacts-iso` does not.
@@ -70,6 +71,7 @@ UNFILLED_SKELETONS = frozenset(
         "residual_risk",
         "benefit_risk",
         "overall_residual_risk_evaluation",
+        "risk_management_plan",
     }
 )
 
@@ -83,6 +85,7 @@ MODEL_OF = {
     "residual_risk": "ResidualRisk",
     "benefit_risk": "BenefitRisk",
     "overall_residual_risk_evaluation": "OverallResidualRiskEvaluation",
+    "risk_management_plan": "RiskManagementPlan",
 }
 
 

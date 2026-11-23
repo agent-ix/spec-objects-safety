@@ -162,6 +162,28 @@ def policy(root, pid="POL-001"):
     (root / f"{pid}.md").write_text(text)
 
 
+PLAN_FILL = {
+    "<what the plan covers>": "Brake controller, whole lifecycle.",
+    "<responsibility>": "Keep the risk file current.",
+    "<person or role>": "Safety lead",
+    "<planned verification method>": "Test against the control requirements.",
+    "<the controls it verifies>": "Every risk control.",
+    "<production or post-production activity>": "Review field reports.",
+    "<how it is carried out>": "Quarterly review by the safety lead.",
+}
+
+
+def plan(root, pid, *references):
+    """A filled risk_management_plan carrying `references` edges."""
+    text = (SKELETONS_DIR / "risk_management_plan.md").read_text()
+    text = text.replace("RMP-001", pid)
+    for placeholder, value in PLAN_FILL.items():
+        text = text.replace(placeholder, value)
+    (root / f"{pid}.md").write_text(
+        _with_edges(text, [("references", t) for t in references])
+    )
+
+
 def requirement(root, rid, kind, edge, target):
     """An iso FR or IT (a TC would do) carrying one edge to `target`."""
     text = (_module("spec_artifacts_iso") / "skeletons" / f"{kind}.md").read_text()
@@ -612,6 +634,28 @@ def test_a_residual_risk_relation_check_is_tunable_on_its_own_key(tmp_path):
     )
     assert result.returncode != 0, result.stderr
     assert _count(result, "residual-risk-without-estimate") == 1
+
+
+@pytest.mark.trace("FR-108-AC-4")
+def test_a_plan_with_no_acceptability_policy_is_reported_once_and_the_edge_clears_it(
+    tmp_path,
+):
+    policy(tmp_path)
+    _warns_once_then_clears(
+        tmp_path,
+        "plan-without-acceptability-criteria",
+        "RMP-001",
+        lambda: plan(tmp_path, "RMP-001"),
+        lambda: plan(tmp_path, "RMP-001", "POL-001"),
+    )
+
+
+@pytest.mark.trace("FR-108-AC-5")
+def test_a_plan_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
+    hazard(tmp_path)
+    plan(tmp_path, "RMP-001", "HAZ-001")
+    lines = findings(validate(tmp_path), "disallowed-edge-target")
+    assert any("RMP-001.md" in line and "'hazard'" in line for line in lines), lines
 
 
 # ── FR-301, FR-303, FR-304: completeness relations and the cycle check ──────

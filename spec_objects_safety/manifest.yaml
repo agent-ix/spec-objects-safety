@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
 version: 0.4.1
-description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation) — IEC 61508 / ISO 26262 / FMEA lineage'
+description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation, risk_management_plan) — IEC 61508 / ISO 26262 / FMEA lineage'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
   # this contract version refuses the module explicitly instead of loading it as
@@ -18,6 +18,7 @@ semantic:
   - residual_risk
   - benefit_risk
   - overall_residual_risk_evaluation
+  - risk_management_plan
   # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
   # references controls (`agent-ix/spec-objects-security` `control`), risks
   # (`risk`), the interfaces and components a failure mode sits in
@@ -599,6 +600,82 @@ object_types:
           after_heading: Invariants
           required: false
 
+# ── risk_management_plan ─────────────────────────────────────────────────
+#
+# The plan a project's people write before the risk work is judged: what the
+# plan covers, who is responsible, how the risk controls will be verified, and
+# how production and post-production information will be collected. It holds a
+# REFERENCE to the acceptability criteria, a `references` edge to the
+# `acceptability_policy` the people wrote, and never the criteria themselves, a
+# score, a class or an acceptance. Every row is entered by a person; the module
+# ships no plan, no default method and no default responsibility, and the
+# skeleton fails validation until a person fills every row.
+- name: risk_management_plan
+  allowed_links:
+    references: [acceptability_policy]
+  data_schema:
+    schema: schemas/RiskManagementPlan.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        scope:
+          from: table_row
+          under_section: Scope
+          required: true
+          assert:
+            columns:
+            - Scope
+            min_rows: 1
+            column_patterns:
+              Scope: '^[^<>\s][^<>]*$'
+        responsibilities:
+          from: table_row
+          under_section: Responsibilities
+          required: true
+          assert:
+            columns:
+            - Responsibility
+            - Assigned to
+            min_rows: 1
+            column_patterns:
+              Responsibility: '^[^<>\s][^<>]*$'
+              Assigned to: '^[^<>\s][^<>]*$'
+        control_verification:
+          from: table_row
+          under_section: Control verification methods
+          required: true
+          assert:
+            columns:
+            - Method
+            - Applies to
+            min_rows: 1
+            column_patterns:
+              Method: '^[^<>\s][^<>]*$'
+              Applies to: '^[^<>\s][^<>]*$'
+        production_post_production:
+          from: table_row
+          under_section: Production and post-production methods
+          required: true
+          assert:
+            columns:
+            - Activity
+            - Method
+            min_rows: 1
+            column_patterns:
+              Activity: '^[^<>\s][^<>]*$'
+              Method: '^[^<>\s][^<>]*$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
 # FR-058 (quire-rs): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.
 #
@@ -764,6 +841,12 @@ traceability:
     to: [residual_risk, benefit_risk]
     direction: outgoing
     check: evaluation-without-considered-record
+  - name: plan-references-acceptability-criteria
+    from: risk_management_plan
+    edges: [references]
+    to: [acceptability_policy]
+    direction: outgoing
+    check: plan-without-acceptability-criteria
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:
