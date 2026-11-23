@@ -930,7 +930,8 @@ def test_each_missing_link_is_reported_once_by_its_own_check(tmp_path):
     implemented_and_verified(tmp_path, implemented=False)
     result = validate(tmp_path)
     assert len(findings(result, "control-without-requirement")) == 1, result.stderr
-    assert findings(result, "control-without-verification") == [], result.stderr
+    assert findings(result, IMPL_CHECK) == [], result.stderr
+    assert findings(result, EFF_CHECK) == [], result.stderr
     other = tmp_path / "other"
     other.mkdir()
     hazard(other)
@@ -960,6 +961,42 @@ def test_implementation_and_effectiveness_verification_are_not_interchangeable(
     result = validate(other)
     assert len(findings(result, IMPL_CHECK)) == 1, result.stderr
     assert findings(result, EFF_CHECK) == [], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-4")
+@pytest.mark.parametrize(
+    "verb,check",
+    [
+        ("verifies_implementation", IMPL_CHECK),
+        ("verifies_effectiveness", EFF_CHECK),
+    ],
+)
+def test_a_non_test_document_verifying_edge_satisfies_the_matching_check(
+    tmp_path, verb, check
+):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    requirement(tmp_path, "NFR-901", "nfr", verb, f"{LOCAL}/CTRL-001")
+    result = validate(tmp_path)
+    assert findings(result, check) == [], result.stderr
+    other = IMPL_CHECK if check == EFF_CHECK else EFF_CHECK
+    assert len(findings(result, other)) == 1, result.stderr
+
+
+@pytest.mark.trace("FR-205-AC-2")
+def test_the_verification_verbs_draw_no_disallowed_edge_type(tmp_path):
+    control(tmp_path)
+    requirement(
+        tmp_path, "IT-901", "it", "verifies_implementation", f"{LOCAL}/CTRL-001"
+    )
+    requirement(tmp_path, "TC-901", "tc", "verifies_effectiveness", f"{LOCAL}/CTRL-001")
+    requirement(
+        tmp_path, "NFR-901", "nfr", "verifies_implementation", f"{LOCAL}/CTRL-001"
+    )
+    result = validate(tmp_path)
+    assert "disallowed-edge-type" not in result.stderr, result.stderr
+    assert "unknown-edge-type" not in result.stderr.lower(), result.stderr
 
 
 @pytest.mark.trace("FR-302-AC-9")
