@@ -37,6 +37,7 @@ Ticket: PLAT-1833. Computed matrix (`quire matrix --scope . --format json`) bind
 | --- | --- | --- |
 | FND-001 | fixed | Commit `c58dbb2` adds TC-114 (two integration tests, spec-objects-architecture loaded). Mutating the role to `system-part` in manifest and unit test turns TC-114 red. |
 | FND-002 | fixed | Commit `c58dbb2` rewords AC-3 to exact verb sets and TC-112 asserts them; adding `leads_to: [failure_mode]` to hazard now turns TC-112 red. |
+| FND-003 | fixed | Commit `c4b8599` drops the TC-062 `verifies` edge, the Imports subtask, the imports scope clause and the manifest-comment deliverable from Task-010; no reference to a removed item remains. |
 
 ## New findings (disposition pass 1)
 

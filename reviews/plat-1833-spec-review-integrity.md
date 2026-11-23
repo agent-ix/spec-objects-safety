@@ -35,6 +35,8 @@ Ticket: PLAT-1833. Integrity and EARS pass over the new FR-010 and its index and
 | --- | --- | --- |
 | FND-001 | fixed | Commit `c58dbb2` deletes the control-`mitigates` SHALL and backs the other two with FR-010-AC-6 (TC-115) and FR-010-AC-7 (TC-116). |
 | FND-002 | fixed | `quire validate` on FR-010 at `c58dbb2` reports no EARS or other warning. |
+| FND-003 | fixed | Commit `c4b8599` deletes all five `semantic.imports` SHALLs and the imports Input/Output lines from FR-006. `imports: {}` stays specified by FR-003 Behavior line 41 and asserted by TC-026 (`semantic_block["imports"] == {}`). `quire matrix` shows no criterion removed, added or newly untagged versus c58dbb2. |
+| FND-004 | fixed | Commit `c4b8599` removes the SHALL NOT bullet and states the SOUP-rule limitation as Description prose. |
 
 ## New findings (disposition pass 1)
 
