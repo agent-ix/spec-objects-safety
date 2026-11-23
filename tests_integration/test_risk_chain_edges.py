@@ -184,6 +184,28 @@ def plan(root, pid, *references):
     )
 
 
+REVIEW_FILL = {
+    "<person who reviewed>": "A. Reviewer",
+    "<yes, partly or no>": "yes",
+    "<ready or not_ready>": "ready",
+    "<the reviewer's statement>": "The plan was carried out.",
+}
+
+
+def review(root, rid, plans=(), evaluations=(), fill=None):
+    """A filled risk_management_review reviewing `plans`, referencing `evaluations`."""
+    text = (SKELETONS_DIR / "risk_management_review.md").read_text()
+    text = text.replace("RMR-001", rid)
+    for placeholder, value in {**REVIEW_FILL, **(fill or {})}.items():
+        text = text.replace(placeholder, value)
+    (root / f"{rid}.md").write_text(
+        _with_edges(
+            text,
+            [("reviews", t) for t in plans] + [("references", t) for t in evaluations],
+        )
+    )
+
+
 def requirement(root, rid, kind, edge, target):
     """An iso FR or IT (a TC would do) carrying one edge to `target`."""
     text = (_module("spec_artifacts_iso") / "skeletons" / f"{kind}.md").read_text()
@@ -656,6 +678,62 @@ def test_a_plan_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
     plan(tmp_path, "RMP-001", "HAZ-001")
     lines = findings(validate(tmp_path), "disallowed-edge-target")
     assert any("RMP-001.md" in line and "'hazard'" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-109-AC-5")
+def test_a_review_missing_its_plan_or_evaluation_is_reported_until_the_edge_is_added(
+    tmp_path,
+):
+    policy(tmp_path)
+    plan(tmp_path, "RMP-001", "POL-001")
+    evaluation(tmp_path, "ORE-001")
+    review(tmp_path, "RMR-001")
+    result = validate(tmp_path)
+    for check in ("review-without-plan", "review-without-overall-evaluation"):
+        lines = findings(result, check)
+        assert len(lines) == 1 and "RMR-001" in lines[0], result.stderr
+        assert lines[0].startswith("warning:")
+    review(tmp_path, "RMR-001", plans=["RMP-001"])
+    result = validate(tmp_path)
+    assert _count(result, "review-without-plan") == 0
+    assert _count(result, "review-without-overall-evaluation") == 1
+    review(tmp_path, "RMR-001", evaluations=["ORE-001"])
+    result = validate(tmp_path)
+    assert _count(result, "review-without-plan") == 1
+    assert _count(result, "review-without-overall-evaluation") == 0
+    review(tmp_path, "RMR-001", plans=["RMP-001"], evaluations=["ORE-001"])
+    result = validate(tmp_path)
+    assert _count(result, "review-without-plan") == 0
+    assert _count(result, "review-without-overall-evaluation") == 0
+
+
+@pytest.mark.trace("FR-109-AC-6")
+def test_a_review_reference_to_a_hazard_is_disallowed_naming_hazard(tmp_path):
+    hazard(tmp_path)
+    for edge in ({"plans": ["HAZ-001"]}, {"evaluations": ["HAZ-001"]}):
+        review(tmp_path, "RMR-001", **edge)
+        lines = findings(validate(tmp_path), "disallowed-edge-target")
+        assert any("RMR-001.md" in line and "'hazard'" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-109-AC-8")
+def test_the_tooling_does_not_judge_a_review_against_the_evaluation_it_references(
+    tmp_path,
+):
+    policy(tmp_path)
+    plan(tmp_path, "RMP-001", "POL-001")
+    evaluation(tmp_path, "ORE-001")
+    refused = tmp_path / "ORE-001.md"
+    refused.write_text(refused.read_text().replace("| accepted |", "| not_accepted |"))
+    assert "| not_accepted |" in refused.read_text()
+    for fill in (
+        {},
+        {"<yes, partly or no>": "no", "<ready or not_ready>": "not_ready"},
+    ):
+        review(tmp_path, "RMR-001", ["RMP-001"], ["ORE-001"], fill=fill)
+        result = validate(tmp_path)
+        assert result.returncode == 0, result.stderr
+        assert "RMR-001" not in result.stderr, result.stderr
 
 
 # ── FR-301, FR-303, FR-304: completeness relations and the cycle check ──────
