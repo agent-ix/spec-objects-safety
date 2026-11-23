@@ -44,3 +44,15 @@ inspection, but its tagged test checks only the schema.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The test tagged FR-108-AC-6 checks only the JSON schema's top-level property names. The skeleton half ("the skeleton declares no score, class, acceptability or approval property") and the "package contains no `risk_management_plan` document other than the unfilled skeleton" half are not checked: adding a `score` locator to the plan's `body_extraction` passes every test (mutation measured). Either extend the test to the plan's locator names, skeleton table headers and the package's documents of this type, or tag it to the schema half only and leave the rest to inspection. | tests/test_risk_management_plan.py:99-109, spec/functional/FR-108-risk-management-plan.md:60 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The AC-6 test's skeleton check reads headings and table header rows only, though its comment says "no table cell in a header or Field column names one". The `Field` column of the Properties table is not read: adding `\| risk_score \| Integer \| 0..1 \| \|` to the skeleton's Properties passes every test (mutation measured), while the Behavior statement says the skeleton otherwise carries only its identity row. The authoring-comment and Invariants exemptions are sound (the comment explains the rule; the invariant is the `self.score->isEmpty()` guard); the gap is the unread Field column. Fix: add the Properties `Field` values to the checked names, or make the comment match what is checked. | tests/test_risk_management_plan.py:164-175, spec/functional/FR-108-risk-management-plan.md:50 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit a122426: AC-6 is now `Test` and its test checks the schema properties, the plan's locator keys and asserted columns, the skeleton's headings and table headers outside the authoring comment and Invariants, and that the only shipped `type: risk_management_plan` document is the skeleton. Re-measured: a `score` locator, a `Risk score` heading and an `Acceptability` column each fail it. |

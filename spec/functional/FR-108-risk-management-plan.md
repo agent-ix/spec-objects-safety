@@ -47,7 +47,8 @@ the module ships no plan, no default responsibility and no default method.
 - If a plan references no `acceptability_policy`, then the tooling SHALL report `plan-without-acceptability-criteria` naming the plan, as a warning.
 - The schema SHALL NOT declare a score, class, acceptability or approval property.
 - The module SHALL NOT ship a plan document, a default responsibility or a default method.
-- The skeleton SHALL carry a placeholder in every plan row, and SHALL otherwise carry only its identity row and its invariant clause.
+- The skeleton SHALL carry a placeholder in every plan row.
+- The skeleton SHALL carry no other content than its plan rows, its identity row and its invariant clause.
 - The skeleton SHALL fail validation until a person fills every plan row.
 
 ## Acceptance Criteria

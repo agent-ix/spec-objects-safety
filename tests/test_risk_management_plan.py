@@ -171,8 +171,14 @@ def test_the_plan_declares_no_score_class_acceptability_or_approval():
         if line.startswith("|") and nxt.startswith(("| -", "|--"))
         for cell in line.strip("|").split("|")
     ]
-    assert headings and headers
-    assert not _mentions(headings + headers)
+    properties = body.split("## Properties", 1)[1]
+    fields = [
+        line.strip("|").split("|")[0].strip()
+        for line in properties.splitlines()
+        if line.startswith("|") and not line.startswith(("| Field", "|--", "| -"))
+    ]
+    assert headings and headers and fields
+    assert not _mentions(headings + headers + fields)
 
     # No shipped plan document except the unfilled skeleton.
     plans = [

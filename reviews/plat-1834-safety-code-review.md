@@ -82,3 +82,9 @@ second columns is unprotected (FND-001).
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | `test_a_placeholder_row_in_any_table_fails_naming_the_table` restores only the first-column placeholder of each table (`TABLES` maps each table to one placeholder). FR-108 says any empty or placeholder cell fails naming the table. Removing the `Applies to` pattern (control_verification) or the `Method` pattern (production_post_production) from the manifest passes every test in `tests/` and the plan integration tests (mutation measured). Fix: parametrise over every placeholder in `FILL` (all seven cells) with the table each belongs to, and assert the table name in the error. | tests/test_risk_management_plan.py:38-43, tests/test_risk_management_plan.py:88-95, spec_objects_safety/manifest.yaml:657, spec_objects_safety/manifest.yaml:669 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit a122426: the AC-3 test is parametrised over all seven placeholders in `CELLS` (table, column) and asserts `'<table>'` and `column '<column>'` in one error. Re-measured: dropping the `Applies to` pattern or the production `Method` pattern now fails a test. |

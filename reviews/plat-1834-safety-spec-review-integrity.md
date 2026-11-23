@@ -37,3 +37,10 @@ row" rule and the skeleton statement are imprecise.
 | --- | --- | --- | --- |
 | FND-001 | low | Outputs promise "a validation failure naming the offending table and column", but the Behavior statement and AC-3 require only "naming the table". Two implementers would read the column requirement differently. Align them: either drop "and column" from Outputs or add the column to the Behavior statement and AC-3 (the negative fixture already asserts the `Assigned to` column). | spec/functional/FR-108-risk-management-plan.md:34, spec/functional/FR-108-risk-management-plan.md:44, spec/functional/FR-108-risk-management-plan.md:57 |
 | FND-002 | low | "each with at least one row" is folded into the four-tables statement and no AC covers it. AC-3 replaces a cell, never removes a row. The rule holds today (a zero-row table fails as `required ... is empty` and `0 data row(s)`, measured), but nothing would catch its loss. Add a zero-row case to AC-3 or a separate AC. The skeleton statement "SHALL contain placeholders only" is also inexact: the skeleton ships a filled `plan_id` identity row and the `PlanCarriesNoScore` invariant. Say "every table row is a placeholder". | spec/functional/FR-108-risk-management-plan.md:39, spec/functional/FR-108-risk-management-plan.md:49 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix commit a122426: Outputs say "naming the offending table and, for a cell, its column"; Behavior says "naming the table and the column"; AC-3 asserts table and column for every cell. The engine message is `'control_verification': column 'Applies to' cell ... does not match pattern`, for placeholder and empty cells alike (measured). |
+| FND-002 | fixed | Fix commit a122426: new Behavior "If a table has no data row, then validation SHALL fail naming the table." and FR-108-AC-7, tested per table (dropping `min_rows` now fails 4 tests); "placeholders only" reworded to "a placeholder in every plan row ... only its identity row and its invariant clause". |

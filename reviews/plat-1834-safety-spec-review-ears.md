@@ -27,3 +27,9 @@ Conformant except one statement with two responses.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | "The skeleton SHALL contain placeholders only, and SHALL fail validation until a person fills every row." has two `SHALL`s (quire `ears:non-singular`). Split it into one statement per response. | spec/functional/FR-108-risk-management-plan.md:49 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | still-open | Fix commit a122426 moved "fail validation" to its own line, but the remaining statement "The skeleton SHALL carry a placeholder in every plan row, and SHALL otherwise carry only its identity row and its invariant clause." still has two SHALLs; quire still reports `[ears:non-singular]` at FR-108 line 50. Split it once more. |
