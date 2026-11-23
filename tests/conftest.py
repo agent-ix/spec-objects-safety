@@ -63,7 +63,15 @@ OBJECT_TYPES = (
 # includes `estimate`). Expiry: when
 # PLAT-1676 lands in the pinned iso release, delete this set and its uses so the
 # vocabulary tests cover the verbs again.
-PENDING_ISO_VERBS = frozenset({"estimates", "assumes", "estimate"})
+PENDING_ISO_VERBS = frozenset(
+    {
+        "estimates",
+        "assumes",
+        "estimate",
+        "verifies_implementation",
+        "verifies_effectiveness",
+    }
+)
 
 # Skeletons that carry unfilled placeholders and fail validation as shipped, by
 # design: a person must enter the values.

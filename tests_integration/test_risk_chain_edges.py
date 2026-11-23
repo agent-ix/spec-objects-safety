@@ -349,7 +349,10 @@ def test_requirement_and_verification_edges_resolve_to_a_declared_control(tmp_pa
     """The edges resolve to the control: dropping the control makes the same
     edges dangle, so the clean run is evidence the target was found."""
     requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
-    requirement(tmp_path, "IT-901", "it", "verifies", f"{LOCAL}/CTRL-001")
+    requirement(
+        tmp_path, "IT-901", "it", "verifies_implementation", f"{LOCAL}/CTRL-001"
+    )
+    requirement(tmp_path, "TC-901", "tc", "verifies_effectiveness", f"{LOCAL}/CTRL-001")
 
     def dangling():
         result = validate(tmp_path, "--strict")
@@ -357,10 +360,15 @@ def test_requirement_and_verification_edges_resolve_to_a_declared_control(tmp_pa
         return [
             line
             for line in findings(result, "dangling-reference")
-            if "CTRL-001" in line and ("'satisfies'" in line or "'verifies'" in line)
+            if "CTRL-001" in line
+            and (
+                "'satisfies'" in line
+                or "'verifies_implementation'" in line
+                or "'verifies_effectiveness'" in line
+            )
         ]
 
-    assert len(dangling()) == 2
+    assert len(dangling()) == 3
     control(tmp_path)
     assert dangling() == []
 
@@ -468,7 +476,9 @@ def test_a_policy_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
     risk_chain(tmp_path)
     residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["EST-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("RR-001.md" in line and "'risk_estimate'" in line for line in lines), lines
+    assert any(
+        "RR-001.md" in line and "'risk_estimate'" in line for line in lines
+    ), lines
 
 
 @pytest.mark.trace("FR-103-AC-4")
@@ -818,14 +828,20 @@ def risk_control(root, cid="CTRL-001", *mitigates):
     (root / f"{cid}.md").write_text(_with_edges(text, pairs))
 
 
-def implemented_and_verified(root, cid="CTRL-001", *, implemented=True, verified=True):
+def implemented_and_verified(
+    root, cid="CTRL-001", *, implemented=True, impl_verified=True, eff_verified=True
+):
     if implemented:
         requirement(root, "FR-901", "fr", "satisfies", f"{LOCAL}/{cid}")
-    if verified:
-        requirement(root, "IT-901", "it", "verifies", f"{LOCAL}/{cid}")
+    if impl_verified:
+        requirement(root, "IT-901", "it", "verifies_implementation", f"{LOCAL}/{cid}")
+    if eff_verified:
+        requirement(root, "TC-901", "tc", "verifies_effectiveness", f"{LOCAL}/{cid}")
 
 
-CONTROL_CHECKS = ("control-without-requirement", "control-without-verification")
+IMPL_CHECK = "control-without-implementation-verification"
+EFF_CHECK = "control-without-effectiveness-verification"
+CONTROL_CHECKS = ("control-without-requirement", IMPL_CHECK, EFF_CHECK)
 
 
 def _control_relations() -> dict:
@@ -846,19 +862,28 @@ SCOPE = [
 @pytest.mark.trace("FR-302-AC-1")
 def test_the_control_relations_declare_the_specified_shape_and_scope():
     relations = _control_relations()
-    assert set(relations) == {"control-has-requirement", "control-has-verification"}
+    assert set(relations) == {
+        "control-has-requirement",
+        "control-has-implementation-verification",
+        "control-has-effectiveness-verification",
+    }
     requirement_rel = relations["control-has-requirement"]
-    verification_rel = relations["control-has-verification"]
+    impl_rel = relations["control-has-implementation-verification"]
+    eff_rel = relations["control-has-effectiveness-verification"]
     assert requirement_rel["edges"] == ["satisfies"]
     assert requirement_rel["to"] == ["FR", "NFR"]
     assert requirement_rel["direction"] == "incoming"
     assert requirement_rel["check"] == "control-without-requirement"
-    assert verification_rel["edges"] == ["verifies"]
-    assert verification_rel["to"] == []
-    assert verification_rel["direction"] == "incoming"
-    assert verification_rel["check"] == "control-without-verification"
+    for rel, verb, check in (
+        (impl_rel, "verifies_implementation", IMPL_CHECK),
+        (eff_rel, "verifies_effectiveness", EFF_CHECK),
+    ):
+        assert rel["edges"] == [verb]
+        assert rel["to"] == []
+        assert rel["direction"] == "incoming"
+        assert rel["check"] == check
+        assert rel["when_any"] == SCOPE
     assert requirement_rel["when_any"] == SCOPE
-    assert verification_rel["when_any"] == SCOPE
 
 
 @pytest.mark.trace("FR-302-AC-1", "FR-302-AC-2")
@@ -887,7 +912,12 @@ def test_a_verifies_edge_from_a_non_test_document_counts_as_verification(tmp_pat
     hazard(tmp_path)
     risk_control(tmp_path, "CTRL-001", "HAZ-001")
     requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
-    requirement(tmp_path, "NFR-901", "nfr", "verifies", f"{LOCAL}/CTRL-001")
+    requirement(
+        tmp_path, "NFR-901", "nfr", "verifies_implementation", f"{LOCAL}/CTRL-001"
+    )
+    requirement(
+        tmp_path, "NFR-902", "nfr", "verifies_effectiveness", f"{LOCAL}/CTRL-001"
+    )
     result = validate(tmp_path)
     for check in CONTROL_CHECKS:
         assert findings(result, check) == [], result.stderr
@@ -905,10 +935,42 @@ def test_each_missing_link_is_reported_once_by_its_own_check(tmp_path):
     other.mkdir()
     hazard(other)
     risk_control(other, "CTRL-001", "HAZ-001")
-    implemented_and_verified(other, verified=False)
+    implemented_and_verified(other, impl_verified=False, eff_verified=False)
     result = validate(other)
     assert findings(result, "control-without-requirement") == [], result.stderr
-    assert len(findings(result, "control-without-verification")) == 1, result.stderr
+    assert len(findings(result, IMPL_CHECK)) == 1, result.stderr
+    assert len(findings(result, EFF_CHECK)) == 1, result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-3")
+def test_implementation_and_effectiveness_verification_are_not_interchangeable(
+    tmp_path,
+):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    implemented_and_verified(tmp_path, eff_verified=False)
+    result = validate(tmp_path)
+    assert findings(result, IMPL_CHECK) == [], result.stderr
+    assert len(findings(result, EFF_CHECK)) == 1, result.stderr
+    other = tmp_path / "other"
+    other.mkdir()
+    hazard(other)
+    risk_control(other, "CTRL-001", "HAZ-001")
+    implemented_and_verified(other, impl_verified=False)
+    result = validate(other)
+    assert len(findings(result, IMPL_CHECK)) == 1, result.stderr
+    assert findings(result, EFF_CHECK) == [], result.stderr
+
+
+@pytest.mark.trace("FR-302-AC-9")
+def test_the_shared_verifies_verb_satisfies_neither_verification_check(tmp_path):
+    hazard(tmp_path)
+    risk_control(tmp_path, "CTRL-001", "HAZ-001")
+    requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    requirement(tmp_path, "IT-901", "it", "verifies", f"{LOCAL}/CTRL-001")
+    result = validate(tmp_path)
+    assert len(findings(result, IMPL_CHECK)) == 1, result.stderr
+    assert len(findings(result, EFF_CHECK)) == 1, result.stderr
 
 
 @pytest.mark.trace("FR-302-AC-5")
@@ -939,7 +1001,10 @@ def test_a_verification_recording_a_failing_result_still_satisfies_the_relation(
     hazard(tmp_path)
     risk_control(tmp_path, "CTRL-001", "HAZ-001")
     requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
-    requirement(tmp_path, "TC-901", "tc", "verifies", f"{LOCAL}/CTRL-001")
+    requirement(tmp_path, "TC-901", "tc", "verifies_effectiveness", f"{LOCAL}/CTRL-001")
+    requirement(
+        tmp_path, "IT-901", "it", "verifies_implementation", f"{LOCAL}/CTRL-001"
+    )
     path = tmp_path / "TC-901.md"
     path.write_text(
         path.read_text().replace("type: TC\n", "type: TC\nstatus: failed\n", 1)
