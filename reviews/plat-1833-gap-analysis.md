@@ -30,3 +30,16 @@ Ticket: PLAT-1833. Computed matrix (`quire matrix --scope . --format json`) bind
 - Untraced behaviours in reviewed changes: 0. Stubs: 0.
 - Plan completion: not assessed
 - Semantic review: skipped (optional method not requested).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `c58dbb2` adds TC-114 (two integration tests, spec-objects-architecture loaded). Mutating the role to `system-part` in manifest and unit test turns TC-114 red. |
+| FND-002 | fixed | Commit `c58dbb2` rewords AC-3 to exact verb sets and TC-112 asserts them; adding `leads_to: [failure_mode]` to hazard now turns TC-112 red. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | Plan Task-010 still declares `verifies` TC-062 and its "Imports" subtask still promises the three migration issues named in the manifest, though TC-062 and FR-006-AC-3 were deleted. | plan/Plan-001-semantic-module-contract/tasks/Task-010-cross-module-references.md:19,38 |

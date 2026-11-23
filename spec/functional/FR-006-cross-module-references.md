@@ -23,13 +23,10 @@ type, field or vocabulary that duplicates one of them.
   `api_endpoint`, `external_contract`), `agent-ix/spec-objects-operational`
   (`incident`, `runbook`, `alert`), and `agent-ix/engineering-assurance`
   (evidence records).
-- The `semantic.imports` map defined by quoin FR-070: imported semantic
-  packages at exact versions.
 
 ## Outputs
 
-- `semantic.imports` in the manifest, and the reference-only support models
-  `EvidenceRef` and the `SemanticId` relation targets.
+- The reference-only support models `EvidenceRef` and the `SemanticId` relation targets.
 
 ## Behavior
 
@@ -42,11 +39,6 @@ type, field or vocabulary that duplicates one of them.
 - A consumer SHALL reach an evidence record through `EvidenceRef.target`, a `SemanticId`.
 - No schema in this module SHALL copy an evidence record's content.
 - `EvidenceRef.kind` SHALL stay an open string, because the closed evidence-kind vocabulary belongs to `agent-ix/engineering-assurance`.
-- `semantic.imports` SHALL name only packages that publish a semantic contract at an exact version.
-- While a neighbouring package publishes no semantic contract, this module SHALL leave it out of `semantic.imports`, because pinning a version a neighbour does not declare is a false claim.
-- When every neighbouring package this module references has published a semantic contract, `semantic.imports` SHALL name each at its exact version.
-- While `semantic.imports` is `{}`, the manifest SHALL name the open migration issues that keep it so.
-- When a neighbour publishes a semantic contract, the change that first names one of its types SHALL add that neighbour to `semantic.imports` at its exact version, whether the first naming is a shipped fixture or a schema reference.
 - The module SHALL NOT change the direction, the verb, or the object type of any edge the `traceability` model declares, because `agent-ix/spec-objects-security`'s hazard-coverage work reads that model across repositories.
 
 ## Constraints

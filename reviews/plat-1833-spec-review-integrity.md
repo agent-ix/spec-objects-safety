@@ -28,3 +28,17 @@ Ticket: PLAT-1833. Integrity and EARS pass over the new FR-010 and its index and
 
 - Sub-analyses run: spec-integrity-analysis, spec-ears-analysis (via `quire validate` grammar diagnostics). Others not applicable to this diff.
 - spec/tests.md: FR-010 summary row and TC-110..TC-113 rows checked against the tagged tests; consistent.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `c58dbb2` deletes the control-`mitigates` SHALL and backs the other two with FR-010-AC-6 (TC-115) and FR-010-AC-7 (TC-116). |
+| FND-002 | fixed | `quire validate` on FR-010 at `c58dbb2` reports no EARS or other warning. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | medium | FR-006-AC-3 and FR-006-CON-2 were removed, but FR-006 Behavior lines 45-49 still state the `semantic.imports` SHALLs, now with no AC; line 48 ("the manifest SHALL name the open migration issues") is the issue-id tracking rule whose test was deleted as ceremony and should go too. | spec/functional/FR-006-cross-module-references.md:45-49 |
+| FND-004 | low | New FR-010 Behavior line 54 is a SHALL NOT with no AC that records an engine limitation (rationale), not module behaviour; it belongs in Description prose. | spec/functional/FR-010-hazard-causes-beyond-failure-modes.md:54 |

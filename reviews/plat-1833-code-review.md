@@ -28,3 +28,10 @@ Ticket: PLAT-1833. PR agent-ix/spec-objects-safety#48 at 1d7b38a, diff `origin/m
 
 - Focused tests: `tests/test_cross_module_references.py`, `tests/test_manifest.py` (20 passed), `tests_integration/test_risk_chain_edges.py -k each_cause` (1 passed), `-o addopts=""`, quire 0.52.0 (engine 0.62.2).
 - Mutation probes: `arises_from: [failure_mode]` fails TC-113; `references: [..., part]` and `[..., systems-part]` both validate a failure_mode to part edge when spec-objects-architecture is loaded.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Commit `c58dbb2` replaces the inline command with `clean_of_edge_errors(validate(tmp_path))`; `validate()` gained `extra_modules`. |
+| FND-002 | fixed | Commit `c58dbb2` restores main's line; `git diff origin/main...HEAD` no longer touches lines 467-472. The ruff E501 at line 471 is identical on origin/main (line 470 there). |

@@ -33,6 +33,10 @@ A control-introduced risk is recorded by the same hazard-end `arises_from` edge.
 People record the causal link. The module never scores, classifies or judges a
 cause, and never decides acceptability.
 
+No soup_record completeness rule (a known anomaly must be referenced by a hazard
+or failure mode) is declared here: `known_anomalies` is an array and a required
+relation matches only a string scalar, so manifest data cannot express it.
+
 ## Inputs
 
 - The manifest `object_types` entries for `hazard` and `failure_mode`.
@@ -51,7 +55,6 @@ cause, and never decides acceptability.
 - The module SHALL NOT make a cause required: a hazard with no `arises_from` edge stays valid.
 - The module SHALL keep `arises_from` acyclic.
 - The module SHALL declare no hazard or failure_mode schema key that carries a severity, likelihood or acceptability for a cause.
-- The module SHALL NOT express a soup_record completeness rule here: `known_anomalies` is an array and a required relation can only match a string scalar, so such a rule is not declarable as manifest data.
 
 ## Acceptance Criteria
 

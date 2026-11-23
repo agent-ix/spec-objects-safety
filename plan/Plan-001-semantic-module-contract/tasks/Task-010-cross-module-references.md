@@ -16,8 +16,6 @@ relationships:
     type: verifies
   - target: ix://agent-ix/spec-objects-safety/TC-061
     type: verifies
-  - target: ix://agent-ix/spec-objects-safety/TC-062
-    type: verifies
   - target: ix://agent-ix/spec-objects-safety/TC-063
     type: verifies
   - target: ix://agent-ix/spec-objects-safety/TC-064
@@ -28,20 +26,17 @@ relationships:
 ## Scope
 
 Hold the line at the module boundary: two object types, no neighbour's type
-redeclared, no safety-only synonym minted, and an `imports` map that is empty for a
-stated reason rather than aspirational.
+redeclared, and no safety-only synonym minted.
 
 ## Subtasks
 
 - [x] **Two types.** `hazard` and `failure_mode`, and nothing `spec-objects-security`, `-architecture` or `-operational` owns.
 - [x] **Reference shape.** Every cross-module reference is a `SemanticId`; no `controls` or `mitigations` key.
-- [x] **Imports.** `{}`, with the three open migration issues named in the manifest.
 - [x] **Vocabulary.** Every `allowed_links` and `traceability` verb exists in the iso vocabulary, and neither `causes` nor `contributes_to` reappears.
 
 ## Deliverables
 
 - `tests/test_cross_module_references.py`
-- The `semantic.imports` comment in the manifest
 
 ## Notes
 
