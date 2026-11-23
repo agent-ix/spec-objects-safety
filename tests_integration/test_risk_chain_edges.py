@@ -171,7 +171,7 @@ def requirement(root, rid, kind, edge, target):
     (root / f"{rid}.md").write_text(_with_edges(text, [(edge, target)]))
 
 
-def validate(root, *flags):
+def validate(root, *flags, extra_modules=()):
     return subprocess.run(
         [
             _quire(),
@@ -184,6 +184,7 @@ def validate(root, *flags):
             str(_module("spec_objects_security")),
             "--module",
             str(PACKAGE_ROOT),
+            *[arg for m in extra_modules for arg in ("--module", str(_module(m)))],
             str(root),
         ],
         capture_output=True,
@@ -467,9 +468,7 @@ def test_a_policy_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
     risk_chain(tmp_path)
     residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["EST-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any(
-        "RR-001.md" in line and "'risk_estimate'" in line for line in lines
-    ), lines
+    assert any("RR-001.md" in line and "'risk_estimate'" in line for line in lines), lines
 
 
 @pytest.mark.trace("FR-103-AC-4")
@@ -976,14 +975,10 @@ def _skeleton(module, name, new_id, old_id, root, edges=()):
 
 @pytest.mark.trace("TC-113", "FR-010-AC-5")
 def test_a_hazard_may_arise_from_each_cause_type(tmp_path):
-    causes = (
-        ("spec_objects_security", "soup_record", "SOUP-001"),
-        ("spec_objects_security", "threat", "THREAT-001"),
-        ("spec_objects_security", "vulnerability", "VULN-001"),
-        ("spec_objects_security", "control", "CTRL-001"),
-    )
-    for module, name, cid in causes:
-        _skeleton(module, name, cid, cid, tmp_path)
+    causes = ("SOUP-001", "THREAT-001", "VULN-001", "CTRL-001")
+    names = ("soup_record", "threat", "vulnerability", "control")
+    for name, cid in zip(names, causes):
+        _skeleton("spec_objects_security", name, cid, cid, tmp_path)
     _write(tmp_path, "failure_mode", SKELETONS_DIR, "FM-001", "FM-001")
     _write(
         tmp_path,
@@ -991,26 +986,45 @@ def test_a_hazard_may_arise_from_each_cause_type(tmp_path):
         SKELETONS_DIR,
         "HAZ-001",
         "HAZ-001",
-        [("arises_from", t) for t in ("FM-001", *(c[2] for c in causes))],
+        [("arises_from", t) for t in ("FM-001", *causes)],
     )
-    result = subprocess.run(
-        [
-            _quire(),
-            "validate",
-            "--okf",
-            "--module",
-            str(_module("spec_artifacts_iso")),
-            "--module",
-            str(_module("spec_objects_security")),
-            "--module",
-            str(PACKAGE_ROOT),
-            str(tmp_path),
-        ],
-        capture_output=True,
-        text=True,
+    clean_of_edge_errors(validate(tmp_path))
+
+
+def _failure_mode_to_part(root, target):
+    _skeleton(
+        "spec_objects_architecture", "part", "scoring_engine", "scoring_engine", root
     )
-    assert "disallowed-edge-target" not in result.stderr, result.stderr
-    assert "dangling-reference" not in result.stderr, result.stderr
-    assert "HAZ-001.md" not in "".join(
-        line for line in result.stderr.splitlines() if "edge" in line
-    ), result.stderr
+    _write(
+        root,
+        "failure_mode",
+        SKELETONS_DIR,
+        "FM-001",
+        "FM-001",
+        [("references", target)],
+    )
+
+
+@pytest.mark.trace("TC-114", "FR-010-AC-2")
+def test_a_failure_mode_may_reference_a_part(tmp_path):
+    _failure_mode_to_part(tmp_path, "scoring_engine")
+    clean_of_edge_errors(
+        validate(tmp_path, extra_modules=("spec_objects_architecture",))
+    )
+
+
+@pytest.mark.trace("TC-114", "FR-010-AC-2")
+def test_a_failure_mode_reference_to_an_undeclared_part_is_dangling(tmp_path):
+    _failure_mode_to_part(tmp_path, "no_such_part")
+    result = validate(
+        tmp_path, "--strict", extra_modules=("spec_objects_architecture",)
+    )
+    assert result.returncode != 0, result.stderr
+    line = next(iter(findings(result, "dangling-reference")), "")
+    assert "FM-001.md" in line and "no_such_part" in line, line
+
+
+@pytest.mark.trace("TC-115", "FR-010-AC-6")
+def test_a_hazard_with_no_cause_edge_has_no_edge_diagnostic(tmp_path):
+    hazard(tmp_path)
+    clean_of_edge_errors(validate(tmp_path))

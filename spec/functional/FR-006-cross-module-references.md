@@ -54,7 +54,6 @@ type, field or vocabulary that duplicates one of them.
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
 | FR-006-CON-1 | This module SHALL mint no safety-only synonym for a verb or a type another module already declares. | Architecture | Test |
-| FR-006-CON-2 | `semantic.imports` SHALL be empty rather than aspirational; an unpublished neighbour is recorded in prose, not in the pin map. | Integrity | Test |
 
 ## Acceptance Criteria
 
@@ -62,7 +61,6 @@ type, field or vocabulary that duplicates one of them.
 |----|----------|--------------|
 | FR-006-AC-1 | The manifest declares `hazard` and `failure_mode` among its enumerated object types, and no object type named by `spec-objects-security`, `spec-objects-architecture` or `spec-objects-operational`. | Test |
 | FR-006-AC-2 | No shipped schema declares a `controls` or `mitigations` key, and the only cross-module reference shape is a `SemanticId`. | Test |
-| FR-006-AC-3 | `semantic.imports` is `{}`, and the manifest states the three open migration issues that keep it empty. | Test |
 | FR-006-AC-4 | Every `allowed_links` verb and every `traceability` verb exists in the `spec-artifacts-iso` edge vocabulary as a forward key or a declared inverse label. | Test |
 
 ## Dependencies

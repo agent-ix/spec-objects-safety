@@ -70,11 +70,11 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | FR-003 | FR-003-AC-1..6, FR-003-CON-1..2 | TC-026..TC-032 | ✅ AC-6's naming half is an expected failure |
 | FR-004 | FR-004-AC-1..14, FR-004-CON-1..3 | TC-035..TC-047, TC-071, TC-072 | ✅ |
 | FR-005 | FR-005-AC-1..10, FR-005-CON-1..3 | TC-048..TC-059 | ✅ |
-| FR-006 | FR-006-AC-1..4, FR-006-CON-1..2 | TC-060..TC-064, TC-109 | ✅ |
+| FR-006 | FR-006-AC-1, AC-2, AC-4, FR-006-CON-1 | TC-060, TC-061, TC-063, TC-064, TC-109 | ✅ |
 | FR-007 | FR-007-AC-1..4 | TC-093..TC-095 | ✅ |
 | FR-008 | FR-008-AC-1..5 | TC-096..TC-098 | ✅ |
 | FR-009 | FR-009-AC-1..10 | TC-099..TC-102, TC-103..TC-107 | ✅ |
-| FR-010 | FR-010-AC-1..5 | TC-110..TC-113 | ✅ |
+| FR-010 | FR-010-AC-1..7 | TC-110..TC-116 | ✅ |
 | FR-203 | FR-203-AC-15 | TC-108 | ✅ |
 
 ### Integration Test Coverage
@@ -136,7 +136,6 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-059 | The tracked tree holds no `corpus/` path, no `fixtures/semantic-module` path and no `/vendor/` path; an empty listing fails the gate rather than passing it | Static | P2 | FR-005-CON-1 | ✅ |
 | TC-060 | The manifest declares exactly `hazard` and `failure_mode` | Unit | P0 | FR-006-AC-1 | ✅ |
 | TC-061 | No schema declares `controls` or `mitigations`, and every cross-module reference is a `SemanticId` | Unit | P0 | FR-006-AC-2 | ✅ |
-| TC-062 | `semantic.imports` is `{}` and the manifest names the three open migration issues that keep it empty | Unit | P1 | FR-006-AC-3, FR-006-CON-2 | ✅ |
 | TC-063 | Every `allowed_links` and `traceability` verb exists in the iso edge vocabulary | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-064 | No safety-only synonym is minted for a verb or a type another module declares | Unit | P1 | FR-006-CON-1 | ✅ |
 | TC-109 | Pending ISO risk verbs used by safety archetypes are registered in the local edge vocabulary | Unit | P1 | FR-006-AC-4 | ✅ |
@@ -159,6 +158,9 @@ constraint, and NFR metric maps to at least one test case backed by a real
 | TC-111 | `failure_mode` `references` includes `systems-part`, `failure_mode` and `hazard` | Unit | P0 | FR-010-AC-2 | ✅ |
 | TC-112 | No cause or part type is declared locally, `failure_mode` has no `arises_from`, and `arises_from` is the only acyclic edge | Unit | P1 | FR-010-AC-3, FR-010-AC-4 | ✅ |
 | TC-113 | A hazard with an `arises_from` edge to each cause type validates without an edge diagnostic | Integration | P0 | FR-010-AC-5 | ✅ |
+| TC-114 | With spec-objects-architecture loaded, a failure mode referencing a real part validates and a reference to an undeclared part is dangling | Integration | P0 | FR-010-AC-2 | ✅ |
+| TC-115 | No required relation obliges a hazard to carry an outgoing `arises_from`, and a lone hazard validates | Unit | P1 | FR-010-AC-6 | ✅ |
+| TC-116 | No Hazard or FailureMode schema key is named for a cause, severity, likelihood or acceptability beyond `assessment` | Unit | P1 | FR-010-AC-7 | ✅ |
 | TC-108 | The composed `RiskEstimate` data schema accepts its top-level frontmatter `phase` and rejects unsupported or missing values | Unit | P1 | FR-203-AC-15 | ✅ |
 | TC-070 | Quoin install roundtrip: install, list, load through Quire, validate a skeleton, restore the catalog | Integration | P1 | IT-001-SC-01, IT-001-SC-02, IT-001-SC-03, IT-001-SC-04, IT-001-SC-05, IT-001-SC-06 | ✅ |
 | TC-071 | Each ordinal scale's emitted enum equals the stated member list, and each advisory lint allow-list is its scale plus the three epistemic states | Unit | P0 | FR-004-AC-12 | ✅ |

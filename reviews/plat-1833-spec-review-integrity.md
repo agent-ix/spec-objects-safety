@@ -1,0 +1,30 @@
+---
+id: SR-411
+title: "Spec review (integrity, EARS) — spec-objects-safety FR-010"
+type: SpecReview
+analysis: integrity
+scope: "agent-ix/spec-objects-safety; spec/functional/FR-010-hazard-causes-beyond-failure-modes.md, spec/functional/index.md, spec/tests.md"
+review_set: subset
+relationships:
+  - { target: "ix://agent-ix/spec-objects-safety/FR-010", type: references }
+---
+
+## Summary
+
+Ticket: PLAT-1833. Integrity and EARS pass over the new FR-010 and its index and test-matrix rows. `quire validate` on FR-010 reports three EARS grammar warnings. The relationships and dependency links resolve.
+
+## Verdict
+
+**CONDITIONAL** — FR-010 states the change accurately. It quotes no standard text and assigns no score or acceptability. Three Behavior statements have no acceptance criterion, and two statements break EARS form.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | medium | Three Behavior SHALLs have no AC: no cause is required (a hazard with no `arises_from` stays valid), no schema key carries severity/likelihood/acceptability for a cause, and the control's own `mitigates` edge stays unchanged — the last describes spec-objects-security's manifest, which this module cannot test or own. | spec/functional/FR-010-hazard-causes-beyond-failure-modes.md:47,50,52 |
+| FND-002 | low | EARS warnings: line 27 "A failure mode SHALL allow a reference..." has no system subject, and line 47 holds two SHALLs in one statement. | spec/functional/FR-010-hazard-causes-beyond-failure-modes.md:27,47 |
+
+## Coverage
+
+- Sub-analyses run: spec-integrity-analysis, spec-ears-analysis (via `quire validate` grammar diagnostics). Others not applicable to this diff.
+- spec/tests.md: FR-010 summary row and TC-110..TC-113 rows checked against the tagged tests; consistent.
