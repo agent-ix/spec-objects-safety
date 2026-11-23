@@ -29,3 +29,9 @@ system.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | "A retained-evidence record SHALL verify a control through an authored `verifies_implementation` or `verifies_effectiveness` edge to it" makes a document the subject of SHALL, so nothing in the system is obliged to do anything. Restate it with the system as subject, for example "Quire SHALL resolve a `verifies_implementation` or `verifies_effectiveness` edge from a retained-evidence record to a `control` as an incoming edge on the control." | spec/functional/FR-205-control-requirement-and-verification-links.md:101 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, c8f1044. The statement now reads "Quire SHALL resolve an authored `verifies_implementation` or `verifies_effectiveness` edge from a retained-evidence record to a control as an incoming edge on the control, as it does for a test (FR-302)." The system is the subject. |

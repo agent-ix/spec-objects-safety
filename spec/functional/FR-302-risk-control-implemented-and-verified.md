@@ -79,7 +79,7 @@ scope. Declared unscoped they would report every unrelated security control.
 | FR-302-AC-1 | The manifest declares the three relations with the fields and scope above, declares no relation over `verifies`, and loads without a declaration error. | Test |
 | FR-302-AC-2 | A control that mitigates a hazard, is satisfied by an `FR`, and is verified for implementation by one test document and for effectiveness by another yields no finding. | Test |
 | FR-302-AC-3 | The same control without the `satisfies` edge yields exactly one `control-without-requirement` finding; without the `verifies_implementation` edge, exactly one `control-without-implementation-verification` finding and no effectiveness finding; without the `verifies_effectiveness` edge, exactly one `control-without-effectiveness-verification` finding and no implementation finding. | Test |
-| FR-302-AC-4 | A `verifies_implementation` or `verifies_effectiveness` edge from a retained-evidence record referenced by id satisfies the matching check. | Test |
+| FR-302-AC-4 | A `verifies_implementation` or `verifies_effectiveness` edge from a document that is not a test document, referenced by id, satisfies the matching check. The test uses an `NFR` as the stand-in for a retained-evidence record, because no such record type exists yet. | Test |
 | FR-302-AC-5 | A control assumed by a `post_control` estimate that mitigates no hazard is reported when it lacks any of the three links. | Test |
 | FR-302-AC-6 | A control that mitigates no hazard or failure mode and is assumed by no estimate yields no finding. | Test |
 | FR-302-AC-9 | A control whose only verification edge is the shared `verifies` verb is reported by both verification checks. | Test |

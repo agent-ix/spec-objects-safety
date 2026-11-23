@@ -60,6 +60,10 @@ to the control, referenced by id. FR-302 owns which controls must have each
 edge. This module
 copies no evidence record.
 
+No retained-evidence record type exists yet, so the relations are exercised with
+an `NFR` as the stand-in source. A retained-evidence record type, when one is
+declared, must allow both verbs in its `allowed_links`.
+
 ### Effectiveness is a link, not a verdict
 
 A link to a verification says a verification exists. Whether it passed, and

@@ -977,6 +977,8 @@ def test_a_non_test_document_verifying_edge_satisfies_the_matching_check(
     hazard(tmp_path)
     risk_control(tmp_path, "CTRL-001", "HAZ-001")
     requirement(tmp_path, "FR-901", "fr", "satisfies", f"{LOCAL}/CTRL-001")
+    # An NFR stands in for a retained-evidence record: no record type exists
+    # yet, and the relation reads the edge, not the source kind (empty `to`).
     requirement(tmp_path, "NFR-901", "nfr", verb, f"{LOCAL}/CTRL-001")
     result = validate(tmp_path)
     assert findings(result, check) == [], result.stderr
@@ -994,9 +996,8 @@ def test_the_verification_verbs_draw_no_disallowed_edge_type(tmp_path):
     requirement(
         tmp_path, "NFR-901", "nfr", "verifies_implementation", f"{LOCAL}/CTRL-001"
     )
-    result = validate(tmp_path)
+    result = validate(tmp_path, "--strict")
     assert "disallowed-edge-type" not in result.stderr, result.stderr
-    assert "unknown-edge-type" not in result.stderr.lower(), result.stderr
 
 
 @pytest.mark.trace("FR-302-AC-9")

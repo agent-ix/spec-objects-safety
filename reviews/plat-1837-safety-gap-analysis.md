@@ -49,3 +49,15 @@ verbs) but is tagged only FR-302-AC-1.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-302-AC-4 (a `verifies_implementation` or `verifies_effectiveness` edge from a retained-evidence record satisfies the matching check) was rewritten by this PR and is still `untagged` in `quire matrix`. The non-test-source test covers the module's half but is tagged FR-302-AC-1 only, and asserts both verbs together, so it never shows that a non-test source of one verb leaves the other check firing. Tag a test to AC-4 that gives each verb from a non-test source in turn and asserts only the matching check clears. | spec/functional/FR-302-risk-control-implemented-and-verified.md:82, tests_integration/test_risk_chain_edges.py:910-922 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | medium | FR-302-AC-4 and the FR-205 retained-evidence statement claim a `verifies_implementation` or `verifies_effectiveness` edge from a retained-evidence record works. The test now tagged AC-4 uses an `NFR` source as a stand-in, and neither spec says so. engineering-assurance origin/main declares no retained-evidence record type, and iso#76 allows the verbs only on NFR, IT and TC. A future record type therefore draws `disallowed-edge-type` under `--strict` unless engineering-assurance allows both verbs. State in FR-302 (and FR-205 "Retained evidence") that the record type does not exist yet, that the tagged test proves the module half (`to: []`) with a non-test source, and that the record type must allow both verbs. Track that engineering-assurance work as a blocked-by ticket. | spec/functional/FR-302-risk-control-implemented-and-verified.md:82, spec/functional/FR-205-control-requirement-and-verification-links.md:54-61, tests_integration/test_risk_chain_edges.py:966-984 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, c8f1044. `test_a_non_test_document_verifying_edge_satisfies_the_matching_check` is tagged FR-302-AC-4, parametrized per verb, and asserts the matching check clears while the other still fires. `quire matrix` shows FR-302-AC-4 as tagged. It passes with quire 0.52.0. |
