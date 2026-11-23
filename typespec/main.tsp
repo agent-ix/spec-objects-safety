@@ -724,3 +724,31 @@ model RiskManagementPlan {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+// ---------------------------------------------------------------------------
+// Risk management review (FR-109).
+//
+// The reviewer, the statement of plan execution, the post-production readiness
+// and the reviewer's statement are one table row under the document's Review
+// section, read by the manifest's locator. The plan and the overall evaluation
+// are `references` edges authored in the document's relationships, never
+// members here, and the seal keeps a score, a class and an acceptance off the
+// record.
+// ---------------------------------------------------------------------------
+
+/**
+ * A risk management review object. The executed plan and the overall
+ * residual-risk evaluation are referenced through `references` edges authored
+ * in the document's relationships.
+ */
+@extension("additionalProperties", false)
+model RiskManagementReview {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  evidence?: EvidenceRef[];
+  relations?: RelationDecl[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

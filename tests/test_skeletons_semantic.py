@@ -43,6 +43,7 @@ SCORED_COLUMNS = {
     "benefit_risk": set(),
     "overall_residual_risk_evaluation": set(),
     "risk_management_plan": set(),
+    "risk_management_review": set(),
 }
 
 

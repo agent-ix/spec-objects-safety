@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
 version: 0.4.1
-description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation, risk_management_plan) — IEC 61508 / ISO 26262 / FMEA lineage'
+description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation, risk_management_plan, risk_management_review) — IEC 61508 / ISO 26262 / FMEA lineage'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
   # this contract version refuses the module explicitly instead of loading it as
@@ -19,6 +19,7 @@ semantic:
   - benefit_risk
   - overall_residual_risk_evaluation
   - risk_management_plan
+  - risk_management_review
   # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
   # references controls (`agent-ix/spec-objects-security` `control`), risks
   # (`risk`), the interfaces and components a failure mode sits in
@@ -676,6 +677,54 @@ object_types:
           after_heading: Invariants
           required: false
 
+# ── risk_management_review ───────────────────────────────────────────────
+#
+# The review a named person writes before release: whether the plan was carried
+# out, whether the production and post-production methods are in place, and a
+# statement. It holds REFERENCES, a `reviews` edge to the
+# `risk_management_plan` that was executed and a `references` edge to the
+# `overall_residual_risk_evaluation` people decided, never the evaluation, a
+# score, a class or an acceptance. Every cell is the reviewer's own entry; no
+# tool derives it from the referenced records, and the module ships no review.
+- name: risk_management_review
+  allowed_links:
+    reviews: [risk_management_plan]
+    references: [overall_residual_risk_evaluation]
+  data_schema:
+    schema: schemas/RiskManagementReview.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        review:
+          from: table_row
+          under_section: Review
+          required: true
+          assert:
+            columns:
+            - Reviewer
+            - Plan executed
+            - Post-production readiness
+            - Statement
+            min_rows: 1
+            max_rows: 1
+            column_choices:
+              Plan executed: ['yes', 'partly', 'no']
+              Post-production readiness: ['ready', 'not_ready']
+            column_patterns:
+              Reviewer: '^[^<>\s][^<>]*$'
+              Statement: '^[^<>\s][^<>]*$'
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
 # FR-058 (quire-rs): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.
 #
@@ -847,6 +896,18 @@ traceability:
     to: [acceptability_policy]
     direction: outgoing
     check: plan-without-acceptability-criteria
+  - name: review-references-plan
+    from: risk_management_review
+    edges: [reviews]
+    to: [risk_management_plan]
+    direction: outgoing
+    check: review-without-plan
+  - name: review-references-overall-evaluation
+    from: risk_management_review
+    edges: [references]
+    to: [overall_residual_risk_evaluation]
+    direction: outgoing
+    check: review-without-overall-evaluation
   # A hazard that transitively arises from itself states nothing, and no
   # per-document check can see it — the defect is a property of the graph.
   acyclic_edges:
