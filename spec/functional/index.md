@@ -16,6 +16,7 @@ description: "Index of artifacts in this directory."
 * [FR-007: A mitigating document can declare a mitigates edge to a hazard or failure_mode](./FR-007-authorable-mitigates-edge.md)
 * [FR-008: The hazard and failure-mode coverage checks report unmitigated objects and stay silent on mitigated ones](./FR-008-mitigation-coverage-findings.md)
 * [FR-009: A safety-classified NFR that mitigates nothing is reported as unjustified scope](./FR-009-safety-nfr-needs-mitigation-target.md)
+* [FR-010: A hazard can arise from SOUP, threat, vulnerability and control causes, and a failure mode can name its part](./FR-010-hazard-causes-beyond-failure-modes.md)
 * [FR-101: An acceptability policy is a project-authored table of levels and the region each cell belongs to](./FR-101-acceptability-policy.md)
 * [FR-102: A risk estimate's levels are checked against the policy's declared levels](./FR-102-estimate-levels-resolve-in-policy.md)
 * [FR-103: A residual-risk record holds the post-control estimate, the decision, a rationale and the named decider](./FR-103-residual-risk-record.md)

@@ -157,3 +157,38 @@ def test_no_safety_only_synonym_is_minted():
     )["allowed_links"]
     assert "arises_from" in hazard_links
     assert "arises_from" not in failure_links
+
+
+# ── FR-010: causes beyond failure modes ─────────────────────────────────────
+
+
+def _links(name: str) -> dict:
+    return next(ot for ot in object_types() if ot["name"] == name)["allowed_links"]
+
+
+@pytest.mark.trace("TC-110", "FR-010-AC-1")
+def test_a_hazard_may_arise_from_every_cause_type():
+    assert _links("hazard")["arises_from"] == [
+        "failure_mode",
+        "soup_record",
+        "threat",
+        "vulnerability",
+        "control",
+    ]
+
+
+@pytest.mark.trace("TC-111", "FR-010-AC-2")
+def test_a_failure_mode_may_reference_the_part_it_sits_in():
+    assert set(_links("failure_mode")["references"]) == {
+        "failure_mode",
+        "hazard",
+        "systems-part",
+    }
+
+
+@pytest.mark.trace("TC-112", "FR-010-AC-3", "FR-010-AC-4")
+def test_causes_are_referenced_not_declared_and_no_verb_is_added():
+    foreign = {"soup_record", "threat", "vulnerability", "control", "part"}
+    assert not foreign & {ot["name"] for ot in object_types()}
+    assert "arises_from" not in _links("failure_mode")
+    assert load_manifest()["traceability"]["acyclic_edges"] == ["arises_from"]

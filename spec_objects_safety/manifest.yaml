@@ -116,7 +116,12 @@ object_types:
     # The ticket (spec-objects-security#7) assumed `causes`/`contributes_to`
     # would be added to the iso vocabulary. Applying the criteria that ticket
     # asked for says not to.
-    arises_from: [failure_mode]
+    #
+    # A cause is not only a failing component: a SOUP record, a threat, a
+    # vulnerability and a control that itself introduces a new hazard are each
+    # a recognised way to reach one. They are owned by spec-objects-security
+    # and named here by reference only (FR-006, FR-010).
+    arises_from: [failure_mode, soup_record, threat, vulnerability, control]
     references: [hazard, failure_mode]
   data_schema:
     schema: schemas/Hazard.json
@@ -195,7 +200,9 @@ object_types:
     # The causal edge is authored from the hazard end (`arises_from`), so a
     # failure mode declares no outgoing safety verb of its own — one edge, one
     # place to write it.
-    references: [failure_mode, hazard]
+    # `part` (role `systems-part`, spec-objects-architecture) is where the failure sits, so a chain
+    # can reach a software item (FR-010).
+    references: [failure_mode, hazard, systems-part]
   data_schema:
     schema: schemas/FailureMode.json
   body_extraction:

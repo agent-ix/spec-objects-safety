@@ -467,7 +467,9 @@ def test_a_policy_edge_to_another_type_is_disallowed_naming_the_type(tmp_path):
     risk_chain(tmp_path)
     residual_risk(tmp_path, "RR-001", estimate=["EST-001"], policy=["EST-001"])
     lines = findings(validate(tmp_path), "disallowed-edge-target")
-    assert any("RR-001.md" in line and "'risk_estimate'" in line for line in lines), lines
+    assert any(
+        "RR-001.md" in line and "'risk_estimate'" in line for line in lines
+    ), lines
 
 
 @pytest.mark.trace("FR-103-AC-4")
@@ -964,3 +966,51 @@ def test_a_verification_recording_a_failing_result_still_satisfies_the_relation(
 
     walk(manifest)
     assert not names & {"status", "result", "passed", "verified", "effective"}
+
+
+def _skeleton(module, name, new_id, old_id, root, edges=()):
+    text = (_module(module) / "skeletons" / f"{name}.md").read_text()
+    text = re.sub(r"\[([^\]]+)\]\((?:\.\./|\./)[^)]*\)", r"\1", text)
+    (root / f"{new_id}.md").write_text(_with_edges(text.replace(old_id, new_id), edges))
+
+
+@pytest.mark.trace("TC-113", "FR-010-AC-5")
+def test_a_hazard_may_arise_from_each_cause_type(tmp_path):
+    causes = (
+        ("spec_objects_security", "soup_record", "SOUP-001"),
+        ("spec_objects_security", "threat", "THREAT-001"),
+        ("spec_objects_security", "vulnerability", "VULN-001"),
+        ("spec_objects_security", "control", "CTRL-001"),
+    )
+    for module, name, cid in causes:
+        _skeleton(module, name, cid, cid, tmp_path)
+    _write(tmp_path, "failure_mode", SKELETONS_DIR, "FM-001", "FM-001")
+    _write(
+        tmp_path,
+        "hazard",
+        SKELETONS_DIR,
+        "HAZ-001",
+        "HAZ-001",
+        [("arises_from", t) for t in ("FM-001", *(c[2] for c in causes))],
+    )
+    result = subprocess.run(
+        [
+            _quire(),
+            "validate",
+            "--okf",
+            "--module",
+            str(_module("spec_artifacts_iso")),
+            "--module",
+            str(_module("spec_objects_security")),
+            "--module",
+            str(PACKAGE_ROOT),
+            str(tmp_path),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert "disallowed-edge-target" not in result.stderr, result.stderr
+    assert "dangling-reference" not in result.stderr, result.stderr
+    assert "HAZ-001.md" not in "".join(
+        line for line in result.stderr.splitlines() if "edge" in line
+    ), result.stderr
