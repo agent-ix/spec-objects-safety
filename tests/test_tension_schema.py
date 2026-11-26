@@ -23,7 +23,7 @@ def test_manifest_exports_the_emitted_tension_schema():
     assert schema_of("TensionFrontmatter")["$id"].endswith("/TensionFrontmatter.json")
 
 
-@pytest.mark.trace("FR-401-AC-2", "FR-402-AC-1")
+@pytest.mark.trace("FR-401-AC-2")
 def test_tension_accepts_each_disposition(schema_registry, tension_record):
     validator = schema_registry("Tension")
     assert valid(validator, tension_record)
