@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import pathlib
@@ -16,13 +15,6 @@ import yaml
 from tests.conftest import PACKAGE_ROOT
 
 pytestmark = pytest.mark.integration
-
-
-def _module(package: str) -> pathlib.Path:
-    spec = importlib.util.find_spec(package)
-    if spec is None or not spec.origin:
-        pytest.fail(f"{package} is not installed")
-    return pathlib.Path(spec.origin).resolve().parent
 
 
 def _quire() -> str:
@@ -59,20 +51,6 @@ def _write_tension(
     if resolved_by is not None:
         edges.append({"target": resolved_by, "type": "resolved_by"})
     frontmatter["relationships"] = edges
-    relation_rows = "\n".join(
-        f"| edge_{index} | {edge['type']} | {edge['target']} | 1..1 |"
-        for index, edge in enumerate(edges, start=1)
-    )
-    body = re.sub(
-        r"^## Relationships\n.*?(?=^## |\Z)",
-        "## Relationships\n\n"
-        "| Name | Verb | Target | Multiplicity |\n"
-        "|---|---|---|---|\n"
-        f"{relation_rows}\n\n",
-        body,
-        count=1,
-        flags=re.DOTALL | re.MULTILINE,
-    )
     text = f"---\n{yaml.safe_dump(frontmatter, sort_keys=False)}---\n{body}"
     (spec / f"{tension_id}.md").write_text(text)
 
@@ -80,11 +58,11 @@ def _write_tension(
 def _part(root: pathlib.Path, part_id: str) -> None:
     spec = root / "spec"
     spec.mkdir(parents=True, exist_ok=True)
-    source = _module("spec_objects_architecture") / "skeletons" / "part.md"
     text = (
-        source.read_text()
-        .replace("scoring_engine", part_id)
-        .replace("ScoringEngine", f"{part_id.title().replace('-', '')}")
+        f"---\nid: {part_id}\ntitle: {part_id}\ntype: part\n---\n"
+        f"# [{part_id}] {part_id}\n\n"
+        "## Part\n\n| Owner | Declared Type | Multiplicity |\n"
+        "|---|---|---|\n| System | ScoringEngine | 1..1 |\n"
     )
     (spec / f"{part_id}.md").write_text(text)
 
@@ -133,12 +111,20 @@ def test_tension_rejects_undeclared_links_with_a_named_diagnostic(tmp_path):
     _write_tension(tmp_path, "TEN-001")
     path = tmp_path / "spec" / "TEN-001.md"
     text = path.read_text().replace("type: conflicts_with", "type: references", 1)
-    text = text.replace("| conflicts_with |", "| references |", 1)
     path.write_text(text)
 
     result = _validate(tmp_path)
     lines = _finding(result, "disallowed-edge-type")
     assert any("TEN-001.md" in line and "references" in line for line in lines), lines
+
+
+@pytest.mark.trace("FR-403-AC-5")
+def test_open_tension_with_resolution_edge_fails_frontmatter_schema(tmp_path):
+    _write_tension(tmp_path, "TEN-001", resolved_by="PART-001")
+
+    result = _validate(tmp_path)
+    assert result.returncode != 0, result.stderr
+    assert "resolved_by" in result.stderr
 
 
 @pytest.mark.trace("FR-402-AC-3", "FR-404-AC-3")

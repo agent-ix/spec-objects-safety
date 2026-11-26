@@ -56,7 +56,6 @@ def test_the_semantic_block_carries_the_eight_admitted_keys_and_two_exports(
         "typed-table",
         "sysml-fence",
         "ocl-clause",
-        "relationships",
         "record-sections",
     ]
     assert semantic_block["compatibility_posture"] == "additive"

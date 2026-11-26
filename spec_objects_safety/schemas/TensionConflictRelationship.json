@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionConflictRelationship.json",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "const": "conflicts_with"
+    }
+  },
+  "required": [
+    "target",
+    "type"
+  ],
+  "description": "One conflict link on a tension's authored frontmatter relationships."
+}

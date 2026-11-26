@@ -202,7 +202,6 @@ def semantic_module(semantic_block: dict[str, Any]) -> dict[str, Any]:
         "package": semantic_block["package"],
         "exports": semantic_block["exports"],
         "imports": semantic_block["imports"],
-        "mappings": semantic_block["mappings"],
         "compatibilityPosture": semantic_block["compatibility_posture"],
         "legacyForms": semantic_block["legacy_forms"],
     }
@@ -331,16 +330,4 @@ def tension_record() -> dict[str, Any]:
         ],
         "status": "open",
         "conflict": "One party requires X while another requires Y; both cannot hold.",
-        "relations": [
-            {
-                "verb": "conflicts_with",
-                "category": "governance",
-                "target": "ix://agent-ix/spec-objects-safety/FR-101",
-            },
-            {
-                "verb": "conflicts_with",
-                "category": "governance",
-                "target": "ix://agent-ix/spec-objects-safety/FR-102",
-            },
-        ],
     }

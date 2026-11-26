@@ -767,9 +767,45 @@ enum TensionStatus {
   `accepted-by-person`,
 }
 
-/** Open subset used to count only conflicts_with entries in relations. */
-model ConflictsWithRelation {
-  verb: "conflicts_with";
+/** One conflict link on a tension's authored frontmatter relationships. */
+model TensionConflictRelationship {
+  target: string;
+  type: "conflicts_with";
+}
+
+/** One design link that resolves a tension. */
+model TensionResolutionRelationship {
+  target: string;
+  type: "resolved_by";
+}
+
+union TensionRelationship {
+  TensionConflictRelationship,
+  TensionResolutionRelationship,
+}
+
+const tensionFrontmatterRules = #[
+  #{
+    `if`: #{ properties: #{ status: #{ `const`: "open" } } },
+    `then`: #{
+      properties: #{
+        relationships: #{ not: #{ contains: #{ properties: #{ type: #{ `const`: "resolved_by" } } } } },
+      },
+    },
+  },
+];
+
+/**
+ * Frontmatter keys read by the tension completeness relations. The graph edges
+ * live here once; the relation report and the schema consume this same list.
+ */
+@extension("allOf", tensionFrontmatterRules)
+model TensionFrontmatter {
+  status: TensionStatus;
+  @contains(TensionConflictRelationship)
+  @extension("minContains", 2)
+  relationships: TensionRelationship[];
+  decided_by?: PersonName;
 }
 
 const tensionStateRules = #[
@@ -780,14 +816,6 @@ const tensionStateRules = #[
   #{
     `if`: #{ properties: #{ status: #{ `enum`: #["open", "resolved-by-design"] } } },
     `then`: #{ not: #{ required: #["decided_by"] } },
-  },
-  #{
-    `if`: #{ properties: #{ status: #{ `const`: "open" } } },
-    `then`: #{
-      properties: #{
-        relations: #{ not: #{ contains: #{ properties: #{ verb: #{ `const`: "resolved_by" } } } } },
-      },
-    },
   },
 ];
 
@@ -802,9 +830,6 @@ model Tension {
   status: TensionStatus;
   conflict: string;
   decided_by?: PersonName;
-  @contains(ConflictsWithRelation)
-  @extension("minContains", 2)
-  relations: RelationDecl[];
   evidence?: EvidenceRef[];
   clauses?: ClauseRef[];
   ...Record<never>;

@@ -5,7 +5,50 @@
   "properties": {
     "status": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionStatus.json"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionRelationship.json"
+      },
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionConflictRelationship.json"
+      },
+      "minContains": 2
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
     }
   },
-  "description": "The frontmatter keys of a tension document that required relations select on. `status` is a top-level frontmatter key, so relation where clauses can name it and the engine sees it as declared. Open to the identity keys every document carries."
+  "required": [
+    "status",
+    "relationships"
+  ],
+  "description": "Frontmatter keys read by the tension completeness relations. The graph edges\nlive here once; the relation report and the schema consume this same list.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "open"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "relationships": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "type": {
+                    "const": "resolved_by"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

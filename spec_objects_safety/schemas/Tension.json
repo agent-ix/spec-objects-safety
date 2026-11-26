@@ -22,16 +22,6 @@
     "decided_by": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
     },
-    "relations": {
-      "type": "array",
-      "items": {
-        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/RelationDecl.json"
-      },
-      "contains": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/ConflictsWithRelation.json"
-      },
-      "minContains": 2
-    },
     "evidence": {
       "type": "array",
       "items": {
@@ -48,8 +38,7 @@
   "required": [
     "fields",
     "status",
-    "conflict",
-    "relations"
+    "conflict"
   ],
   "unevaluatedProperties": {
     "not": {}
@@ -86,30 +75,6 @@
           "required": [
             "decided_by"
           ]
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "status": {
-            "const": "open"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "relations": {
-            "not": {
-              "contains": {
-                "properties": {
-                  "verb": {
-                    "const": "resolved_by"
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }

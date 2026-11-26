@@ -36,7 +36,7 @@ semantic:
   # obligation to fill it.
   imports: {}
   targets: [json-schema, markdown]
-  mappings: [typed-table, sysml-fence, ocl-clause, relationships, record-sections]
+  mappings: [typed-table, sysml-fence, ocl-clause, record-sections]
   compatibility_posture: additive
   legacy_forms: warning
 # Order 55, following the family sequence (operational 53, security 54).

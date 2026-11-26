@@ -22,7 +22,6 @@ from tests.conftest import (
     frontmatter,
     kernel_scalars,
     locators,
-    load_manifest,
     object_type,
     object_types,
 )
@@ -231,11 +230,6 @@ def test_every_skeleton_heading_is_asserted_and_every_required_heading_is_presen
             for loc in declared.values()
             if loc.get("required") and heading_of(loc)
         }
-        manifest = load_manifest()
-        if "relationships" in manifest["semantic"]["mappings"] and object_type(
-            name
-        ).get("allowed_links"):
-            asserted.add("Relationships")
         body = re.sub(r"^```.*?^```\s*$", "", text, flags=re.DOTALL | re.MULTILINE)
         headings = {
             m.group(1).strip() for m in re.finditer(r"^## (.+)$", body, re.MULTILINE)

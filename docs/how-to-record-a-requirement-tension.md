@@ -10,6 +10,8 @@ conflict is acceptable.
 - Install Quire and make the ISO, safety, architecture, business, and security
   modules available to it. The shared registry lets validation resolve the
   edge verbs and cross-module object roles declared by those modules.
+- Each `--module` path below points to the module package directory that
+  contains `manifest.yaml` (usually a subdirectory of the repository checkout).
 - Keep both source requirements in the same corpus or load their repositories
   together so the links can be resolved.
 - Choose a unique document ID for the tension.
@@ -37,13 +39,6 @@ relationships:
 
 `One requirement calls for immediate processing. Another caps the work available to each operation; under the stated load, both cannot be guaranteed.`
 
-## Relationships
-
-| Name | Verb | Target | Multiplicity |
-|---|---|---|---|
-| immediate_requirement | conflicts_with | FR-020 | 1..1 |
-| bounded_work_requirement | conflicts_with | NFR-008 | 1..1 |
-
 ## Properties
 
 | Field | Type | Multiplicity | Constraints |
@@ -53,9 +48,8 @@ relationships:
 
 An open tension must name at least two requirements or clauses through
 `conflicts_with`. It cannot include `resolved_by` or `decided_by`.
-Keep the `Relationships` table and frontmatter `relationships` list aligned:
-the table supplies the validated record, and frontmatter supplies the graph
-edges Quire reports.
+The frontmatter `relationships` list is the single source for these graph
+edges. The completeness report reads these links directly.
 
 ## Resolve or accept the conflict
 
@@ -74,9 +68,6 @@ relationships:
     type: resolved_by
 ```
 
-Add a `resolved_by` row for `PART-042` to the record's `Relationships` table
-as well.
-
 If a person decides to live with the conflict, use `status: accepted-by-person`
 and add a non-empty `decided_by: Name`. Do not add a date; the file's version
 history records who authored the decision and when.
@@ -88,11 +79,11 @@ registries:
 
 ```sh
 quire validate --okf \
-  --module /path/to/spec-artifacts-iso \
-  --module /path/to/spec-objects-safety \
-  --module /path/to/spec-objects-business \
-  --module /path/to/spec-objects-security \
-  --module /path/to/spec-objects-architecture \
+  --module /path/to/spec-artifacts-iso/spec_artifacts_iso \
+  --module /path/to/spec-objects-safety/spec_objects_safety \
+  --module /path/to/spec-objects-business/spec_objects_business \
+  --module /path/to/spec-objects-security/spec_objects_security \
+  --module /path/to/spec-objects-architecture/spec_objects_architecture \
   /path/to/corpus
 ```
 
@@ -100,11 +91,11 @@ Then report tension completeness from the same corpus:
 
 ```sh
 quire relations --repo agent-ix/spec-objects-safety=/path/to/corpus \
-  --module /path/to/spec-artifacts-iso \
-  --module /path/to/spec-objects-safety \
-  --module /path/to/spec-objects-business \
-  --module /path/to/spec-objects-security \
-  --module /path/to/spec-objects-architecture \
+  --module /path/to/spec-artifacts-iso/spec_artifacts_iso \
+  --module /path/to/spec-objects-safety/spec_objects_safety \
+  --module /path/to/spec-objects-business/spec_objects_business \
+  --module /path/to/spec-objects-security/spec_objects_security \
+  --module /path/to/spec-objects-architecture/spec_objects_architecture \
   --relation tension-is-not-open \
   --relation resolved-tension-has-link \
   --json
