@@ -6,12 +6,23 @@ import copy
 
 import pytest
 
-from tests.conftest import object_types, schema_of
+from tests.conftest import MANIFEST_PATH, object_types, schema_of
 from tests.test_record_schemas import valid
 
 
 def _relation(verb: str, target: str) -> dict[str, str]:
     return {"verb": verb, "category": "governance", "target": target}
+
+
+@pytest.mark.trace("FR-401-AC-1")
+def test_manifest_exports_the_emitted_tension_schema():
+    import yaml
+
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text())
+    entry = next(item for item in manifest["object_types"] if item["name"] == "tension")
+    assert "tension" in manifest["semantic"]["exports"]
+    assert entry["data_schema"]["schema"] == "schemas/Tension.json"
+    assert schema_of("Tension")["$id"].endswith("/Tension.json")
 
 
 @pytest.mark.trace("FR-401-AC-2", "FR-402-AC-1")
@@ -84,7 +95,12 @@ def test_only_person_named_acceptance_is_valid(schema_registry, tension_record):
             del candidate["decided_by"]
         else:
             candidate["decided_by"] = decided_by
-        assert not valid(validator, candidate), decided_by
+        errors = list(validator.iter_errors(candidate))
+        assert errors, decided_by
+        if decided_by is None:
+            assert any("decided_by" in error.message for error in errors)
+        else:
+            assert any(list(error.path) == ["decided_by"] for error in errors)
 
 
 @pytest.mark.trace("FR-403-AC-4", "FR-403-AC-5")
