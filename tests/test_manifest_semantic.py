@@ -42,7 +42,7 @@ def module_copy(tmp_path, mutate=None):
     return tmp_path
 
 
-@pytest.mark.trace("TC-026", "FR-003-AC-1", "FR-003-CON-1")
+@pytest.mark.trace("TC-026", "FR-003-AC-1", "FR-003-CON-1", "FR-401-AC-1")
 def test_the_semantic_block_carries_the_eight_admitted_keys_and_two_exports(
     semantic_block,
 ):

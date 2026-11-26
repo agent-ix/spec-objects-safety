@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionFrontmatter.json",
+  "type": "object",
+  "properties": {
+    "status": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionStatus.json"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionRelationship.json"
+      },
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionConflictRelationship.json"
+      },
+      "minContains": 2
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    }
+  },
+  "required": [
+    "status",
+    "relationships"
+  ],
+  "description": "Frontmatter keys read by the tension completeness relations. The graph edges\nlive here once; the relation report and the schema consume this same list.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "open"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "relationships": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "type": {
+                    "const": "resolved_by"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

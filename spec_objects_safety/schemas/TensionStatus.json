@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionStatus.json",
+  "type": "string",
+  "enum": [
+    "open",
+    "resolved-by-design",
+    "accepted-by-person"
+  ]
+}

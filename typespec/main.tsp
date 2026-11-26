@@ -752,3 +752,85 @@ model RiskManagementReview {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+// ---------------------------------------------------------------------------
+// Tension between conflicting requirements (PLAT-1480 / FR-401..FR-405).
+//
+// A tension records the conflict and its authored disposition. It has no
+// scoring, date, history, or automatic acceptance. The conflicting documents
+// and any resolving design element are links written from this record.
+// ---------------------------------------------------------------------------
+
+enum TensionStatus {
+  open,
+  `resolved-by-design`,
+  `accepted-by-person`,
+}
+
+/** One conflict link on a tension's authored frontmatter relationships. */
+model TensionConflictRelationship {
+  target: string;
+  type: "conflicts_with";
+}
+
+/** One design link that resolves a tension. */
+model TensionResolutionRelationship {
+  target: string;
+  type: "resolved_by";
+}
+
+union TensionRelationship {
+  TensionConflictRelationship,
+  TensionResolutionRelationship,
+}
+
+const tensionFrontmatterRules = #[
+  #{
+    `if`: #{ properties: #{ status: #{ `const`: "open" } } },
+    `then`: #{
+      properties: #{
+        relationships: #{ not: #{ contains: #{ properties: #{ type: #{ `const`: "resolved_by" } } } } },
+      },
+    },
+  },
+];
+
+/**
+ * Frontmatter keys read by the tension completeness relations. The graph edges
+ * live here once; the relation report and the schema consume this same list.
+ */
+@extension("allOf", tensionFrontmatterRules)
+model TensionFrontmatter {
+  status: TensionStatus;
+  @contains(TensionConflictRelationship)
+  @extension("minContains", 2)
+  relationships: TensionRelationship[];
+  decided_by?: PersonName;
+}
+
+const tensionStateRules = #[
+  #{
+    `if`: #{ properties: #{ status: #{ `const`: "accepted-by-person" } } },
+    `then`: #{ required: #["decided_by"] },
+  },
+  #{
+    `if`: #{ properties: #{ status: #{ `enum`: #["open", "resolved-by-design"] } } },
+    `then`: #{ not: #{ required: #["decided_by"] } },
+  },
+];
+
+/** A person-authored record that names a conflict and how it was closed. */
+@extension("additionalProperties", false)
+@extension("allOf", tensionStateRules)
+model Tension {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  status: TensionStatus;
+  conflict: string;
+  decided_by?: PersonName;
+  evidence?: EvidenceRef[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

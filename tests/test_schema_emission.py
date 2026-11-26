@@ -1,10 +1,8 @@
 """Emission tests for the schema set (FR 002), its `$id`/`$ref` shape, the drift gate,
 determinism, and packaging.
 
-The emitted set is fifteen files: the two object-type records `Hazard` and
-`FailureMode`, and the thirteen support models they compose — the identity
-marker, the four structured value models, and the eight closed vocabularies
-that carry the safety scales and the epistemic states.
+The emitted set contains the twelve object-type records and the shared support
+models they compose, including the tension record's closed disposition.
 """
 
 from __future__ import annotations

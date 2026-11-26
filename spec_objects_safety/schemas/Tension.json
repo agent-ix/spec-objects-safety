@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/Tension.json",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/FieldDecl.json"
+      },
+      "minItems": 1,
+      "contains": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/IdentityField.json"
+      }
+    },
+    "status": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/TensionStatus.json"
+    },
+    "conflict": {
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/EvidenceRef.json"
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.4.4/ClauseRef.json"
+      }
+    }
+  },
+  "required": [
+    "fields",
+    "status",
+    "conflict"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "A person-authored record that names a conflict and how it was closed.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "accepted-by-person"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "decided_by"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "open",
+              "resolved-by-design"
+            ]
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "decided_by"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
