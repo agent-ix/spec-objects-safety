@@ -44,6 +44,7 @@ SCORED_COLUMNS = {
     "overall_residual_risk_evaluation": set(),
     "risk_management_plan": set(),
     "risk_management_review": set(),
+    "tension": set(),
 }
 
 
@@ -79,6 +80,28 @@ def test_every_skeleton_validates_with_no_error(quire_engine, skeletons):
         assert not [
             e for e in result["errors"] if "semantic.record-invalid" in e["message"]
         ], path.name
+
+
+@pytest.mark.trace("FR-401-AC-5")
+def test_tension_skeleton_validates_but_requires_its_conflict_section(quire_engine):
+    """The tension template accepts a complete example and rejects a missing conflict."""
+    path = SKELETONS_DIR / "tension.md"
+    text = path.read_text()
+    accepted = quire_engine.validate_document("tension", str(PACKAGE_ROOT), text)
+    assert accepted["is_valid"], accepted["errors"]
+
+    without_conflict = re.sub(
+        r"^## Conflict\n.*?(?=^## |\Z)",
+        "",
+        text,
+        count=1,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    rejected = quire_engine.validate_document(
+        "tension", str(PACKAGE_ROOT), without_conflict
+    )
+    assert not rejected["is_valid"]
+    assert any("conflict" in error["message"].lower() for error in rejected["errors"])
 
 
 @pytest.mark.trace("TC-049", "FR-005-AC-2", "FR-005-CON-2")

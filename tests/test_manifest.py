@@ -32,7 +32,7 @@ def _manifest() -> dict:
     return yaml.safe_load(MANIFEST_PATH.read_text())
 
 
-@pytest.mark.trace("TC-002", "FR-001-AC-1")
+@pytest.mark.trace("TC-002", "FR-001-AC-1", "FR-401-AC-1")
 def test_manifest_loads() -> None:
     manifest = _manifest()
     assert manifest["manifest_version"] == "1.0.0"
@@ -52,7 +52,9 @@ def test_object_types_are_well_formed() -> None:
             assert entry.get("allowed_links"), f"{name}: declares allowed_links"
 
 
-@pytest.mark.trace("TC-007", "FR-001-AC-7", "FR-001-CON-2")
+@pytest.mark.trace(
+    "TC-007", "FR-001-AC-7", "FR-001-CON-2", "FR-402-CON-1", "FR-402-AC-5"
+)
 def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
     """Every `allowed_links` verb already exists in the iso edge vocabulary.
 
@@ -93,6 +95,39 @@ def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
         "spec-artifacts-iso change with FR 004's criteria to satisfy, not a "
         "local mint."
     )
+
+
+@pytest.mark.trace("FR-402-AC-4", "FR-402-AC-5", "FR-404-AC-6")
+def test_tension_links_and_completeness_rules_are_manifest_data() -> None:
+    manifest = _manifest()
+    tension = next(item for item in manifest["object_types"] if item["name"] == "tension")
+    assert set(tension["allowed_links"]) == {"conflicts_with", "resolved_by"}
+
+    relations = manifest["traceability"]["required_relations"]
+    by_name = {item["name"]: item for item in relations}
+    assert by_name["resolved-tension-has-link"] == {
+        "name": "resolved-tension-has-link",
+        "from": "tension",
+        "where": {"field": "status", "values": ["resolved-by-design"]},
+        "edges": ["resolved_by"],
+        "to": [],
+        "direction": "outgoing",
+        "check": "resolved-tension-without-link",
+    }
+    assert by_name["tension-is-not-open"] == {
+        "name": "tension-is-not-open",
+        "from": "tension",
+        "where": {"field": "status", "values": ["open"]},
+        "edges": ["resolved_by"],
+        "to": [],
+        "direction": "outgoing",
+        "check": "open-tension",
+    }
+    assert {
+        "hazard-has-mitigation",
+        "failure-mode-has-mitigation",
+        "safety-nfr-has-mitigation-target",
+    } <= set(by_name)
 
 
 @pytest.mark.trace("TC-003", "FR-001-AC-2", "FR-001-AC-3", "StR-001-VC-1")

@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-objects-safety
 version: 0.4.1
-description: 'Filament Module: safety ObjectTypes (hazard, failure_mode, harm, hazardous_situation, risk_estimate, acceptability_policy, residual_risk, benefit_risk, overall_residual_risk_evaluation, risk_management_plan, risk_management_review) — IEC 61508 / ISO 26262 / FMEA lineage'
+description: 'Filament Module: safety object types for hazards, risks, and authored requirement tensions'
 semantic:
   # quoin FR-070. Declared at the module level, so a consumer that cannot read
   # this contract version refuses the module explicitly instead of loading it as
@@ -20,6 +20,7 @@ semantic:
   - overall_residual_risk_evaluation
   - risk_management_plan
   - risk_management_review
+  - tension
   # EMPTY ON PURPOSE, and not a claim that this module stands alone. A hazard
   # references controls (`agent-ix/spec-objects-security` `control`), risks
   # (`risk`), the interfaces and components a failure mode sits in
@@ -725,6 +726,42 @@ object_types:
           after_heading: Invariants
           required: false
 
+# ── tension ──────────────────────────────────────────────────────────────
+# A person-authored record of conflicting requirements. The disposition is
+# explicit; validation never decides that a conflict is acceptable.
+- name: tension
+  allowed_links:
+    conflicts_with: []
+    resolved_by: []
+  data_schema:
+    schema: schemas/Tension.json
+  body_extraction:
+    yield_pattern:
+      match:
+        id: *id001
+        title: *id002
+        type: *id003
+        status:
+          from: frontmatter_field
+          path: [status]
+          required: true
+        decided_by:
+          from: frontmatter_field
+          path: [decided_by]
+          required: false
+        conflict:
+          from: section_body
+          after_heading: Conflict
+          required: true
+        properties:
+          from: section_body
+          after_heading: Properties
+          required: false
+        invariants:
+          from: section_body
+          after_heading: Invariants
+          required: false
+
 # FR-058 (quire-rs): upward-trace completeness. THE POINT OF THIS
 # MODULE, and the reason agent-ix/spec-objects-security#5 exists.
 #
@@ -737,6 +774,20 @@ object_types:
 # direction — a different module states a different chain with the same code.
 traceability:
   required_relations:
+  - name: resolved-tension-has-link
+    from: tension
+    where: {field: status, values: [resolved-by-design]}
+    edges: [resolved_by]
+    to: []
+    direction: outgoing
+    check: resolved-tension-without-link
+  - name: tension-is-not-open
+    from: tension
+    where: {field: status, values: [open]}
+    edges: [resolved_by]
+    to: []
+    direction: outgoing
+    check: open-tension
   # A hazard nothing mitigates is a risk that was identified and then dropped.
   # This is the finding that cannot be produced any other way: the hazard
   # document is perfectly well-formed, passes every schema and grammar check,

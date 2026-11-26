@@ -752,3 +752,63 @@ model RiskManagementReview {
   clauses?: ClauseRef[];
   ...Record<never>;
 }
+
+// ---------------------------------------------------------------------------
+// Tension between conflicting requirements (PLAT-1480 / FR-401..FR-405).
+//
+// A tension records the conflict and its authored disposition. It has no
+// scoring, date, history, or automatic acceptance. The conflicting documents
+// and any resolving design element are links written from this record.
+// ---------------------------------------------------------------------------
+
+enum TensionStatus {
+  open,
+  `resolved-by-design`,
+  `accepted-by-person`,
+}
+
+/** Open subset used to count only conflicts_with entries in relations. */
+model ConflictsWithRelation {
+  verb: "conflicts_with";
+}
+
+const tensionStateRules = #[
+  #{
+    `if`: #{ properties: #{ status: #{ `const`: "accepted-by-person" } } },
+    `then`: #{
+      required: #["decided_by"],
+      properties: #{ decided_by: #{ minLength: 1, pattern: "^[^<>\\s][^<>]*$" } },
+    },
+  },
+  #{
+    `if`: #{ properties: #{ status: #{ `enum`: #["open", "resolved-by-design"] } } },
+    `then`: #{ not: #{ required: #["decided_by"] } },
+  },
+  #{
+    `if`: #{ properties: #{ status: #{ `const`: "open" } } },
+    `then`: #{
+      properties: #{
+        relations: #{ not: #{ contains: #{ properties: #{ verb: #{ `const`: "resolved_by" } } } } },
+      },
+    },
+  },
+];
+
+/** A person-authored record that names a conflict and how it was closed. */
+@extension("additionalProperties", false)
+@extension("allOf", tensionStateRules)
+model Tension {
+  @minItems(1)
+  @contains(IdentityField)
+  fields: FieldDecl[];
+
+  status: TensionStatus;
+  conflict: string;
+  decided_by?: string;
+  @contains(ConflictsWithRelation)
+  @extension("minContains", 2)
+  relations: RelationDecl[];
+  evidence?: EvidenceRef[];
+  clauses?: ClauseRef[];
+  ...Record<never>;
+}

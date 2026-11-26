@@ -58,6 +58,7 @@ OBJECT_TYPES = (
     "overall_residual_risk_evaluation",
     "risk_management_plan",
     "risk_management_review",
+    "tension",
 )
 
 # Verbs the manifest declares itself because `spec-artifacts-iso` does not.
@@ -89,6 +90,7 @@ MODEL_OF = {
     "overall_residual_risk_evaluation": "OverallResidualRiskEvaluation",
     "risk_management_plan": "RiskManagementPlan",
     "risk_management_review": "RiskManagementReview",
+    "tension": "Tension",
 }
 
 
@@ -304,4 +306,40 @@ def failure_mode_record() -> dict[str, Any]:
                 "identity": True,
             }
         ]
+    }
+
+
+@pytest.fixture(scope="session")
+def tension_record() -> dict[str, Any]:
+    """The smallest open tension declaration with two authored conflicts."""
+    return {
+        "fields": [
+            {
+                "name": "tension_id",
+                "type": {
+                    "target": {"kind": "KernelScalar", "value": "UUID"},
+                    "multiplicity": {
+                        "lower": 1,
+                        "upper": 1,
+                        "ordered": False,
+                        "unique": False,
+                    },
+                },
+                "identity": True,
+            }
+        ],
+        "status": "open",
+        "conflict": "One party requires X while another requires Y; both cannot hold.",
+        "relations": [
+            {
+                "verb": "conflicts_with",
+                "category": "governance",
+                "target": "ix://agent-ix/spec-objects-safety/FR-101",
+            },
+            {
+                "verb": "conflicts_with",
+                "category": "governance",
+                "target": "ix://agent-ix/spec-objects-safety/FR-102",
+            },
+        ],
     }
