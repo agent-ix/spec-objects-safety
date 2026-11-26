@@ -74,8 +74,22 @@ history records who authored the decision and when.
 
 ## Verify the record
 
-Validate the record in bundle mode with the edge, safety, and design-element
-registries:
+First run structural and semantic validation on the documents. This checks the
+tension frontmatter against its data schema, including the rule that an
+accepted tension names `decided_by`:
+
+```sh
+quire validate --scope /path/to/corpus \
+  --module /path/to/spec-artifacts-iso/spec_artifacts_iso \
+  --module /path/to/spec-objects-safety/spec_objects_safety \
+  --module /path/to/spec-objects-business/spec_objects_business \
+  --module /path/to/spec-objects-security/spec_objects_security \
+  --module /path/to/spec-objects-architecture/spec_objects_architecture \
+  'spec/**/*.md'
+```
+
+Then validate the corpus in bundle mode with the same registries. This checks
+the bundle's cross-document links and completeness:
 
 ```sh
 quire validate --okf \
@@ -104,5 +118,8 @@ quire relations --repo agent-ix/spec-objects-safety=/path/to/corpus \
 The report marks an open tension without a closing edge and a
 resolved-by-design tension without its outgoing `resolved_by` link as
 `uncovered`. An accepted-by-person tension needs its named decision maker and
-does not enter either relation's selected population. Add `--strict` when an
-uncovered tension must block the release.
+does not enter either relation's selected population. Inspect the selected
+rows in the JSON output for `uncovered`. `--strict` also fails when a selected
+relation has no rows or only `not-tracked` rows, so it can fail even when the
+tension condition is satisfied; use the row states when this check is a
+tension-specific release gate.
