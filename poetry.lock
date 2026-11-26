@@ -1150,7 +1150,7 @@ type = ["importlib_metadata (>=7.0.2) ; python_version < \"3.10\"", "jaraco.deve
 
 [[package]]
 name = "spec-artifacts-iso"
-version = "0.27.0.post1.dev0+9342304"
+version = "0.28.0.post1.dev0+54519e4"
 description = "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)"
 optional = false
 python-versions = ">=3.13,<3.14"
@@ -1161,8 +1161,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/agent-ix/spec-artifacts-iso.git"
-reference = "main"
-resolved_reference = "9342304894c8473539b64acd959024e551bccf0e"
+reference = "54519e4523c01c52d2c99c08dc0bd4b70793a8e8"
+resolved_reference = "54519e4523c01c52d2c99c08dc0bd4b70793a8e8"
 
 [[package]]
 name = "spec-objects-architecture"
@@ -1212,4 +1212,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "1d2d29a797a7494bc932921cd0655a2836174b5f13a54a7e17ca680d165ac857"
+content-hash = "c55a170e060b25465b935b2f5fdf49bdac2e4f38fd354cf949c2019b0f35fbf1"
