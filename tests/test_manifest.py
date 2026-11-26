@@ -32,7 +32,7 @@ def _manifest() -> dict:
     return yaml.safe_load(MANIFEST_PATH.read_text())
 
 
-@pytest.mark.trace("TC-002", "FR-001-AC-1", "FR-401-AC-1")
+@pytest.mark.trace("TC-002", "FR-001-AC-1")
 def test_manifest_loads() -> None:
     manifest = _manifest()
     assert manifest["manifest_version"] == "1.0.0"
@@ -97,7 +97,7 @@ def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
     )
 
 
-@pytest.mark.trace("FR-402-AC-4", "FR-402-AC-5", "FR-404-AC-6")
+@pytest.mark.trace("FR-404-AC-6")
 def test_tension_links_and_completeness_rules_are_manifest_data() -> None:
     manifest = _manifest()
     tension = next(
