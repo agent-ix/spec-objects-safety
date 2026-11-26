@@ -20,7 +20,7 @@
       "type": "string"
     },
     "decided_by": {
-      "type": "string"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-objects-safety/PersonName.json"
     },
     "relations": {
       "type": "array",
@@ -67,13 +67,7 @@
       "then": {
         "required": [
           "decided_by"
-        ],
-        "properties": {
-          "decided_by": {
-            "minLength": 1,
-            "pattern": "^[^<>\\s][^<>]*$"
-          }
-        }
+        ]
       }
     },
     {
