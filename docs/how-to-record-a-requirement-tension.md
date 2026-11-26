@@ -69,10 +69,16 @@ history records who authored the decision and when.
 
 ## Verify the record
 
-Run validation against the corpus and the module:
+Run Quire in bundle mode and load the edge, role, safety, and design-element
+registries with the corpus:
 
 ```sh
-quire validate --module /path/to/spec-objects-safety /path/to/corpus
+quire validate --okf \
+  --module /path/to/spec-artifacts-iso \
+  --module /path/to/spec-objects-security \
+  --module /path/to/spec-objects-safety \
+  --module /path/to/spec-objects-architecture \
+  /path/to/corpus
 ```
 
 An open tension validates as a record but is reported as `trace:open-tension`.

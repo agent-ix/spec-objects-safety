@@ -41,6 +41,9 @@ spec-artifacts-iso = {git = "https://github.com/agent-ix/spec-artifacts-iso.git"
 # The mitigates-edge integration tests (tests_integration/test_mitigates_edge.py)
 # load the security module so a `control` can mitigate a hazard.
 spec-objects-security = {version = "^0.12.1", source = "internal-pypi"}
+# Tension integration checks resolve a `resolved_by` edge to an architecture
+# `part`; pin the current module commit that exports this systems-model kind.
+spec-objects-architecture = {git = "https://github.com/agent-ix/spec-objects-architecture.git", rev = "df01e2430759452fdea23ef95cd7e251976719c3"}
 
 [tool.poetry.scripts]
 build-tools = "scripts.build_tools:main"

@@ -775,10 +775,7 @@ model ConflictsWithRelation {
 const tensionStateRules = #[
   #{
     `if`: #{ properties: #{ status: #{ `const`: "accepted-by-person" } } },
-    `then`: #{
-      required: #["decided_by"],
-      properties: #{ decided_by: #{ minLength: 1, pattern: "^[^<>\\s][^<>]*$" } },
-    },
+    `then`: #{ required: #["decided_by"] },
   },
   #{
     `if`: #{ properties: #{ status: #{ `enum`: #["open", "resolved-by-design"] } } },
@@ -804,7 +801,7 @@ model Tension {
 
   status: TensionStatus;
   conflict: string;
-  decided_by?: string;
+  decided_by?: PersonName;
   @contains(ConflictsWithRelation)
   @extension("minContains", 2)
   relations: RelationDecl[];
