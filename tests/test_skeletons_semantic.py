@@ -84,7 +84,7 @@ def test_every_skeleton_validates_with_no_error(quire_engine, skeletons):
 
 @pytest.mark.trace("FR-401-AC-5")
 def test_tension_skeleton_validates_but_requires_its_conflict_section(quire_engine):
-    """The tension template accepts a complete example and rejects a missing conflict."""
+    """The template accepts a complete example and rejects a missing conflict."""
     path = SKELETONS_DIR / "tension.md"
     text = path.read_text()
     accepted = quire_engine.validate_document("tension", str(PACKAGE_ROOT), text)

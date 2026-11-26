@@ -100,7 +100,9 @@ def test_no_verb_outside_the_declared_iso_vocabulary() -> None:
 @pytest.mark.trace("FR-402-AC-4", "FR-402-AC-5", "FR-404-AC-6")
 def test_tension_links_and_completeness_rules_are_manifest_data() -> None:
     manifest = _manifest()
-    tension = next(item for item in manifest["object_types"] if item["name"] == "tension")
+    tension = next(
+        item for item in manifest["object_types"] if item["name"] == "tension"
+    )
     assert set(tension["allowed_links"]) == {"conflicts_with", "resolved_by"}
 
     relations = manifest["traceability"]["required_relations"]
