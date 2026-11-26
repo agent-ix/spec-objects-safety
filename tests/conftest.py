@@ -202,6 +202,7 @@ def semantic_module(semantic_block: dict[str, Any]) -> dict[str, Any]:
         "package": semantic_block["package"],
         "exports": semantic_block["exports"],
         "imports": semantic_block["imports"],
+        "mappings": semantic_block["mappings"],
         "compatibilityPosture": semantic_block["compatibility_posture"],
         "legacyForms": semantic_block["legacy_forms"],
     }

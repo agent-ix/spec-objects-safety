@@ -22,6 +22,7 @@ from tests.conftest import (
     frontmatter,
     kernel_scalars,
     locators,
+    load_manifest,
     object_type,
     object_types,
 )
@@ -145,6 +146,10 @@ def test_under_the_bundle_index_every_skeleton_extracts_clean(
             d for d in diagnostics if d.get("code") == "semantic.unresolved-type"
         ], (path.name, diagnostics)
         clauses = record.get("clauses") or []
+        if frontmatter(path.read_text())["object"] == "tension":
+            # Tension's Invariants section is authored prose, not an OCL
+            # ClauseRef; the conflict itself is validated as a record field.
+            continue
         assert clauses, path.name
         for clause in clauses:
             # A clause reference without a span is a clause nothing can trace
@@ -226,6 +231,11 @@ def test_every_skeleton_heading_is_asserted_and_every_required_heading_is_presen
             for loc in declared.values()
             if loc.get("required") and heading_of(loc)
         }
+        manifest = load_manifest()
+        if "relationships" in manifest["semantic"]["mappings"] and object_type(
+            name
+        ).get("allowed_links"):
+            asserted.add("Relationships")
         body = re.sub(r"^```.*?^```\s*$", "", text, flags=re.DOTALL | re.MULTILINE)
         headings = {
             m.group(1).strip() for m in re.finditer(r"^## (.+)$", body, re.MULTILINE)

@@ -11,7 +11,7 @@ from tests.test_record_schemas import valid
 
 
 def _relation(verb: str, target: str) -> dict[str, str]:
-    return {"verb": verb, "category": "governance", "target": target}
+    return {"verb": verb, "category": "traceability", "target": target}
 
 
 @pytest.mark.trace("FR-401-AC-1")
@@ -34,7 +34,9 @@ def test_tension_accepts_each_disposition_and_requires_two_conflict_edges(
 
     resolved = copy.deepcopy(tension_record)
     resolved.update(status="resolved-by-design")
-    resolved["relations"].append(_relation("resolved_by", "PART-001"))
+    resolved["relations"].append(
+        _relation("resolved_by", "ix://agent-ix/spec-objects-architecture/PART-001")
+    )
     assert valid(validator, resolved)
 
     accepted = copy.deepcopy(tension_record)
@@ -113,5 +115,7 @@ def test_nonaccepted_tensions_refuse_deciders_and_open_refuses_resolution_edges(
         assert not valid(validator, candidate), status
 
     open_with_resolution = copy.deepcopy(tension_record)
-    open_with_resolution["relations"].append(_relation("resolved_by", "PART-001"))
+    open_with_resolution["relations"].append(
+        _relation("resolved_by", "ix://agent-ix/spec-objects-architecture/PART-001")
+    )
     assert not valid(validator, open_with_resolution)

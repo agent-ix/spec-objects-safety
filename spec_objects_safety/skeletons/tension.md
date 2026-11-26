@@ -19,8 +19,14 @@ relationships:
 
 ## Conflict
 
-One requirement requires immediate processing while the other requires a
-bounded resource limit; the same operation cannot satisfy both readings.
+`One requirement requires immediate processing. The other requires a bounded resource limit; the same operation cannot satisfy both readings.`
+
+## Relationships
+
+| Name | Verb | Target | Multiplicity |
+|---|---|---|---|
+| first_conflict | conflicts_with | FR-101 | 1..1 |
+| second_conflict | conflicts_with | FR-102 | 1..1 |
 
 ## Properties
 

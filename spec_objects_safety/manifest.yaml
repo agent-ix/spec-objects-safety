@@ -36,7 +36,7 @@ semantic:
   # obligation to fill it.
   imports: {}
   targets: [json-schema, markdown]
-  mappings: [typed-table, sysml-fence, ocl-clause, record-sections]
+  mappings: [typed-table, sysml-fence, ocl-clause, relationships, record-sections]
   compatibility_posture: additive
   legacy_forms: warning
 # Order 55, following the family sequence (operational 53, security 54).
@@ -730,6 +730,7 @@ object_types:
 # A person-authored record of conflicting requirements. The disposition is
 # explicit; validation never decides that a conflict is acceptable.
 - name: tension
+  frontmatter_schema_ref: schemas/TensionFrontmatter.json
   allowed_links:
     conflicts_with: []
     resolved_by: []

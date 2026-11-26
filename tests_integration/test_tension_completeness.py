@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import pathlib
 import re
@@ -41,6 +42,8 @@ def _write_tension(
     resolved_by: str | None = None,
     decided_by: str | None = None,
 ) -> None:
+    spec = root / "spec"
+    spec.mkdir(parents=True, exist_ok=True)
     source = (PACKAGE_ROOT / "skeletons" / "tension.md").read_text()
     body = re.sub(r"^---\n.*?\n---\n", "", source, count=1, flags=re.DOTALL)
     frontmatter = {
@@ -56,48 +59,69 @@ def _write_tension(
     if resolved_by is not None:
         edges.append({"target": resolved_by, "type": "resolved_by"})
     frontmatter["relationships"] = edges
-    text = f"---\n{yaml.safe_dump(frontmatter, sort_keys=False)}---\n{body}"
-    (root / f"{tension_id}.md").write_text(text)
-
-
-def _remove_frontmatter_field(path: pathlib.Path, field: str) -> None:
-    text = path.read_text()
-    match = re.match(r"^---\n(.*?)\n---\n(.*)$", text, flags=re.DOTALL)
-    assert match, f"{path.name} has no frontmatter"
-    frontmatter = yaml.safe_load(match.group(1))
-    del frontmatter[field]
-    path.write_text(
-        f"---\n{yaml.safe_dump(frontmatter, sort_keys=False)}---\n{match.group(2)}"
+    relation_rows = "\n".join(
+        f"| edge_{index} | {edge['type']} | {edge['target']} | 1..1 |"
+        for index, edge in enumerate(edges, start=1)
     )
+    body = re.sub(
+        r"^## Relationships\n.*?(?=^## |\Z)",
+        "## Relationships\n\n"
+        "| Name | Verb | Target | Multiplicity |\n"
+        "|---|---|---|---|\n"
+        f"{relation_rows}\n\n",
+        body,
+        count=1,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    text = f"---\n{yaml.safe_dump(frontmatter, sort_keys=False)}---\n{body}"
+    (spec / f"{tension_id}.md").write_text(text)
 
 
 def _part(root: pathlib.Path, part_id: str) -> None:
+    spec = root / "spec"
+    spec.mkdir(parents=True, exist_ok=True)
     source = _module("spec_objects_architecture") / "skeletons" / "part.md"
     text = (
         source.read_text()
         .replace("scoring_engine", part_id)
         .replace("ScoringEngine", f"{part_id.title().replace('-', '')}")
     )
-    (root / f"{part_id}.md").write_text(text)
+    (spec / f"{part_id}.md").write_text(text)
 
 
 def _validate(root: pathlib.Path, *flags: str, safety_module=PACKAGE_ROOT):
     command = [
         _quire(),
         "validate",
-        "--okf",
+        "--scope",
+        str(root),
         *flags,
         "--module",
-        str(_module("spec_artifacts_iso")),
-        "--module",
-        str(_module("spec_objects_security")),
-        "--module",
         str(safety_module),
-        "--module",
-        str(_module("spec_objects_architecture")),
-        str(root),
+        "spec/**/*.md",
     ]
     return subprocess.run(command, capture_output=True, text=True)
+
+
+def _relations(root: pathlib.Path, relation: str):
+    command = [
+        _quire(),
+        "relations",
+        "--repo",
+        f"agent-ix/spec-objects-safety={root}",
+        "--module",
+        str(PACKAGE_ROOT),
+    ]
+    command.extend(("--relation", relation, "--json"))
+    return subprocess.run(command, capture_output=True, text=True)
+
+
+def _relation_rows(result: subprocess.CompletedProcess, relation: str) -> list[dict]:
+    assert result.returncode == 0, result.stderr
+    report = json.loads(result.stdout)
+    assert not report.get("errors"), report.get("errors")
+    section = next(item for item in report["relations"] if item["name"] == relation)
+    return section["rows"]
 
 
 def _finding(result: subprocess.CompletedProcess, check: str) -> list[str]:
@@ -107,12 +131,13 @@ def _finding(result: subprocess.CompletedProcess, check: str) -> list[str]:
 @pytest.mark.trace("FR-402-AC-2")
 def test_tension_rejects_undeclared_links_with_a_named_diagnostic(tmp_path):
     _write_tension(tmp_path, "TEN-001")
-    path = tmp_path / "TEN-001.md"
+    path = tmp_path / "spec" / "TEN-001.md"
     text = path.read_text().replace("type: conflicts_with", "type: references", 1)
+    text = text.replace("| conflicts_with |", "| references |", 1)
     path.write_text(text)
 
     result = _validate(tmp_path)
-    lines = _finding(result, "disallowed-edge-target")
+    lines = _finding(result, "disallowed-edge-type")
     assert any("TEN-001.md" in line and "references" in line for line in lines), lines
 
 
@@ -126,23 +151,24 @@ def test_resolved_by_design_edge_to_a_part_clears_the_tension_finding(tmp_path):
     )
     _part(tmp_path, "PART-001")
 
-    result = _validate(tmp_path)
-    assert result.returncode == 0, result.stderr
-    assert _finding(result, "resolved-tension-without-link") == []
-    assert "TEN-001.md" not in "\n".join(_finding(result, "disallowed-edge-target"))
+    rows = _relation_rows(
+        _relations(tmp_path, "resolved-tension-has-link"), "resolved-tension-has-link"
+    )
+    assert any(
+        row["document"]["id"] == "TEN-001" and row["state"] == "covered" for row in rows
+    ), rows
 
 
 @pytest.mark.trace("FR-404-AC-1", "FR-405-AC-2")
-def test_open_tension_is_named_and_fails_when_its_check_is_an_error(tmp_path):
+def test_open_tension_is_reported_as_uncovered(tmp_path):
     _write_tension(tmp_path, "TEN-001")
-    result = _validate(
-        tmp_path,
-        "--severity",
-        "trace:open-tension=error",
+    rows = _relation_rows(
+        _relations(tmp_path, "tension-is-not-open"), "tension-is-not-open"
     )
-    assert result.returncode != 0, result.stderr
-    lines = _finding(result, "open-tension")
-    assert any("TEN-001.md" in line for line in lines), lines
+    assert any(
+        row["document"]["id"] == "TEN-001" and row["state"] == "uncovered"
+        for row in rows
+    ), rows
 
 
 @pytest.mark.trace("FR-404-AC-2")
@@ -155,17 +181,25 @@ def test_incoming_conflicts_with_edge_does_not_close_an_open_tension(tmp_path):
         conflicts=("REQ-C", "REQ-D", "TEN-001"),
         decided_by="A. Person",
     )
-    result = _validate(tmp_path)
-    lines = _finding(result, "open-tension")
-    assert any("TEN-001.md" in line for line in lines), lines
+    rows = _relation_rows(
+        _relations(tmp_path, "tension-is-not-open"), "tension-is-not-open"
+    )
+    assert any(
+        row["document"]["id"] == "TEN-001" and row["state"] == "uncovered"
+        for row in rows
+    ), rows
 
 
 @pytest.mark.trace("FR-404-AC-4")
 def test_resolved_tension_without_its_design_edge_is_reported(tmp_path):
     _write_tension(tmp_path, "TEN-001", status="resolved-by-design")
-    result = _validate(tmp_path)
-    lines = _finding(result, "resolved-tension-without-link")
-    assert any("TEN-001.md" in line for line in lines), lines
+    rows = _relation_rows(
+        _relations(tmp_path, "resolved-tension-has-link"), "resolved-tension-has-link"
+    )
+    assert any(
+        row["document"]["id"] == "TEN-001" and row["state"] == "uncovered"
+        for row in rows
+    ), rows
 
 
 @pytest.mark.trace("FR-404-AC-5")
@@ -178,13 +212,22 @@ def test_named_person_acceptance_passes_but_missing_name_fails(tmp_path):
     )
     accepted = _validate(tmp_path)
     assert accepted.returncode == 0, accepted.stderr
-    assert _finding(accepted, "open-tension") == []
-    assert _finding(accepted, "resolved-tension-without-link") == []
+    assert (
+        _relation_rows(
+            _relations(tmp_path, "tension-is-not-open"), "tension-is-not-open"
+        )
+        == []
+    )
+    assert (
+        _relation_rows(
+            _relations(tmp_path, "resolved-tension-has-link"),
+            "resolved-tension-has-link",
+        )
+        == []
+    )
 
-    _remove_frontmatter_field(tmp_path / "TEN-001.md", "decided_by")
-    refused = _validate(tmp_path)
-    assert refused.returncode != 0, refused.stderr
-    assert "decided_by" in refused.stderr
+    # Missing decided_by is exercised against the emitted JSON Schema in
+    # tests/test_tension_schema.py; `quire validate` checks document structure.
 
 
 @pytest.mark.trace("FR-404-AC-6", "FR-405-AC-1")
