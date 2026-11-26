@@ -409,3 +409,22 @@ Reverse inventory: exported hazard/failure-mode types and structured safety reco
 Missing obligation IDs: FR-101-AC-3, FR-101-AC-4, FR-102-AC-1, FR-102-AC-2, FR-102-AC-3, FR-102-AC-4, FR-103-AC-7, FR-104-AC-1, FR-104-AC-2, FR-104-AC-4, FR-105-AC-1, FR-105-AC-2, FR-105-AC-3, FR-105-AC-4, FR-105-AC-5, FR-105-AC-6, FR-105-AC-7, FR-105-AC-8, FR-105-AC-9, FR-105-AC-10, FR-105-AC-11, FR-107-AC-3, FR-107-AC-4, FR-107-AC-5, FR-107-AC-7, FR-202-AC-2, FR-305-AC-1, FR-305-AC-2, FR-305-AC-3, FR-305-AC-4, FR-305-AC-5, FR-305-AC-6, FR-305-AC-7, FR-305-AC-8, FR-305-AC-9, FR-305-AC-10, FR-305-AC-11, NFR-100-AC-1, NFR-100-AC-2, NFR-100-AC-3, NFR-100-M-1, NFR-100-M-2, NFR-100-M-3, NFR-300-M-2, NFR-300-M-3, NFR-300-M-4
 
 Completed independent checks: schema emitter drift check passed (42 schemas); Ruff passed for all seven touched Python files; Black passed for all seven touched Python files.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | still-open | Still open for routing: the 46 inherited matrix obligations are outside the tension feature diff, but every implicated safety requirement file was first added 2026-11-12. PLAT-1915 owns files first added before 2026-11-11, so deferral to that older-gap ticket is not supported by repository history. The new-population follow-up belongs under PLAT-1914 or another explicitly assigned owner. |
+| FND-001 | deferred | Deferred to the broader PLAT-1914 follow-up under the dispatching lead's explicit routing decision: these 46 inherited safety matrix obligations are outside this feature-scoped tension PR. Their requirement files were first added 2026-11-12, so they belong to the new-population ticket PLAT-1914, not the older-population ticket PLAT-1915. They remain tracked on PLAT-1914 after this in-flight feature lands. |
+
+## Disposition pass 1
+
+**FAIL; mergeable=no** at 72a77f466e11d03a94b060f5911d146f24cfdadd. Verified PLAT-1915's outcome and acceptance criteria and inspected first-add history for FR-101, FR-102, FR-103, FR-104, FR-105, FR-107, FR-202, FR-305, NFR-100 and NFR-300. Every file was first added 2026-11-12, after the ticket's older-population cutoff. Thus the requested conditional deferral to PLAT-1915 cannot be verified. The baseline finding remains inherited and outside this PR's tension implementation, but it needs correctly scoped follow-up ownership.
+
+No new static gap was introduced by the original-finding fixes. The code-review artifact records newly exposed execution defects and the retained focused result (13 passed, 8 failed). No full-suite or repository gap PASS is claimed. Original finding text remains unchanged.
+
+## Disposition pass 2
+
+**Scoped PR mergeable=yes** at aaa299b7a58ea1b7392fd42e4a6fbc789426360e. The sole inherited gap finding is deferred to the correctly scoped broader PLAT-1914 work, as explicitly confirmed by the dispatching lead. The original repository-wide FAIL remains historical and the gap has not been represented as fixed.
+
+Explicit Quoin 0.37.0 matrix refresh at the final product revision reports the same 202 tagged, 26 method-without-symbol and 46 untagged obligations. Final trace-only removals retain dedicated valid binders for all tension criteria and introduce no new static gap. Plan completion: not assessed. Current code-review SR-424 is PASS with all six findings fixed; no further gap findings were added.
