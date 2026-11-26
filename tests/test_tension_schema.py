@@ -115,4 +115,3 @@ def test_nonaccepted_tensions_refuse_deciders_and_open_refuses_resolution_edges(
     open_with_resolution = copy.deepcopy(tension_record)
     open_with_resolution["relations"].append(_relation("resolved_by", "PART-001"))
     assert not valid(validator, open_with_resolution)
-

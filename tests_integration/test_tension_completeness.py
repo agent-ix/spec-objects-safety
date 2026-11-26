@@ -25,8 +25,10 @@ def _module(package: str) -> pathlib.Path:
 
 
 def _quire() -> str:
-    return os.environ.get("QUIRE_BIN") or shutil.which("quire") or pytest.fail(
-        "set QUIRE_BIN or put the quire command on PATH"
+    return (
+        os.environ.get("QUIRE_BIN")
+        or shutil.which("quire")
+        or pytest.fail("set QUIRE_BIN or put the quire command on PATH")
     )
 
 
@@ -71,8 +73,10 @@ def _remove_frontmatter_field(path: pathlib.Path, field: str) -> None:
 
 def _part(root: pathlib.Path, part_id: str) -> None:
     source = _module("spec_objects_architecture") / "skeletons" / "part.md"
-    text = source.read_text().replace("scoring_engine", part_id).replace(
-        "ScoringEngine", f"{part_id.title().replace('-', '')}"
+    text = (
+        source.read_text()
+        .replace("scoring_engine", part_id)
+        .replace("ScoringEngine", f"{part_id.title().replace('-', '')}")
     )
     (root / f"{part_id}.md").write_text(text)
 
@@ -204,4 +208,3 @@ def test_corpus_without_tensions_has_identical_validation_output(tmp_path):
     assert current.returncode == before.returncode
     assert current.stdout == before.stdout
     assert current.stderr == before.stderr
-
