@@ -82,19 +82,10 @@ rendering and may be regenerated at will.
 
 ## Acceptance Criteria
 
-| ID | Criteria | Verification |
-|----|----------|--------------|
-| FR-305-AC-1 | Over a complete fixture chain, `--format json` yields one row per hazard and situation pairing, each key holding the entered value, and the output parses as one JSON object with `attribution` and `rows`. | Test |
-| FR-305-AC-2 | A hazard with no situation yields a row with `situation: null` and `hazard-without-situation` in `findings`. | Test |
-| FR-305-AC-3 | A fixture with `probability: not_assessed` shows `not_assessed` in its estimate entry with that entry's `policy_region: null`, while another estimate in the same row keeps its own label. | Test |
-| FR-305-AC-4 | A fixture residual risk with `decision: undecided` shows `undecided`, and no row shows `accepted` that a person did not write. | Test |
-| FR-305-AC-5 | No row key and no top-level key is numeric, a rank, or a verdict: the JSON keys of every row equal the row table exactly, of every estimate entry equal `estimate`, `severity`, `probability`, `policy_region`, of every control entry `control`, `requirements`, `implementation_verifications`, `effectiveness_verifications`, of every residual-risk entry `residual_risk`, `decision`, `decided_by`, and of every finding `finding`, `names`. | Test |
-| FR-305-AC-6 | Running the command leaves every fixture file byte-identical. | Test |
-| FR-305-AC-7 | Two runs over the same fixtures give identical output in both formats, ordered by hazard id then situation id. | Test |
-| FR-305-AC-8 | A control without an implementation or effectiveness verification appears in its row with `control-without-implementation-verification` or `control-without-effectiveness-verification` in `findings`; adding the matching verification removes it. | Test |
-| FR-305-AC-9 | A situation with no `arises_from` edge to a hazard yields a row with `hazard: null` and `situation-without-hazard` in `findings`. | Test |
-| FR-305-AC-10 | Two estimates on one situation both appear in the row, and no key marks either as in force. | Test |
-| FR-305-AC-11 | A post-control estimate with no `assumes` edge yields `post-control-without-control` naming the estimate in the `findings` of its situation's rows; adding the edge removes it. | Test |
+The report contract is owned by Quoin FR-169 and FR-170, which carry its
+acceptance criteria and tests. See
+[Quoin FR-169](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-169-risk-summary-command.md)
+and [Quoin FR-170](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-170-risk-summary-row-findings.md).
 
 ## Dependencies
 
