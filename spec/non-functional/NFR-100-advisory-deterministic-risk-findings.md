@@ -29,8 +29,6 @@ Tracked by Linear PLAT-1523. A finding that varies between runs, or a check that
 
 | Metric | Target | Threshold | Method |
 |--------|--------|-----------|--------|
-| Differing output bytes across two runs on identical inputs | 0 | 0 | Test |
-| Authored files whose bytes changed in a run | 0 | 0 | Test |
 | Wall time for 5,000 fixture residual-risk records | 3 s | 10 s | Test |
 
 ## Verification
@@ -41,9 +39,10 @@ A test runs the discrepancy report twice over a fixture bundle and compares the 
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| NFR-100-AC-1 | Two runs of the discrepancy report over one fixture bundle produce output that differs in 0 bytes. | Test |
-| NFR-100-AC-2 | The bytes of every authored fixture file are unchanged after a run. | Test |
 | NFR-100-AC-3 | One run over 5,000 generated residual-risk records completes within 10 seconds. | Test |
+
+Quoin FR-154 owns and tests deterministic, read-only discrepancy reporting. See
+[Quoin FR-154](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-154-risk-discrepancies-command.md).
 
 ## Dependencies
 
