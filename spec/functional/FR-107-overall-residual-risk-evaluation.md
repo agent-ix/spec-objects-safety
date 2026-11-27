@@ -42,12 +42,11 @@ the person considered; the bundle is what exists.
 |----|----------|--------------|
 | FR-107-AC-1 | A fixture evaluation with product, considered records, `accepted`, rationale and `decided_by` validates. | Test |
 | FR-107-AC-2 | A decided evaluation without `decided_by` fails; an `undecided` one with `decided_by` fails. | Test |
-| FR-107-AC-3 | A fixture bundle with a `residual_risk` missing from the considered list yields one `residual-risk-not-considered` warning naming it. | Test |
-| FR-107-AC-4 | An `accepted` evaluation over a considered `not_accepted` risk yields `evaluation-accepted-with-open-risk` naming that risk. | Test |
-| FR-107-AC-5 | Given only decided-accepted considered records and no evaluation document, the tooling creates no evaluation and reports no accepted state. | Test |
 | FR-107-AC-6 | The emitted schema declares no total, score or date property. | Inspection |
-| FR-107-AC-7 | An `accepted` evaluation over a considered `undecided` risk yields `evaluation-accepted-with-open-risk` naming that risk. | Test |
 | FR-107-AC-8 | An evaluation with an empty `product` string fails validation naming the field. | Test |
+
+The report-level evaluation checks are owned and tested by Quoin FR-213. See
+[Quoin FR-213](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-213-risk-advise-overall-evaluation-checks.md).
 
 ## Dependencies
 

@@ -40,12 +40,12 @@ yields no score.
 
 ## Acceptance Criteria
 
+The report-level criteria are owned and tested by Quoin FR-146; the module
+defines the authored policy and estimate shapes consumed by that report.
+See [Quoin FR-146](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-146-risk-advice-policy-cells.md).
+
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-102-AC-1 | For a fixture whose estimate levels exist in the referenced policy, the report shows exactly the region label written in that policy cell. | Test |
-| FR-102-AC-2 | For a fixture whose severity is not in the policy's list, the report contains a `level-not-in-policy` finding naming that level and the policy, and no region. | Test |
-| FR-102-AC-3 | For a fixture whose probability is `not_assessed`, the report contains one `level-not-assessed` finding naming `not_assessed`, no region, and no substituted level. | Test |
-| FR-102-AC-4 | The same holds for `unknown` and for `not_applicable`, each yielding a `level-not-assessed` finding. | Test |
 | FR-102-AC-5 | Over every fixture, no report field holds a computed numeric value; the report schema declares none. | Inspection |
 
 ## Dependencies
