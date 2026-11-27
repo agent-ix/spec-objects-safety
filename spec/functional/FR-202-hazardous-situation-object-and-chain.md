@@ -84,7 +84,6 @@ This requirement defines the types and the edges only.
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-202-AC-1 | A fixture bundle of one hazard, one situation with `arises_from` to it and one harm with `arises_from` to the situation validates with no diagnostic. | Test |
-| FR-202-AC-2 | `quire extract` over the fixture shows the resolved inverse of each chain edge on the hazard and on the situation, though neither document declares it. | Test |
 | FR-202-AC-3 | A situation with `arises_from` to a `harm`, or a harm with `arises_from` to a `hazard`, is reported `disallowed-edge-target` naming the target type. | Test |
 | FR-202-AC-4 | A `hazardous_situation` carrying `severity`, `probability`, `score` or `acceptance` fails validation. | Test |
 | FR-202-AC-5 | An existing hazard fixture with `context.situation` and no situation object validates unchanged. | Test |
@@ -93,6 +92,11 @@ This requirement defines the types and the edges only.
 | FR-202-AC-8 | An `arises_from` edge to an undeclared local id makes `quire validate --okf --strict` exit non-zero with stderr naming the source path, `arises_from` and the missing id. | Test |
 | FR-202-AC-9 | A cycle among chain edges is reported by the existing `arises_from` acyclicity check. | Test |
 | FR-202-AC-10 | The manifest `lexicon` has an entry `hazardous situation`. | Inspection |
+
+The former inverse-edge criterion named `quire extract`, which reads one
+document and returns its authored edges only. It cannot inspect sibling
+documents to resolve incoming edges. Repository-level inverse resolution is a
+Quire graph operation and needs a separate Quire-owned criterion if retained.
 
 ## Dependencies
 
