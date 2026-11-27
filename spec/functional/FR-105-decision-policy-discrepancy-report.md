@@ -47,7 +47,8 @@ acceptably when at least one covering benefit-risk record is `accepted`.
 
 Quoin owns and tests the report findings under FR-155. The module specifies
 the source record contract; see
-[Quoin FR-155](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-155-risk-discrepancy-findings.md).
+[Quoin FR-155](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-155-risk-discrepancy-findings.md)
+and [Quoin FR-154-AC-5](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-154-risk-discrepancies-command.md), which defines the default warning and strict non-zero exit statuses.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|

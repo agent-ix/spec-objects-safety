@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import os
 import pathlib
-import shutil
 import subprocess
 
 import pytest
@@ -26,9 +25,12 @@ def _quoin() -> str:
 
 def _quire() -> str:
     """Return the explicitly configured Quire binary or fail with its name."""
-    binary = os.environ.get("QUIRE_BIN") or shutil.which("quire")
+    binary = os.environ.get("QUIRE_BIN")
     if not binary:
         pytest.fail("QUIRE_BIN must name the scoped quire CLI")
+    path = pathlib.Path(binary)
+    if not path.is_file() or not os.access(path, os.X_OK):
+        pytest.fail(f"QUIRE_BIN does not name an executable file: {binary}")
     return binary
 
 
