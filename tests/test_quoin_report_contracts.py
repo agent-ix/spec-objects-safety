@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import subprocess
+import time
 
 import pytest
 
@@ -55,7 +56,9 @@ def _scoped_module_roots() -> list[pathlib.Path]:
 
 
 def _with_relationships(text: str, edges: list[tuple[str, str]]) -> str:
-    block = "".join(f"  - target: {target}\n    type: {kind}\n" for kind, target in edges)
+    block = "".join(
+        f"  - target: {target}\n    type: {kind}\n" for kind, target in edges
+    )
     return text.replace("\n---\n", f"\nrelationships:\n{block}---\n", 1)
 
 
@@ -90,12 +93,13 @@ def _residual_risk(root: pathlib.Path, risk_id: str, decision: str) -> None:
     for placeholder, value in (
         ("<undecided, accepted or not_accepted>", decision),
         ("<why the person decided so>", "Recorded for the fixture."),
-        ("<person who decided, empty while undecided>", "A. Person" if decision != "undecided" else ""),
+        (
+            "<person who decided, empty while undecided>",
+            "A. Person" if decision != "undecided" else "",
+        ),
     ):
         text = text.replace(placeholder, value)
-    text = _with_relationships(
-        text, [("estimate", "EST-1"), ("references", "POL-1")]
-    )
+    text = _with_relationships(text, [("estimate", "EST-1"), ("references", "POL-1")])
     (root / f"{risk_id}.md").write_text(text)
 
 
@@ -107,7 +111,9 @@ def _bundle(root: pathlib.Path, decision: str = "accepted", count: int = 1) -> N
         _residual_risk(root, f"RR-{index:05d}", decision)
 
 
-def _run_report(root: pathlib.Path, *, strict: bool = False) -> subprocess.CompletedProcess[str]:
+def _run_report(
+    root: pathlib.Path, *, strict: bool = False, timeout: float | None = None
+) -> subprocess.CompletedProcess[str]:
     command = [
         _quoin(),
         "risk",
@@ -121,7 +127,9 @@ def _run_report(root: pathlib.Path, *, strict: bool = False) -> subprocess.Compl
     ]
     if strict:
         command.append("--strict")
-    return subprocess.run(command, capture_output=True, text=True, check=False)
+    return subprocess.run(
+        command, capture_output=True, text=True, check=False, timeout=timeout
+    )
 
 
 def _snapshot(root: pathlib.Path) -> dict[str, bytes]:
@@ -135,7 +143,9 @@ class TestPortableQuoinReports:
     """Exercise report contracts against the Quoin executable selected by QUOIN_BIN."""
 
     @pytest.mark.trace("FR-104-AC-1")
-    def test_validation_and_discrepancy_report_leave_authored_files_unchanged(self, tmp_path):
+    def test_validation_and_discrepancy_report_leave_authored_files_unchanged(
+        self, tmp_path
+    ):
         """Validation and report execution preserve every authored fixture byte.
 
         Assumptions:
@@ -189,3 +199,21 @@ class TestPortableQuoinReports:
         assert strict.returncode != 0, strict.stderr
         assert "accepted-outside-acceptable-region" in strict.stdout + strict.stderr
 
+    @pytest.mark.trace("NFR-100-AC-3", "NFR-100-M-1")
+    def test_one_report_over_5000_residual_risks_finishes_within_10_seconds(
+        self, tmp_path
+    ):
+        """The installed release CLI reports all 5,000 records within the bound."""
+        _bundle(tmp_path, count=5_000)
+
+        started = time.perf_counter()
+        report = _run_report(tmp_path, timeout=10)
+        elapsed = time.perf_counter() - started
+        print(f"Quoin report over 5,000 residual risks took {elapsed:.3f}s")
+
+        assert report.returncode == 0, report.stderr
+        findings = json.loads(report.stdout)["findings"]
+        assert len(findings) == 5_000
+        assert findings[0]["refs"]["residual_risk"] == "RR-00000"
+        assert findings[-1]["refs"]["residual_risk"] == "RR-04999"
+        assert elapsed <= 10, f"5,000-record report took {elapsed:.3f}s (limit: 10s)"
