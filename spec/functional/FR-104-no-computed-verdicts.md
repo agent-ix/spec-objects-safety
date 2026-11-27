@@ -39,9 +39,12 @@ authored them. It may read what a person wrote and report disagreement
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-104-AC-1 | Running validation and the discrepancy report over fixtures leaves the bytes of every fixture file unchanged. | Test |
-| FR-104-AC-2 | With a fixture `residual_risk` that has `decision: undecided` and an all-acceptable policy, the report contains no accepted state for that risk. | Test |
 | FR-104-AC-3 | No emitted schema and no report schema of the module declares a numeric score, weight or total property, and the shipped package contains no `acceptability_policy` document other than the unfilled skeleton. | Inspection |
-| FR-104-AC-4 | The report output for a fixture contains the attribution statement naming the policy as the source of regions and the named person as the source of decisions. | Test |
+
+The report's treatment of undecided decisions is tested by Quoin FR-155, and
+its attribution is tested by Quoin FR-145. See
+[Quoin FR-155](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-155-risk-discrepancy-findings.md)
+and [Quoin FR-145](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-145-risk-advise-command.md).
 
 ## Dependencies
 

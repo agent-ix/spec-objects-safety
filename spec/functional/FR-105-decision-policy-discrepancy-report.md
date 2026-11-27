@@ -45,19 +45,14 @@ acceptably when at least one covering benefit-risk record is `accepted`.
 
 ## Acceptance Criteria
 
+Quoin owns and tests the report findings under FR-155. The module specifies
+the source record contract; see
+[Quoin FR-155](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-155-risk-discrepancy-findings.md)
+and [Quoin FR-154-AC-5](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-154-risk-discrepancies-command.md), which defines the default warning and strict non-zero exit statuses.
+
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-105-AC-1 | A fixture `accepted` residual risk in a cell whose region has `outside_acceptable: true`, with no covering benefit-risk record, yields exactly one `accepted-outside-acceptable-region` finding naming the document, `accepted`, the region and the policy. | Test |
-| FR-105-AC-2 | Adding an `accepted` benefit-risk record that covers that risk removes the finding. | Test |
-| FR-105-AC-3 | A covering benefit-risk record with `decision: undecided` yields `benefit-risk-undecided` instead. | Test |
-| FR-105-AC-4 | A `not_accepted` risk in a cell whose region has `outside_acceptable: false` yields `not-accepted-inside-acceptable-region`. | Test |
-| FR-105-AC-5 | An `undecided` risk yields `residual-risk-undecided` regardless of region. | Test |
-| FR-105-AC-6 | An `accepted` risk in a cell whose region has `outside_acceptable: false` yields no finding. | Test |
-| FR-105-AC-7 | All findings exit 0 by default as warnings; with the promote flag the run exits non-zero. | Test |
-| FR-105-AC-8 | Two runs over the same fixtures produce identical output. | Test |
-| FR-105-AC-9 | An `accepted` risk outside the acceptable region whose only covering benefit-risk record is `not_accepted` yields `benefit-risk-not-accepted`. | Test |
-| FR-105-AC-10 | An `accepted` risk whose estimate has probability `not_assessed`, and one whose severity is not in the policy, each yield `decision-without-region`; so does a `not_accepted` risk in the same state. | Test |
-| FR-105-AC-11 | An `accepted` risk outside the acceptable region covered by one `not_accepted` and one `accepted` benefit-risk record yields no benefit-risk finding. | Test |
+| FR-105-AC-7 | All findings exit 0 by default as warnings; with `--strict` the run exits non-zero. | Test |
 
 ## Dependencies
 

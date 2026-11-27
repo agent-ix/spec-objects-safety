@@ -7,9 +7,9 @@ skeletons. Nothing is copied into this repository.
 
 `estimates` and `assumes` are verbs `spec-artifacts-iso` has not declared yet
 (PLAT-1676), so the engine reports `UnknownEdgeType` for them as an advisory at
-module load; every run below exits 0 regardless. FR-202-AC-2 and the resolved
-incoming-edge half of FR-204-AC-1 need the `arises_from` inverse label and the
-verb inverses from PLAT-1676 and are not asserted here until it lands.
+module load; every run below exits 0 regardless. `quire extract` reads one
+document and returns authored edges only; incoming-edge resolution needs a
+repository-level Quire graph operation and is not asserted by these tests.
 """
 
 from __future__ import annotations

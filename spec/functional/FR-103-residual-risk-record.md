@@ -70,7 +70,9 @@ whose `status` is `accepted` does not make any residual risk accepted.
 | FR-103-AC-4 | A fixture whose `estimate` references a `pre_control` estimate, or a document of another type, fails validation naming the reference. | Test |
 | FR-103-AC-5 | A fixture omitting `decision` fails validation and no code path supplies a default value. | Test |
 | FR-103-AC-6 | The emitted schema contains no property for severity, probability, a decision date, a history list, or a region. | Inspection |
-| FR-103-AC-7 | Over a bundle with a hazard at `status: accepted` and a `residual_risk` at `undecided`, the tooling reports `residual-risk-undecided` (FR-105) and no accepted state for the risk. | Test |
+
+The report-level decision check is owned and tested by Quoin FR-155. See
+[Quoin FR-155](https://github.com/agent-ix/quoin/blob/main/spec/functional/FR-155-risk-discrepancy-findings.md).
 
 ## Dependencies
 
